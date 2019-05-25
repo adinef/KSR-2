@@ -10,8 +10,6 @@ import net.script.data.annotations.Comment;
 import net.script.data.annotations.enums.Author;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -26,7 +24,7 @@ public class DCResMeasurement {
             value = "Auto-generated internal unique ID",
             madeBy = Author.AdrianFijalkowski
     )
-    private Long id;
+    private Integer id;
 
     @CSVColumn("SSL")
     @CsvBindByName(column = "SSL")
@@ -131,7 +129,7 @@ public class DCResMeasurement {
             value = "Date of most recent sale",
             madeBy = Author.AdrianFijalkowski
     )
-    private LocalDateTime dateOfRecentSale;
+    private String dateOfRecentSale;
 
     @CSVColumn("PRICE")
     @CsvBindByName(column = "PRICE")
@@ -173,8 +171,8 @@ public class DCResMeasurement {
     )
     private Integer noFireplaces;
 
-    @CSVColumn("LANDREA")
-    @CsvBindByName(column = "LANDREA")
+    @CSVColumn("LANDAREA")
+    @CsvBindByName(column = "LANDAREA")
     @Comment(
             value = "Land area of property in square feet",
             madeBy = Author.AdrianFijalkowski

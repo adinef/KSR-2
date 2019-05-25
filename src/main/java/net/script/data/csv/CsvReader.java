@@ -12,10 +12,12 @@ public class CsvReader {
     public static List<DCResMeasurement> readData(String fileName) throws FileNotFoundException {
         FileReader fileReader = new FileReader(fileName);
 
+        HeaderColumnNameMappingStrategy<DCResMeasurement> mappingStrategy = new HeaderColumnNameMappingStrategy<>();
+        mappingStrategy.setType(DCResMeasurement.class);
         CsvToBean<DCResMeasurement> csvToBean = new CsvToBeanBuilder<DCResMeasurement>(fileReader)
                 .withSeparator(',')
                 .withIgnoreLeadingWhiteSpace(true)
-                .withType(DCResMeasurement.class)
+                .withMappingStrategy(mappingStrategy)
                 .build();
 
         List<DCResMeasurement> parsed = csvToBean.parse();

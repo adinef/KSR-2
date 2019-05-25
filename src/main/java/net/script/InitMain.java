@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -22,10 +23,16 @@ public class InitMain {
                 "org.apache.commons.logging.impl.NoOpLog");
     }
 
-    @Autowired
-    private DCResMeasurementRepository repository;
+    private final DCResMeasurementRepository repository;
 
-    public InitMain() throws FileNotFoundException {
+    @Autowired
+    public InitMain(DCResMeasurementRepository repository) throws FileNotFoundException {
+        this.repository = repository;
+    }
+
+    @PostConstruct
+    public void init() throws FileNotFoundException {
+
         log.info("Beginning data load up.");
         List<DCResMeasurement> dcResMeasurements =
                 CsvReader.readData("./src/main/resources/data/raw_residential_data.csv");
