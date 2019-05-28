@@ -1,44 +1,14 @@
 <functions>
    <functions>
       <function name="trapezoid">
-         <coefficients class="java.util.HashMap">
-            <coefficient>
-               <name>a</name>
-               <value>2.0</value>
-            </coefficient>
-            <coefficient>
-               <name>b</name>
-               <value>3.0</value>
-            </coefficient>
-            <coefficient>
-               <name>c</name>
-               <value>3.0</value>
-            </coefficient>
-            <coefficient>
-               <name>d</name>
-               <value>3.0</value>
-            </coefficient>
-         </coefficients>
+         <coefficient name="a" value="1.0"/>
+         <coefficient name="b" value="2.0"/>
+         <coefficient name="c" value="5.0"/>
+         <coefficient name="d" value="6.0"/>
       </function>
       <function name="triangular">
-         <coefficients class="java.util.HashMap">
-            <coefficient>
-               <name>a</name>
-               <value>2.0</value>
-            </coefficient>
-            <coefficient>
-               <name>b</name>
-               <value>3.0</value>
-            </coefficient>
-            <coefficient>
-               <name>c</name>
-               <value>3.0</value>
-            </coefficient>
-            <coefficient>
-               <name>d</name>
-               <value>3.0</value>
-            </coefficient>
-         </coefficients>
+         <coefficient name="a" value="1.0"/>
+         <coefficient name="b" value="10.0"/>
       </function>
    </functions>
 </functions>

@@ -1,7 +1,7 @@
 package net.script.logic.fuzzy.functions.factory;
 
 import lombok.NonNull;
-import net.script.logic.settings.functions.FunctionSetting;
+import net.script.logic.fuzzy.functions.FunctionSetting;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.TrapezoidFunction;
 import net.script.logic.fuzzy.functions.TriangleFunction;

@@ -1,4 +1,4 @@
-package net.script.logic.settings.functions;
+package net.script.logic.fuzzy.functions;
 
 import java.util.Map;
 

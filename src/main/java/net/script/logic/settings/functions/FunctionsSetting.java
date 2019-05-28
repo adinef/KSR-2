@@ -1,7 +1,7 @@
-package net.script.logic.fuzzy.functions;
+package net.script.logic.settings.functions;
 
 import lombok.Data;
-import net.script.logic.settings.functions.FunctionSetting;
+import net.script.logic.fuzzy.functions.FunctionSetting;
 import org.simpleframework.xml.*;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class FunctionsSetting {
         @Attribute(name = "name")
         private String name;
 
-        @ElementMap(name = "coefficients", entry = "coefficient", key = "name", value = "value")
+        @ElementMap(name = "coefficients", entry = "coefficient", key = "name", value = "value", attribute = true, inline = true)
         private Map<String, Double> coefficients;
     }
 }

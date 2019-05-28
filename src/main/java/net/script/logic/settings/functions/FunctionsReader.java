@@ -1,6 +1,5 @@
 package net.script.logic.settings.functions;
 
-import net.script.logic.fuzzy.functions.FunctionsSetting;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import org.simpleframework.xml.Serializer;
