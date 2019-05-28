@@ -1,5 +1,5 @@
 <functions>
-   <functions>
+   <definitions>
       <function name="trapezoid">
          <coefficient name="a" value="1.0"/>
          <coefficient name="b" value="2.0"/>
@@ -10,5 +10,5 @@
          <coefficient name="a" value="1.0"/>
          <coefficient name="b" value="10.0"/>
       </function>
-   </functions>
+   </definitions>
 </functions>

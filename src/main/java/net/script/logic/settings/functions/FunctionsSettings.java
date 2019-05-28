@@ -9,8 +9,8 @@ import java.util.Map;
 
 @Data
 @Root(name = "functions")
-public class FunctionsSetting {
-    @ElementList(name = "functions", entry = "function")
+public class FunctionsSettings {
+    @ElementList(name = "definitions", entry = "function")
     private List<SingleFunctionSetting> functions;
 
     @Data
