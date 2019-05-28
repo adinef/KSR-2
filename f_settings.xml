@@ -1,0 +1,44 @@
+<functions>
+   <functions>
+      <function name="trapezoid">
+         <coefficients class="java.util.HashMap">
+            <coefficient>
+               <name>a</name>
+               <value>2.0</value>
+            </coefficient>
+            <coefficient>
+               <name>b</name>
+               <value>3.0</value>
+            </coefficient>
+            <coefficient>
+               <name>c</name>
+               <value>3.0</value>
+            </coefficient>
+            <coefficient>
+               <name>d</name>
+               <value>3.0</value>
+            </coefficient>
+         </coefficients>
+      </function>
+      <function name="triangular">
+         <coefficients class="java.util.HashMap">
+            <coefficient>
+               <name>a</name>
+               <value>2.0</value>
+            </coefficient>
+            <coefficient>
+               <name>b</name>
+               <value>3.0</value>
+            </coefficient>
+            <coefficient>
+               <name>c</name>
+               <value>3.0</value>
+            </coefficient>
+            <coefficient>
+               <name>d</name>
+               <value>3.0</value>
+            </coefficient>
+         </coefficients>
+      </function>
+   </functions>
+</functions>

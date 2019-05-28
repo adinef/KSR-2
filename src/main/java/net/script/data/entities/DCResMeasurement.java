@@ -1,11 +1,10 @@
 package net.script.data.entities;
 
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvBindByName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.script.data.annotations.CSVColumn;
+import net.script.data.annotations.Column;
 import net.script.data.annotations.Comment;
 import net.script.data.annotations.enums.Author;
 
@@ -18,7 +17,7 @@ import javax.persistence.*;
 @Table(name = "data_points")
 public class DCResMeasurement {
     @Id
-    @CSVColumn("OBJECTID")
+    @Column("OBJECTID")
     @CsvBindByName(column = "OBJECTID")
     @Comment(
             value = "Auto-generated internal unique ID",
@@ -26,7 +25,7 @@ public class DCResMeasurement {
     )
     private Integer id;
 
-    @CSVColumn("SSL")
+    @Column("SSL")
     @CsvBindByName(column = "SSL")
     @Comment(
             value = "Square, suffix, lot ID",
@@ -34,7 +33,7 @@ public class DCResMeasurement {
     )
     private String lotID;
 
-    @CSVColumn("BATHRM")
+    @Column("BATHRM")
     @CsvBindByName(column = "BATHRM")
     @Comment(
             value = "Number of full bathrooms",
@@ -42,7 +41,7 @@ public class DCResMeasurement {
     )
     private Integer noBathrooms;
 
-    @CSVColumn("HF_BATHRM")
+    @Column("HF_BATHRM")
     @CsvBindByName(column = "HF_BATHRM")
     @Comment(
             value = "Number of half bathrooms (no shower or tub)",
@@ -50,7 +49,7 @@ public class DCResMeasurement {
     )
     private Integer noHalfBathrooms;
 
-    @CSVColumn("HEAD")
+    @Column("HEAD")
     @CsvBindByName(column = "HEAD")
     @Comment(
             value = "Heating code",
@@ -58,7 +57,7 @@ public class DCResMeasurement {
     )
     private Integer heatingCode;
 
-    @CSVColumn("HEAD_D")
+    @Column("HEAD_D")
     @CsvBindByName(column = "HEAD_D")
     @Comment(
             value = "Heating description",
@@ -66,7 +65,7 @@ public class DCResMeasurement {
     )
     private String heatingDescription;
 
-    @CSVColumn("AC")
+    @Column("AC")
     @CsvBindByName(column = "AC")
     @Comment(
             value = "Air conditioning (Y/N)",
@@ -74,7 +73,7 @@ public class DCResMeasurement {
     )
     private String isAirConditioned;
 
-    @CSVColumn("NUM_UNITS")
+    @Column("NUM_UNITS")
     @CsvBindByName(column = "NUM_UNITS")
     @Comment(
             value = "Number of units",
@@ -82,7 +81,7 @@ public class DCResMeasurement {
     )
     private Integer noUnits;
 
-    @CSVColumn("ROOMS")
+    @Column("ROOMS")
     @CsvBindByName(column = "ROOMS")
     @Comment(
             value = "Number of rooms",
@@ -90,7 +89,7 @@ public class DCResMeasurement {
     )
     private Integer noRooms;
 
-    @CSVColumn("BEDRM")
+    @Column("BEDRM")
     @CsvBindByName(column = "BEDRM")
     @Comment(
             value = "Number of bedrooms",
@@ -98,7 +97,7 @@ public class DCResMeasurement {
     )
     private Integer noBedrooms;
 
-    @CSVColumn("AYB")
+    @Column("AYB")
     @CsvBindByName(column = "AYB")
     @Comment(
             value = "The earliest time the main portion of the building was built." +
@@ -107,7 +106,7 @@ public class DCResMeasurement {
     )
     private Integer yearBuilt;
 
-    @CSVColumn("YR_RMDL")
+    @Column("YR_RMDL")
     @CsvBindByName(column = "YR_RMDL")
     @Comment(
             value = "Last year residence was remodeled",
@@ -115,7 +114,7 @@ public class DCResMeasurement {
     )
     private Integer yearRemodelled;
 
-    @CSVColumn("STORIES")
+    @Column("STORIES")
     @CsvBindByName(column = "STORIES")
     @Comment(
             value = "Stories",
@@ -123,7 +122,7 @@ public class DCResMeasurement {
     )
     private Float stories;
 
-    @CSVColumn("SALESDATE")
+    @Column("SALESDATE")
     @CsvBindByName(column = "SALESDATE")
     @Comment(
             value = "Date of most recent sale",
@@ -131,7 +130,7 @@ public class DCResMeasurement {
     )
     private String dateOfRecentSale;
 
-    @CSVColumn("PRICE")
+    @Column("PRICE")
     @CsvBindByName(column = "PRICE")
     @Comment(
             value = "Price of most recent sale",
@@ -139,7 +138,7 @@ public class DCResMeasurement {
     )
     private Float recentSalePrice;
 
-    @CSVColumn("SALE_NUM")
+    @Column("SALE_NUM")
     @CsvBindByName(column = "SALE_NUM")
     @Comment(
             value = "Sale number since May 2014",
@@ -147,7 +146,7 @@ public class DCResMeasurement {
     )
     private String saleNumber;
 
-    @CSVColumn("GBA")
+    @Column("GBA")
     @CsvBindByName(column = "GBA")
     @Comment(
             value = "Gross building area in square feet ",
@@ -155,7 +154,7 @@ public class DCResMeasurement {
     )
     private Integer gbArea;
 
-    @CSVColumn("KITCHENS")
+    @Column("KITCHENS")
     @CsvBindByName(column = "KITCHENS")
     @Comment(
             value = "Number of kitchens ",
@@ -163,7 +162,7 @@ public class DCResMeasurement {
     )
     private Integer noKitchens;
 
-    @CSVColumn("FIREPLACES")
+    @Column("FIREPLACES")
     @CsvBindByName(column = "FIREPLACES")
     @Comment(
             value = "Number of fireplaces ",
@@ -171,7 +170,7 @@ public class DCResMeasurement {
     )
     private Integer noFireplaces;
 
-    @CSVColumn("LANDAREA")
+    @Column("LANDAREA")
     @CsvBindByName(column = "LANDAREA")
     @Comment(
             value = "Land area of property in square feet",

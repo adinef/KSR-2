@@ -1,18 +1,23 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXTreeTableColumn;
+import com.jfoenix.controls.JFXTreeTableView;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.annotations.enums.Author;
+import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.DCResMeasurementRepository;
 import net.script.utils.CommonFXUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @Controller
@@ -21,6 +26,9 @@ public class MainController implements Initializable {
 
     private boolean isFullscreen;
     private final DCResMeasurementRepository DCResMeasurementRepository;
+
+    @FXML
+    private JFXTreeTableView table;
 
     @Autowired
     public MainController(DCResMeasurementRepository DCResMeasurementRepository) {
@@ -71,5 +79,14 @@ public class MainController implements Initializable {
                                 Author.BartoszGoss.indexNumber() + ")"),
                 Main.getCurrentStage().getScene()
         );
+    }
+
+    @FXML
+    private void loadData() {
+        List<JFXTreeTableColumn<DCResMeasurement, ?>> columnsForClass = CommonFXUtils.getColumnsForClass(
+                DCResMeasurement.class,
+                true
+        );
+        this.table.getColumns().addAll(columnsForClass);
     }
 }

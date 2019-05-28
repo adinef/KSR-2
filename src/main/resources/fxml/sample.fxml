@@ -18,6 +18,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <?import javafx.scene.layout.Pane?>
+<?import com.jfoenix.controls.JFXTabPane?>
 <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="705.0" prefWidth="1055.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
@@ -60,9 +61,12 @@
         </Button>
     </HBox>
     <GridPane fx:id="grid" prefHeight="685.0" prefWidth="1021.0">
+        <JFXTreeTableView fx:id="table" >
+
+        </JFXTreeTableView>
     </GridPane>
     <ToolBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
-        <JFXButton fx:id="button" buttonType="RAISED" onAction="#about" prefHeight="51.0" prefWidth="139.0"
+        <JFXButton fx:id="button" buttonType="RAISED" onAction="#loadData" prefHeight="51.0" prefWidth="139.0"
                    ripplerFill="#8d2a2a" text="Load data">
             <cursor>
                 <Cursor fx:constant="HAND"/>
