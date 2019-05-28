@@ -1,9 +1,9 @@
 package net.script.logic.fuzzy;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import net.script.logic.fuzzy.linguistic.LinguisticVariable;
+
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FuzzySet<T> implements Map<T, Double> {
@@ -50,6 +50,22 @@ public class FuzzySet<T> implements Map<T, Double> {
                 .filter( entry -> entry.getValue() > 0 )
                 .map( entry -> entry.getKey())
                 .collect(Collectors.toSet());
+    }
+
+    public static <E> FuzzySet<E> of(Collection<E> elements, LinguisticVariable lVariable) throws NoSuchFieldException, IllegalAccessException {
+        E next = elements.iterator().next();
+        Class<?> aClass = next.getClass();
+        Field declaredField = aClass.getDeclaredField(lVariable.getMemberFieldName());
+        declaredField.setAccessible(true);
+        Map<E, Double> map = new HashMap<>();
+        for (E elem : elements) {
+            if (declaredField.getType().equals(Integer.class)) {
+                map.put(elem, lVariable.getFunction().calculate((Integer)declaredField.get(elem)));
+            } else {
+                map.put(elem, lVariable.getFunction().calculate((Double)declaredField.get(elem)));
+            }
+        }
+        return new FuzzySet<E>(map);
     }
 
     @Override

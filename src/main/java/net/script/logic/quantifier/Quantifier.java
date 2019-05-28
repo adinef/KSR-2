@@ -1,30 +1,23 @@
 package net.script.logic.quantifier;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import net.script.data.annotations.Comment;
 import net.script.data.annotations.enums.Author;
-import net.script.logic.fuzzy.functions.QFunction;
+import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 
+@EqualsAndHashCode(callSuper = true)
 @Comment(
         value = "Klasa reprezentująca kwantyfikator",
         madeBy = Author.AdrianFijalkowski
 )
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class Quantifier {
-    private QFunction function;
-    private String name;
-
+public class Quantifier extends LinguisticVariable {
     public double calculate(double x) {
-        return function.calculate(x);
+        return getFunction().calculate(x);
     }
 
     public double cardinalNumber() {
-        return function.distance();
+        return getFunction().distance();
     }
 }
