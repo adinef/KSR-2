@@ -1,7 +1,8 @@
-package net.script.data.settings.functions;
+package net.script.logic.settings.functions;
 
-import net.script.data.functions.QFunction;
-import net.script.data.functions.factory.QFunctionFactory;
+import net.script.logic.fuzzy.functions.FunctionsSetting;
+import net.script.logic.fuzzy.functions.QFunction;
+import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.stereotype.Component;

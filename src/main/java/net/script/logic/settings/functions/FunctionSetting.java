@@ -1,4 +1,4 @@
-package net.script.data.functions;
+package net.script.logic.settings.functions;
 
 import java.util.Map;
 

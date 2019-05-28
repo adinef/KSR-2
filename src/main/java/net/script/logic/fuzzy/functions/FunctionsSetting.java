@@ -1,7 +1,7 @@
-package net.script.data.settings.functions;
+package net.script.logic.fuzzy.functions;
 
 import lombok.Data;
-import net.script.data.functions.FunctionSetting;
+import net.script.logic.settings.functions.FunctionSetting;
 import org.simpleframework.xml.*;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package net.script.data.functions;
+package net.script.logic.fuzzy.functions;
 
 import lombok.AllArgsConstructor;
 import lombok.ToString;
