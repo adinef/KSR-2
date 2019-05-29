@@ -7,9 +7,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.script.data.csv.CsvReader;
+import net.script.logic.quantifier.Quantifier;
+import net.script.logic.settings.Reader;
+import net.script.logic.settings.quantifier.QuantifiersReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.List;
 
 @SpringBootApplication
 public class Main extends Application {
@@ -18,7 +24,6 @@ public class Main extends Application {
     private FXMLLoader fxmlLoader;
     private double xOffset = 0;
     private double yOffset = 0;
-
 
     private static Stage currentStage;
 

@@ -17,7 +17,9 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import net.script.data.annotations.Column;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BiConsumer;
 
@@ -83,6 +85,14 @@ public class CommonFXUtils {
             o = field.get(object);
         } catch (IllegalAccessException e) {
             log.error("Error reading object value for cell factory", e);
+        }
+        if (o == null) {
+            try {
+                Constructor<?> constructor = field.getType().getConstructor();
+                o = constructor.newInstance();
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                return null;
+            }
         }
         if (field.getType().equals(Integer.class)) {
             return new SimpleIntegerProperty((Integer)o);

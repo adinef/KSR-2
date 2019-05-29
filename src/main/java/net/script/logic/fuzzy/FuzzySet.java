@@ -1,13 +1,18 @@
 package net.script.logic.fuzzy;
 
+import lombok.NonNull;
+import lombok.ToString;
+import net.script.data.entities.DCResMeasurement;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@ToString(onlyExplicitlyIncluded = true)
 public class FuzzySet<T> implements Map<T, Double> {
 
+    @ToString.Include
     private Map<T, Double> elementsValuesMapping = new HashMap<>();
 
     public FuzzySet(Map<T, Double> anotherMap) {
@@ -52,23 +57,15 @@ public class FuzzySet<T> implements Map<T, Double> {
                 .collect(Collectors.toSet());
     }
 
-    public static <E> FuzzySet<E> of(Collection<E> elements, LinguisticVariable lVariable) throws NoSuchFieldException, IllegalAccessException {
-        E next = elements.iterator().next();
-        Class<?> aClass = next.getClass();
-        Field declaredField = aClass.getDeclaredField(lVariable.getMemberFieldName());
-        declaredField.setAccessible(true);
-        Map<E, Double> map = new HashMap<>();
-        for (E elem : elements) {
-            if (declaredField.getType().equals(Integer.class)) {
-                map.put(elem, lVariable.getFunction().calculate((Integer)declaredField.get(elem)));
-            } else {
-                map.put(elem, lVariable.getFunction().calculate((Double)declaredField.get(elem)));
-            }
-        }
-        return new FuzzySet<E>(map);
+    public static <E> FuzzySetBuilder<E> with(Collection<E> coll) {
+        return new FuzzySetBuilder<>(coll);
     }
 
+    public static <E> FuzzySetBuilder<E> with(@NonNull E... elems) {
+        return new FuzzySetBuilder<>(Arrays.asList(elems));
+    }
     @Override
+
     public int size() {
         return this.elementsValuesMapping.size();
     }
@@ -130,5 +127,37 @@ public class FuzzySet<T> implements Map<T, Double> {
     @Override
     public Set<Entry<T, Double>> entrySet() {
         return this.elementsValuesMapping.entrySet();
+    }
+
+    public static class FuzzySetBuilder<E> {
+        private final Collection<E> coll;
+
+        private FuzzySetBuilder(Collection<E> collection) {
+            this.coll = collection;
+        }
+
+        public FuzzySet<E> from(LinguisticVariable lv) {
+            try {
+                return this.of(this.coll, lv);
+            } catch (Exception e) {
+                return new FuzzySet<>();
+            }
+        }
+
+        private <K> FuzzySet<K> of(Collection<K> elements, LinguisticVariable lVariable) throws NoSuchFieldException, IllegalAccessException {
+            K next = elements.iterator().next();
+            Class<?> aClass = next.getClass();
+            Field declaredField = aClass.getDeclaredField(lVariable.getMemberFieldName());
+            declaredField.setAccessible(true);
+            Map<K, Double> map = new HashMap<>();
+            for (K elem : elements) {
+                if (declaredField.getType().equals(Integer.class)) {
+                    map.put(elem, lVariable.getFunction().calculate((Integer)declaredField.get(elem)));
+                } else {
+                    map.put(elem, lVariable.getFunction().calculate((Double)declaredField.get(elem)));
+                }
+            }
+            return new FuzzySet<>(map);
+        }
     }
 }
