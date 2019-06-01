@@ -4,24 +4,19 @@ import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialogLayout;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
-import javafx.beans.property.*;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import net.script.data.annotations.Column;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class CommonFXUtils {
@@ -40,84 +35,36 @@ public class CommonFXUtils {
         alert.setContent(layout);
         return alert.showAndWait();
     }
-
-    public static <T> List<JFXTreeTableColumn<T, ?>> getColumnsForClass(
-            Class<T> type,
-            boolean editable) {
-
-        Field[] allFields = type.getDeclaredFields();
-        List<JFXTreeTableColumn<T, ?>> columns = new LinkedList<>();
+/*
+    public static <T> List<TableColumn<T, ?>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
+        Field[] allFields = tClass.getDeclaredFields();
+        List<TableColumn<T, ?>> columns = new LinkedList<>();
         for (Field field : allFields) {
             Column annotation = field.getAnnotation(Column.class);
             if (annotation != null) {
-                JFXTreeTableColumn<T, ?> column = new JFXTreeTableColumn<>(annotation.value());
+                TableColumn<T, Object> column = new TableColumn<>(annotation.value());
                 column.setEditable(editable);
-                column.setCellFactory((param) -> new GenericEditableTreeTableCell<>(
-                        new TextFieldEditorBuilder()));
-                column.setCellValueFactory((elem) -> cvFactory(field, elem));
-                column.setOnEditCommit(
-                        cellEditEvent -> {
-                            onEdit(cellEditEvent, (obj, val) -> onEditAction(obj, val, field));
-                        }
-                );
-                columns.add(
-                        column
-                );
+                column.setPrefWidth(75);
+                column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
+                columns.add(column);
             }
         }
         return columns;
     }
-
-    private static <T> void onEditAction(T obj, Object val, Field field) {
-        field.setAccessible(true);
-        try {
-            field.set(obj, val);
-        } catch (IllegalAccessException e) {
-            log.error("Error during value set", e);
-        }
-    }
-
-    private static <T> ObservableValue cvFactory(Field field, TreeTableColumn.CellDataFeatures<T, ?> elem) {
-        T object = elem.getValue().getValue();
-        field.setAccessible(true);
-        Object o = null;
-        try {
-            o = field.get(object);
-        } catch (IllegalAccessException e) {
-            log.error("Error reading object value for cell factory", e);
-        }
-        if (o == null) {
-            try {
-                Constructor<?> constructor = field.getType().getConstructor();
-                o = constructor.newInstance();
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                return null;
+    */
+    public static <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
+        Field[] allFields = tClass.getDeclaredFields();
+        List<TableColumn<String, T>> columns = new LinkedList<>();
+        for (Field field : allFields) {
+            Column annotation = field.getAnnotation(Column.class);
+            if (annotation != null) {
+                TableColumn<String, T> column = new TableColumn<>(annotation.value());
+                column.setEditable(editable);
+                column.setPrefWidth(75);
+                column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
+                columns.add(column);
             }
         }
-        if (field.getType().equals(Integer.class)) {
-            return new SimpleIntegerProperty((Integer)o);
-        } else if (field.getType().equals(String.class)) {
-            return new SimpleStringProperty((String)o);
-        } else if (field.getType().equals(Float.class)) {
-            return new SimpleFloatProperty((Float)o);
-        } else if (field.getType().equals(Double.class)) {
-            return new SimpleDoubleProperty((Float)o);
-        } else if (field.getType().equals(Boolean.class)) {
-            return new SimpleBooleanProperty((Boolean) o);
-        } else if (field.getType().equals(Long.class)) {
-            return new SimpleLongProperty((Long) o);
-        } else {
-            return new SimpleStringProperty("");
-        }
-    }
-
-    private static <T> void onEdit(TreeTableColumn.CellEditEvent<T, ?> cellEditEvent, BiConsumer<T, Object> cons) {
-        T value = cellEditEvent
-                .getTreeTableView()
-                .getTreeItem(cellEditEvent
-                        .getTreeTablePosition()
-                        .getRow()
-                ).getValue();
-        cons.accept(value, cellEditEvent.getNewValue());
+        return columns;
     }
 }

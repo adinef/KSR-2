@@ -1,9 +1,10 @@
-package net.script.logic.settings.quantifier;
+package net.script.logic.settings.qualifier;
 
 import net.script.config.paths.PathInjection;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
+import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.Reader;
 import net.script.logic.settings.SimpleLinguisticVariableSetting;
@@ -18,34 +19,33 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class QuantifiersReader implements Reader<Quantifier> {
+public class QualifiersReader implements Reader<Qualifier> {
 
     private final Path SETTINGS_FILE_PATH;
 
-    private List<Quantifier> cached = null;
-
+    private List<Qualifier> cached = null;
 
     @Autowired
-    public QuantifiersReader(@PathInjection(PathType.QUANTIFIERS) Path settings_file_path) {
+    public QualifiersReader(@PathInjection(PathType.QUALIFIERS) Path settings_file_path) {
         SETTINGS_FILE_PATH = settings_file_path;
     }
 
-    public List<Quantifier> read(boolean reloadCache) throws Exception {
+    public List<Qualifier> read(boolean reloadCache) throws Exception {
         if (cached == null || reloadCache == true) {
             Serializer serializer = new Persister();
             File file = new File(SETTINGS_FILE_PATH.toString());
-            QuantifiersSettings read = serializer.read(QuantifiersSettings.class, file);
+            QualifiersSettings read = serializer.read(QualifiersSettings.class, file);
             this.cached = new LinkedList<>();
-            List<SimpleLinguisticVariableSetting> quantifiers = read.getQuantifiers();
+            List<SimpleLinguisticVariableSetting> quantifiers = read.getQualifiers();
             for (SimpleLinguisticVariableSetting setting : quantifiers) {
                 QFunction function = QFunctionFactory.getFunction(setting.getFunctionSetting());
-                this.cached.add( new Quantifier(setting.getName(), setting.getMember(), function) );
+                this.cached.add( new Qualifier(setting.getName(), setting.getMember(), function) );
             }
         }
         return this.cached;
     }
 
-    public List<Quantifier> read() throws Exception {
+    public List<Qualifier> read() throws Exception {
         return this.read(false);
     }
 

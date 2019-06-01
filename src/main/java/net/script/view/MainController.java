@@ -1,17 +1,15 @@
 package net.script.view;
 
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.annotations.enums.Author;
@@ -35,7 +33,7 @@ public class MainController implements Initializable {
     private final DCResMeasurementRepository repository;
 
     @FXML
-    private JFXTreeTableView table;
+    private Tab tab1;
 
     @Autowired
     public MainController(DCResMeasurementRepository repository) {
@@ -89,25 +87,25 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    @SuppressWarnings("unchecked")
     private void loadData() {
-        List<JFXTreeTableColumn<DCResMeasurement, ?>> columnsForClass = CommonFXUtils.getColumnsForClass(
-                DCResMeasurement.class,
-                true
-        );
-        ObservableList columns = this.table.getColumns();
-        columns.addAll(columnsForClass);
-        this.fillColumns(columnsForClass);
+        TableView tableView = new TableView();
+        List<TableColumn<String, DCResMeasurement>> simpleColumns =
+                CommonFXUtils.getSimpleColumnsForClass(DCResMeasurement.class, false);
+        tableView.getColumns().addAll(simpleColumns);
+        tableView.setPrefHeight(700);
+        this.fillColumns(tableView);
+        tab1.getTabPane().getTabs().addAll( new Tab("Dane", tableView) );
     }
 
-    private void fillColumns(List<JFXTreeTableColumn<DCResMeasurement, ?>> columns) {
+    @SuppressWarnings("unchecked")
+    private void fillColumns(TableView tableView) {
         EntityReadService<DCResMeasurement> task = new EntityReadService<>(this.repository::findAll);
         ObservableList<DCResMeasurement> data = FXCollections.observableArrayList();
         task.setOnSucceeded((e) -> {
             data.addAll((Collection<? extends DCResMeasurement>) e.getSource().getValue());
             log.info("Data loaded");
-            TreeItem<DCResMeasurement> root = new RecursiveTreeItem<>(data, RecursiveTreeObject::getChildren);
-            table.setRoot(root);
-            table.setShowRoot(false);
+            tableView.getItems().addAll(data);
         });
         task.start();
     }

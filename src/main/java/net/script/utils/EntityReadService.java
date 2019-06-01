@@ -18,7 +18,7 @@ public class EntityReadService<T> extends Service<Iterable<T>> {
 
     @Override
     protected Task<Iterable<T>> createTask() {
-        return new Task<>() {
+        return new Task<Iterable<T>>() {
             @Override
             protected Iterable<T> call() throws Exception {
                 return supplier.get();

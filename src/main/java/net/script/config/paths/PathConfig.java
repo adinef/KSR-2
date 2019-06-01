@@ -19,4 +19,10 @@ public class PathConfig {
     public Path quantifiersPath() {
         return Paths.get("q_settings.xml");
     }
+
+    @PathInjection(PathType.QUALIFIERS)
+    @Bean
+    public Path qualifiersPath() {
+        return Paths.get("qf_settings.xml");
+    }
 }

@@ -1,0 +1,12 @@
+<quantifiers>
+   <definitions>
+      <quantifier name="kto wie co?" member="id">
+         <function name="trapezoid">
+            <coefficient name="a" value="1.0"/>
+            <coefficient name="b" value="2.0"/>
+            <coefficient name="c" value="5.0"/>
+            <coefficient name="d" value="6.0"/>
+         </function>
+      </quantifier>
+   </definitions>
+</quantifiers>

@@ -1,7 +1,8 @@
 package net.script.data.entities;
 
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.opencsv.bean.CsvBindByName;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "data_points")
-public class DCResMeasurement extends RecursiveTreeObject<DCResMeasurement> {
+public class DCResMeasurement {
     @Id
     @Column("OBJECTID")
     @CsvBindByName(column = "OBJECTID")
