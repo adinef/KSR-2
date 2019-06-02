@@ -21,6 +21,7 @@ import net.script.logic.settings.qualifier.QualifiersReader;
 import net.script.logic.settings.quantifier.QuantifiersReader;
 import net.script.utils.CommonFXUtils;
 import net.script.utils.EntityReadService;
+import net.script.utils.SupplierWithException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 @Controller
 @Slf4j
@@ -124,24 +126,25 @@ public class MainController implements Initializable {
     }
 
     public void showQuantifiers() {
-        ObservableList<Quantifier> read = FXCollections.observableArrayList();
-        try {
-            read =  FXCollections.observableList(quantifiersReader.read());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.newTabWithContent(Quantifier.class, "Kwantyfikatory", read);
+        this.showLinguisticData(Quantifier.class, "Kwantyfikatory", quantifiersReader::read);
     }
 
     public void showQualifiers() {
-        ObservableList<Qualifier> read = FXCollections.observableArrayList();
+        this.showLinguisticData(Qualifier.class, "Kwalifikatory", qualifiersReader::read);
+    }
+
+
+    private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
+        ObservableList<T> read = FXCollections.observableArrayList();
         try {
-            read =  FXCollections.observableList(qualifiersReader.read());
+            read =  FXCollections.observableList(listSupplier.get());
         } catch (Exception e) {
+            CommonFXUtils.noDataPopup("Wystapił błąd", e.getLocalizedMessage(), Main.getCurrentStage().getScene());
             e.printStackTrace();
         }
-        this.newTabWithContent(Qualifier.class, "Kwalifikatory", read);
+        this.newTabWithContent(tClass, tabname, read);
     }
+
 
     private <T> void newTabWithContent(Class<T> tClass, String name, List<T> content) {
         TableView tableView = new TableView();
