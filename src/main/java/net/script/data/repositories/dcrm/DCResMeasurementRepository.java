@@ -1,4 +1,4 @@
-package net.script.data.repositories;
+package net.script.data.repositories.dcrm;
 
 import net.script.data.entities.DCResMeasurement;
 import org.springframework.data.repository.CrudRepository;

@@ -1,4 +1,4 @@
-package net.script.data;
+package net.script.data.repositories;
 
 
 import org.springframework.data.repository.CrudRepository;

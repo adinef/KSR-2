@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.config.main.ApplicationVariables;
-import net.script.data.CachingRepository;
+import net.script.data.repositories.CachingRepository;
 import net.script.data.annotations.enums.Author;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
@@ -150,6 +150,7 @@ public class MainController implements Initializable {
     }
 
 
+    @SuppressWarnings("unchecked")
     private <T> void newTabWithContent(Class<T> tClass, String name, List<T> content) {
         TableView tableView = new TableView();
         List<TableColumn<String, T>> simpleColumns =

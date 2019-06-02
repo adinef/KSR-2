@@ -1,26 +1,23 @@
 package net.script.data.csv;
 
-import com.opencsv.CSVReader;
-import com.opencsv.bean.*;
-import net.script.data.entities.DCResMeasurement;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
 
 public class CsvReader {
-    public static List<DCResMeasurement> readData(String fileName) throws FileNotFoundException {
+    public static <T> List<T> readData(String fileName, Class<T> tClass) throws FileNotFoundException {
         FileReader fileReader = new FileReader(fileName);
-
-        HeaderColumnNameMappingStrategy<DCResMeasurement> mappingStrategy = new HeaderColumnNameMappingStrategy<>();
-        mappingStrategy.setType(DCResMeasurement.class);
-        CsvToBean<DCResMeasurement> csvToBean = new CsvToBeanBuilder<DCResMeasurement>(fileReader)
+        HeaderColumnNameMappingStrategy<T> mappingStrategy = new HeaderColumnNameMappingStrategy<>();
+        mappingStrategy.setType(tClass);
+        CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(fileReader)
                 .withSeparator(',')
                 .withIgnoreLeadingWhiteSpace(true)
                 .withMappingStrategy(mappingStrategy)
                 .build();
-
-        List<DCResMeasurement> parsed = csvToBean.parse();
-        return parsed;
+        return csvToBean.parse();
     }
 }
