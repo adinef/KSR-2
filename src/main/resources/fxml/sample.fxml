@@ -67,7 +67,7 @@
                 </JFXButton>
                 <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="51.0"
                            prefWidth="139.0"
-                           ripplerFill="#042e8d" text="Kwantyfikatory">
+                           ripplerFill="#042e8d" text="Kwalifikatory">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>

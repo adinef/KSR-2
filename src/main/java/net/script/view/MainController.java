@@ -3,7 +3,6 @@ package net.script.view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
@@ -13,9 +12,8 @@ import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.config.main.ApplicationVariables;
+import net.script.data.CachingRepository;
 import net.script.data.annotations.enums.Author;
-import net.script.data.entities.DCResMeasurement;
-import net.script.data.repositories.DCResMeasurementRepository;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.qualifier.QualifiersReader;
@@ -27,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,21 +36,21 @@ public class MainController implements Initializable {
 
     private final QuantifiersReader quantifiersReader;
     private final QualifiersReader qualifiersReader;
+    private final CachingRepository repository;
     private boolean isFullscreen;
-    private final DCResMeasurementRepository repository;
-
+    private ObservableList<?> data;
 
     @FXML
     private Tab tab1;
 
     @Autowired
     public MainController(
-            DCResMeasurementRepository repository,
             QuantifiersReader quantifiersReader,
-            QualifiersReader qualifiersReader) {
-        this.repository = repository;
+            QualifiersReader qualifiersReader,
+            CachingRepository repository) {
         this.quantifiersReader = quantifiersReader;
         this.qualifiersReader = qualifiersReader;
+        this.repository = repository;
     }
 
     @FXML
@@ -106,20 +103,20 @@ public class MainController implements Initializable {
     @SuppressWarnings("unchecked")
     private void loadData() {
         TableView tableView = new TableView();
-        List<TableColumn<String, DCResMeasurement>> simpleColumns =
-                CommonFXUtils.getSimpleColumnsForClass(DCResMeasurement.class, false);
+        List<TableColumn<String, ?>> simpleColumns =
+                CommonFXUtils.getSimpleColumnsForClass(repository.getItemClass(), false);
         tableView.getColumns().addAll(simpleColumns);
         tableView.setPrefHeight(700);
-        this.fillColumns(tableView);
+        this.fillColumns(tableView, this.repository::findAll);
         tab1.getTabPane().getTabs().addAll( new Tab("Dane", tableView) );
     }
 
     @SuppressWarnings("unchecked")
-    private void fillColumns(TableView tableView) {
-        EntityReadService<DCResMeasurement> task = new EntityReadService<>(this.repository::findAll);
-        ObservableList<DCResMeasurement> data = FXCollections.observableArrayList();
+    private <T> void fillColumns(TableView tableView, Supplier<Iterable<T>> listSupplier) {
+        EntityReadService<T> task = new EntityReadService<>(listSupplier);
+        data = FXCollections.observableArrayList();
         task.setOnSucceeded((e) -> {
-            data.addAll((Collection<? extends DCResMeasurement>) e.getSource().getValue());
+            data.addAll((Collection) e.getSource().getValue());
             log.info("Data loaded");
             tableView.getItems().addAll(data);
         });
