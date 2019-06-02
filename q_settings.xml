@@ -8,5 +8,11 @@
             <coefficient name="d" value="6.0"/>
          </function>
       </quantifier>
+      <quantifier name="ttt" member="id">
+         <function name="triangular">
+            <coefficient name="a" value="1.0"/>
+            <coefficient name="b" value="2.0"/>
+         </function>
+      </quantifier>
    </definitions>
 </quantifiers>

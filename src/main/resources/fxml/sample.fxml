@@ -50,8 +50,24 @@
     <TabPane fx:id="tabPane" tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
             <ToolBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                <JFXButton fx:id="button" buttonType="RAISED" onAction="#loadData" prefHeight="51.0" prefWidth="139.0"
+                <JFXButton fx:id="loadDataButton" buttonType="RAISED" onAction="#loadData" prefHeight="51.0"
+                           prefWidth="139.0"
                            ripplerFill="#8d2a2a" text="Wczytaj dane">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </JFXButton>
+                <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="51.0"
+                           prefWidth="139.0"
+                           ripplerFill="#042e8d" text="Kwantyfikatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+
+                </JFXButton>
+                <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="51.0"
+                           prefWidth="139.0"
+                           ripplerFill="#042e8d" text="Kwantyfikatory">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>

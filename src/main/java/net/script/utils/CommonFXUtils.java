@@ -35,36 +35,27 @@ public class CommonFXUtils {
         alert.setContent(layout);
         return alert.showAndWait();
     }
-/*
-    public static <T> List<TableColumn<T, ?>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
-        Field[] allFields = tClass.getDeclaredFields();
-        List<TableColumn<T, ?>> columns = new LinkedList<>();
-        for (Field field : allFields) {
-            Column annotation = field.getAnnotation(Column.class);
-            if (annotation != null) {
-                TableColumn<T, Object> column = new TableColumn<>(annotation.value());
-                column.setEditable(editable);
-                column.setPrefWidth(75);
-                column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
-                columns.add(column);
-            }
-        }
-        return columns;
-    }
-    */
-    public static <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
+
+    public static  <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
         Field[] allFields = tClass.getDeclaredFields();
         List<TableColumn<String, T>> columns = new LinkedList<>();
         for (Field field : allFields) {
-            Column annotation = field.getAnnotation(Column.class);
-            if (annotation != null) {
-                TableColumn<String, T> column = new TableColumn<>(annotation.value());
-                column.setEditable(editable);
-                column.setPrefWidth(75);
-                column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
-                columns.add(column);
-            }
+            createColumn(editable, columns, field);
+        }
+        for (Field field : tClass.getSuperclass().getDeclaredFields()) {
+            createColumn(editable, columns, field);
         }
         return columns;
+    }
+
+    private static <T> void createColumn(boolean editable, List<TableColumn<String, T>> columns, Field field) {
+        Column annotation = field.getAnnotation(Column.class);
+        if (annotation != null) {
+            TableColumn<String, T> column = new TableColumn<>(annotation.value());
+            column.setEditable(editable);
+            column.setPrefWidth(75);
+            column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
+            columns.add(column);
+        }
     }
 }

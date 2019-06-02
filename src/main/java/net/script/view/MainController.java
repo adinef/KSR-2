@@ -3,24 +3,29 @@ package net.script.view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.annotations.enums.Author;
 import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.DCResMeasurementRepository;
+import net.script.logic.qualifier.Qualifier;
+import net.script.logic.quantifier.Quantifier;
+import net.script.logic.settings.qualifier.QualifiersReader;
+import net.script.logic.settings.quantifier.QuantifiersReader;
 import net.script.utils.CommonFXUtils;
 import net.script.utils.EntityReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,15 +34,23 @@ import java.util.ResourceBundle;
 @Slf4j
 public class MainController implements Initializable {
 
+    private final QuantifiersReader quantifiersReader;
+    private final QualifiersReader qualifiersReader;
     private boolean isFullscreen;
     private final DCResMeasurementRepository repository;
+
 
     @FXML
     private Tab tab1;
 
     @Autowired
-    public MainController(DCResMeasurementRepository repository) {
+    public MainController(
+            DCResMeasurementRepository repository,
+            QuantifiersReader quantifiersReader,
+            QualifiersReader qualifiersReader) {
         this.repository = repository;
+        this.quantifiersReader = quantifiersReader;
+        this.qualifiersReader = qualifiersReader;
     }
 
     @FXML
@@ -108,5 +121,34 @@ public class MainController implements Initializable {
             tableView.getItems().addAll(data);
         });
         task.start();
+    }
+
+    public void showQuantifiers() {
+        ObservableList<Quantifier> read = FXCollections.observableArrayList();
+        try {
+            read =  FXCollections.observableList(quantifiersReader.read());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.newTabWithContent(Quantifier.class, "Kwantyfikatory", read);
+    }
+
+    public void showQualifiers() {
+        ObservableList<Qualifier> read = FXCollections.observableArrayList();
+        try {
+            read =  FXCollections.observableList(qualifiersReader.read());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.newTabWithContent(Qualifier.class, "Kwalifikatory", read);
+    }
+
+    private <T> void newTabWithContent(Class<T> tClass, String name, List<T> content) {
+        TableView tableView = new TableView();
+        List<TableColumn<String, T>> simpleColumns =
+                CommonFXUtils.getSimpleColumnsForClass(tClass, false);
+        tableView.getColumns().addAll(simpleColumns);
+        tableView.setItems(FXCollections.observableList(content));
+        tab1.getTabPane().getTabs().add(new Tab(name, tableView));
     }
 }
