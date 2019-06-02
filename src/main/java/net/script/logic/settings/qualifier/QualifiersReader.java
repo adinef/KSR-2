@@ -31,7 +31,7 @@ public class QualifiersReader implements Reader<Qualifier> {
     }
 
     public List<Qualifier> read(boolean reloadCache) throws Exception {
-        if (cached == null || reloadCache == true) {
+        if (cached == null || reloadCache) {
             Serializer serializer = new Persister();
             File file = new File(SETTINGS_FILE_PATH.toString());
             QualifiersSettings read = serializer.read(QualifiersSettings.class, file);

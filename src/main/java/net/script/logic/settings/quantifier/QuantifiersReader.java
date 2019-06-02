@@ -31,7 +31,7 @@ public class QuantifiersReader implements Reader<Quantifier> {
     }
 
     public List<Quantifier> read(boolean reloadCache) throws Exception {
-        if (cached == null || reloadCache == true) {
+        if (cached == null || reloadCache) {
             Serializer serializer = new Persister();
             File file = new File(SETTINGS_FILE_PATH.toString());
             QuantifiersSettings read = serializer.read(QuantifiersSettings.class, file);

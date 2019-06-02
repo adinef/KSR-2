@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
+import net.script.config.main.ApplicationVariables;
 import net.script.data.annotations.enums.Author;
 import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.DCResMeasurementRepository;
@@ -126,11 +127,17 @@ public class MainController implements Initializable {
     }
 
     public void showQuantifiers() {
-        this.showLinguisticData(Quantifier.class, "Kwantyfikatory", quantifiersReader::read);
+        this.showLinguisticData(
+                Quantifier.class, "Kwantyfikatory",
+                () -> quantifiersReader.read(ApplicationVariables.determineRuntimeConfig())
+        );
     }
 
     public void showQualifiers() {
-        this.showLinguisticData(Qualifier.class, "Kwalifikatory", qualifiersReader::read);
+        this.showLinguisticData(Qualifier.class,
+                "Kwalifikatory",
+                () -> qualifiersReader.read(ApplicationVariables.determineRuntimeConfig())
+        );
     }
 
 

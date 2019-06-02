@@ -14,5 +14,11 @@
             <coefficient name="b" value="2.0"/>
          </function>
       </quantifier>
+      <quantifier name="tt1" member="id">
+         <function name="triangular">
+            <coefficient name="a" value="2.0"/>
+            <coefficient name="b" value="3.0"/>
+         </function>
+      </quantifier>
    </definitions>
 </quantifiers>
