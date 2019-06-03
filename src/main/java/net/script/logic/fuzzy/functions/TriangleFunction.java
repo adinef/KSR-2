@@ -1,14 +1,19 @@
 package net.script.logic.fuzzy.functions;
 
 import lombok.AllArgsConstructor;
-import lombok.ToString;
+import net.script.data.annotations.Function;
+import net.script.data.annotations.Coefficient;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 @AllArgsConstructor
+@Function("triangular")
 public class TriangleFunction implements QFunction {
 
+    @Coefficient("a")
     private final double num;
+
+    @Coefficient("b")
     private final double dis;
 
     @Override

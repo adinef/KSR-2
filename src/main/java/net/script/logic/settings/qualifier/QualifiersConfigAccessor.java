@@ -6,8 +6,8 @@ import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.fuzzy.linguistic.Range;
 import net.script.logic.qualifier.Qualifier;
-import net.script.logic.quantifier.Quantifier;
-import net.script.logic.settings.Reader;
+import net.script.logic.settings.ConfigAccessor;
+import net.script.logic.settings.LinguisticVariableConfigMapper;
 import net.script.logic.settings.SimpleLinguisticVariableSetting;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -20,14 +20,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class QualifiersReader implements Reader<Qualifier> {
+public class QualifiersConfigAccessor implements ConfigAccessor<Qualifier> {
 
     private final Path SETTINGS_FILE_PATH;
 
     private List<Qualifier> cached = null;
 
     @Autowired
-    public QualifiersReader(@PathInjection(PathType.QUALIFIERS) Path settings_file_path) {
+    public QualifiersConfigAccessor(@PathInjection(PathType.QUALIFIERS) Path settings_file_path) {
         SETTINGS_FILE_PATH = settings_file_path;
     }
 
@@ -50,6 +50,26 @@ public class QualifiersReader implements Reader<Qualifier> {
             }
         }
         return this.cached;
+    }
+
+    @Override
+    public void saveCachedData() throws Exception {
+        QualifiersSettings newSettings = this.mapToSettings(this.cached);
+        Serializer serializer = new Persister();
+        File file = new File(this.SETTINGS_FILE_PATH.toString());
+        serializer.write(newSettings, file);
+    }
+
+    private QualifiersSettings mapToSettings(List<Qualifier> cached) throws Exception {
+        QualifiersSettings settings = new QualifiersSettings();
+        List<SimpleLinguisticVariableSetting> variableSettings = new LinkedList<>();
+        for (Qualifier qualifier : cached) {
+            SimpleLinguisticVariableSetting setting =
+                    LinguisticVariableConfigMapper.getSimpleWithFunction(qualifier);
+            variableSettings.add(setting);
+        }
+        settings.setQualifiers(variableSettings);
+        return settings;
     }
 
     public List<Qualifier> read() throws Exception {

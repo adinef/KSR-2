@@ -7,23 +7,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.script.config.main.ApplicationVariables;
-import net.script.data.csv.CsvReader;
-import net.script.data.entities.DCResMeasurement;
-import net.script.data.repositories.CachingRepository;
-import net.script.logic.fuzzy.FuzzySet;
-import net.script.logic.quantifier.Quantifier;
-import net.script.logic.settings.Reader;
-import net.script.logic.settings.quantifier.QuantifiersReader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 @SpringBootApplication
 public class Main extends Application {
@@ -51,7 +39,6 @@ public class Main extends Application {
             primaryStage.setY(e.getScreenY() - yOffset);
         });
         primaryStage.setScene(new Scene(root, 1055, 705));
-        primaryStage.setResizable(true);
         primaryStage.show();
         currentStage = primaryStage;
     }

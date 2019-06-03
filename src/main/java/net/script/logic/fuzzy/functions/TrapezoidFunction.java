@@ -1,14 +1,23 @@
 package net.script.logic.fuzzy.functions;
 
 import lombok.AllArgsConstructor;
-import lombok.ToString;
+import net.script.data.annotations.Function;
+import net.script.data.annotations.Coefficient;
 
 @AllArgsConstructor
+@Function("trapezoid")
 public class TrapezoidFunction implements QFunction {
 
+    @Coefficient("a")
     private final double a;
+
+    @Coefficient("b")
     private final double b;
+
+    @Coefficient("c")
     private final double c;
+
+    @Coefficient("d")
     private final double d;
 
     @Override

@@ -1,16 +1,16 @@
-<quantifiers>
-   <definitions>
-      <quantifier name="kto wie co?" member="id">
+<qualifiers>
+   <definitions class="java.util.LinkedList">
+      <qualifier name="nowy" member="id">
          <range>
-            <start>0</start>
-            <end>10</end>
+            <start>0.0</start>
+            <end>10.0</end>
          </range>
          <function name="trapezoid">
-            <coefficient name="a" value="1.0"/>
+            <coefficient name="a" value="2.0"/>
             <coefficient name="b" value="2.0"/>
             <coefficient name="c" value="5.0"/>
             <coefficient name="d" value="6.0"/>
          </function>
-      </quantifier>
+      </qualifier>
    </definitions>
-</quantifiers>
+</qualifiers>

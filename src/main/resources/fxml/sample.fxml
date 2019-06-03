@@ -10,11 +10,11 @@
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
     <HBox onMouseClicked="#barClicked">
         <MenuBar style="-fx-background-color: transparent;">
-            <Menu mnemonicParsing="false" text="File">
-                <MenuItem mnemonicParsing="false" text="Close" onAction="#closeWindow"/>
+            <Menu mnemonicParsing="false" text="Plik">
+                <MenuItem mnemonicParsing="false" text="Zamknij" onAction="#closeWindow"/>
             </Menu>
-            <Menu mnemonicParsing="false" text="Help">
-                <MenuItem mnemonicParsing="false" text="About" onAction="#about"/>
+            <Menu mnemonicParsing="false" text="Pomoc">
+                <MenuItem mnemonicParsing="false" text="O nas" onAction="#about"/>
             </Menu>
         </MenuBar>
         <Pane HBox.hgrow="ALWAYS"/>
@@ -49,14 +49,14 @@
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
             <ToolBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="51.0"
+                <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="28"
                            prefWidth="139.0"
                            ripplerFill="#8d2a2a" text="Wczytaj dane">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>
                 </JFXButton>
-                <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="51.0"
+                <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="28"
                            prefWidth="139.0"
                            ripplerFill="#042e8d" text="Kwantyfikatory">
                     <cursor>
@@ -64,13 +64,29 @@
                     </cursor>
 
                 </JFXButton>
-                <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="51.0"
+                <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="28"
                            prefWidth="139.0"
                            ripplerFill="#042e8d" text="Kwalifikatory">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>
                 </JFXButton>
+
+                <JFXButton fx:id="saveQuantifiers" buttonType="RAISED" onAction="#saveQuantifiers" prefHeight="28"
+                           prefWidth="250.0"
+                           ripplerFill="#042e8d" text="Zapisz zmienione kwantyfikatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </JFXButton>
+                <JFXButton fx:id="saveQualifiers" buttonType="RAISED" onAction="#saveQualifiers" prefHeight="28"
+                           prefWidth="250.0"
+                           ripplerFill="#042e8d" text="Zapisz zmienione kwalifikatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </JFXButton>
+                
             </ToolBar>
         </Tab>
     </TabPane>

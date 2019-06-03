@@ -3,6 +3,7 @@ package net.script.view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
@@ -14,39 +15,38 @@ import net.script.Main;
 import net.script.config.main.ApplicationVariables;
 import net.script.data.annotations.enums.Author;
 import net.script.data.repositories.CachingRepository;
+import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
-import net.script.logic.settings.qualifier.QualifiersReader;
-import net.script.logic.settings.quantifier.QuantifiersReader;
+import net.script.logic.settings.qualifier.QualifiersConfigAccessor;
+import net.script.logic.settings.quantifier.QuantifiersConfigAccessor;
 import net.script.utils.CommonFXUtils;
 import net.script.utils.EntityReadService;
+import net.script.utils.FuzzyFXUtils;
 import net.script.utils.SupplierWithException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Controller
 @Slf4j
 public class MainController implements Initializable {
 
-    private final QuantifiersReader quantifiersReader;
-    private final QualifiersReader qualifiersReader;
+    private final QuantifiersConfigAccessor quantifiersReader;
+    private final QualifiersConfigAccessor qualifiersReader;
     private final CachingRepository repository;
     private boolean isFullscreen;
-    private ObservableList<?> data;
 
     @FXML
     private Tab tab1;
 
     @Autowired
     public MainController(
-            QuantifiersReader quantifiersReader,
-            QualifiersReader qualifiersReader,
+            QuantifiersConfigAccessor quantifiersReader,
+            QualifiersConfigAccessor qualifiersReader,
             CachingRepository repository) {
         this.quantifiersReader = quantifiersReader;
         this.qualifiersReader = qualifiersReader;
@@ -90,11 +90,9 @@ public class MainController implements Initializable {
     private void about() {
         CommonFXUtils.noDataPopup(
                 "Autorzy",
-                String.format("Projekt zrealizowany przez (z licencją MIT) ",
-                        Author.AdrianFijalkowski.fullName() + " (" +
-                                Author.AdrianFijalkowski.indexNumber() + "), ",
-                        Author.BartoszGoss.fullName() + " (" +
-                                Author.BartoszGoss.indexNumber() + ")"),
+                String.format("Projekt zrealizowany przez %s (%s), %s (%s) ",
+                        Author.AdrianFijalkowski.fullName(), Author.AdrianFijalkowski.indexNumber(),
+                        Author.BartoszGoss.fullName(), Author.BartoszGoss.indexNumber()),
                 Main.getCurrentStage().getScene()
         );
     }
@@ -102,25 +100,7 @@ public class MainController implements Initializable {
     @FXML
     @SuppressWarnings("unchecked")
     private void loadData() {
-        TableView tableView = new TableView();
-        List<TableColumn<String, ?>> simpleColumns =
-                CommonFXUtils.getSimpleColumnsForClass(repository.getItemClass(), false);
-        tableView.getColumns().addAll(simpleColumns);
-        tableView.setPrefHeight(700);
-        this.fillColumns(tableView, this.repository::findAll);
-        tab1.getTabPane().getTabs().addAll(new Tab("Dane", tableView));
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> void fillColumns(TableView tableView, Supplier<Iterable<T>> listSupplier) {
-        EntityReadService<T> task = new EntityReadService<>(listSupplier);
-        data = FXCollections.observableArrayList();
-        task.setOnSucceeded((e) -> {
-            data.addAll((Collection) e.getSource().getValue());
-            log.info("Data loaded");
-            tableView.getItems().addAll(data);
-        });
-        task.start();
+        this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
     }
 
     public void showQuantifiers() {
@@ -139,24 +119,81 @@ public class MainController implements Initializable {
 
 
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
-        ObservableList<T> read = FXCollections.observableArrayList();
+        var ref = new Object() {
+            ObservableList<T> read = FXCollections.observableArrayList();
+        };
         try {
-            read = FXCollections.observableList(listSupplier.get());
+            ref.read = FXCollections.observableList(listSupplier.get());
         } catch (Exception e) {
             CommonFXUtils.noDataPopup("Wystapił błąd", e.getLocalizedMessage(), Main.getCurrentStage().getScene());
             e.printStackTrace();
         }
-        this.newTabWithContent(tClass, tabname, read);
+        this.newTabWithContent(tClass, tabname, () -> ref.read);
     }
 
 
     @SuppressWarnings("unchecked")
-    private <T> void newTabWithContent(Class<T> tClass, String name, List<T> content) {
+    private <T> void newTabWithContent(Class<T> tClass, String name, Supplier<Iterable<T>> dataSupplier) {
+        EntityReadService<T> task = new EntityReadService<>(dataSupplier);
         TableView tableView = new TableView();
+        tableView.setPrefHeight(prefTabContentHeight());
         List<TableColumn<String, T>> simpleColumns =
                 CommonFXUtils.getSimpleColumnsForClass(tClass, false);
         tableView.getColumns().addAll(simpleColumns);
-        tableView.setItems(FXCollections.observableList(content));
+        tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
         tab1.getTabPane().getTabs().add(new Tab(name, tableView));
+        task.setOnSucceeded(
+                e -> {
+                    Collection data = (Collection) e.getSource().getValue();
+                    tableView.setItems(FXCollections.observableList(new ArrayList<>(data)));
+                }
+        );
+        task.start();
     }
+
+    private void listenForTableDoubleClick(MouseEvent mouseEvent, TableView tableView) {
+        if (mouseEvent.getClickCount() == 2) {
+            Object selectedItem = tableView.getSelectionModel().getSelectedItem();
+            if (selectedItem instanceof LinguisticVariable) {
+                LinguisticVariable lv = (LinguisticVariable)selectedItem;
+                Optional editQualifierOptional =
+                        FuzzyFXUtils.editLVPopup("Edytuj kwalifikator", lv, Main.getCurrentStage().getScene());
+                editQualifierOptional.ifPresent((e) -> tableView.refresh());
+            }
+        }
+    }
+
+    @FXML
+    private void saveQualifiers() {
+        try {
+            qualifiersReader.saveCachedData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            CommonFXUtils.noDataPopup(
+                    "Błąd",
+                    "Wystąpił błąd przy zapisie. " + e.getLocalizedMessage(),
+                    Main.getCurrentStage().getScene()
+            );
+        }
+    }
+
+    @FXML
+    private void saveQuantifiers() {
+        try {
+            quantifiersReader.saveCachedData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            CommonFXUtils.noDataPopup(
+                    "Błąd",
+                    "Wystąpił błąd przy zapisie. " + e.getLocalizedMessage(),
+                    Main.getCurrentStage().getScene()
+            );
+        }
+    }
+
+    private double prefTabContentHeight() {
+        return Main.getCurrentStage().getHeight() - 100;
+    }
+
+
 }
