@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.ToString;
 
 @AllArgsConstructor
-@ToString
 public class TrapezoidFunction implements QFunction {
 
     private final double a;
@@ -32,5 +31,10 @@ public class TrapezoidFunction implements QFunction {
     @Override
     public double square() {
         return (a - b) * (d - c);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Funkcja trapezoidalna, współczynniki: %f, %f, %f, %f", a, b, c, d);
     }
 }

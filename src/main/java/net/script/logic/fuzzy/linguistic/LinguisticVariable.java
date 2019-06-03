@@ -10,10 +10,16 @@ import net.script.logic.fuzzy.functions.QFunction;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LinguisticVariable {
+
     @Column("Nazwa")
     private String name;
+
     @Column("Uczestnik")
     private String memberFieldName;
+
     @Column("Funkcja")
     private QFunction function;
+
+    @Column("Zasięg")
+    private Range lvRange;
 }

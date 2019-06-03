@@ -8,6 +8,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.script.config.main.ApplicationVariables;
 import net.script.data.csv.CsvReader;
+import net.script.data.entities.DCResMeasurement;
+import net.script.data.repositories.CachingRepository;
+import net.script.logic.fuzzy.FuzzySet;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.Reader;
 import net.script.logic.settings.quantifier.QuantifiersReader;
@@ -18,7 +21,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class Main extends Application {
@@ -50,11 +55,9 @@ public class Main extends Application {
         currentStage = primaryStage;
     }
 
-
     public static Stage getCurrentStage() {
         return currentStage;
     }
-
 
     public static void main(String[] args) {
         if (args != null) {
@@ -64,14 +67,14 @@ public class Main extends Application {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init() {
         springContext = SpringApplication.run(Main.class);
         fxmlLoader = new FXMLLoader();
         fxmlLoader.setControllerFactory(springContext::getBean);
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         springContext.stop();
     }
 }

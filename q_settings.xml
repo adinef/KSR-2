@@ -1,20 +1,32 @@
 <quantifiers>
    <definitions>
-      <quantifier name="kto wie co?" member="id">
+      <quantifier name="Bathrooms ???" member="noBathrooms">
+         <range>
+            <start>0</start>
+            <end>10</end>
+         </range>
          <function name="trapezoid">
-            <coefficient name="a" value="1.0"/>
-            <coefficient name="b" value="2.0"/>
-            <coefficient name="c" value="5.0"/>
-            <coefficient name="d" value="6.0"/>
+            <coefficient name="a" value="0"/>
+            <coefficient name="b" value="1"/>
+            <coefficient name="c" value="2"/>
+            <coefficient name="d" value="4"/>
          </function>
       </quantifier>
       <quantifier name="ttt" member="id">
+         <range>
+            <start>0</start>
+            <end>10</end>
+         </range>
          <function name="triangular">
             <coefficient name="a" value="1.0"/>
             <coefficient name="b" value="2.0"/>
          </function>
       </quantifier>
       <quantifier name="tt1" member="id">
+         <range>
+            <start>0</start>
+            <end>10</end>
+         </range>
          <function name="triangular">
             <coefficient name="a" value="2.0"/>
             <coefficient name="b" value="3.0"/>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
+<?import javafx.scene.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="705.0" prefWidth="1055.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
     <HBox onMouseClicked="#barClicked">
@@ -47,10 +46,10 @@
             </cursor>
         </Button>
     </HBox>
-    <TabPane fx:id="tabPane" tabMinWidth="75">
+    <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
             <ToolBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                <JFXButton fx:id="loadDataButton" buttonType="RAISED" onAction="#loadData" prefHeight="51.0"
+                <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="51.0"
                            prefWidth="139.0"
                            ripplerFill="#8d2a2a" text="Wczytaj dane">
                     <cursor>
@@ -73,9 +72,6 @@
                     </cursor>
                 </JFXButton>
             </ToolBar>
-        </Tab>
-        <Tab fx:id="tab2" text="Coś..." closable="false">
-
         </Tab>
     </TabPane>
 </VBox>

@@ -15,11 +15,15 @@ public class FuzzySet<T> implements Map<T, Double> {
     @ToString.Include
     private Map<T, Double> elementsValuesMapping = new HashMap<>();
 
-    public FuzzySet(Map<T, Double> anotherMap) {
+    @ToString.Include
+    private LinguisticVariable linguisticVariable;
+
+    private FuzzySet(Map<T, Double> anotherMap, LinguisticVariable lv) {
         this.elementsValuesMapping = anotherMap;
+        this.linguisticVariable = lv;
     }
 
-    public FuzzySet() {
+    private FuzzySet() {
 
     }
 
@@ -53,7 +57,7 @@ public class FuzzySet<T> implements Map<T, Double> {
         return this.entrySet()
                 .stream()
                 .filter( entry -> entry.getValue() > 0 )
-                .map( entry -> entry.getKey())
+                .map(Entry::getKey)
                 .collect(Collectors.toSet());
     }
 
@@ -61,8 +65,13 @@ public class FuzzySet<T> implements Map<T, Double> {
         return new FuzzySetBuilder<>(coll);
     }
 
-    public static <E> FuzzySetBuilder<E> with(@NonNull E... elems) {
-        return new FuzzySetBuilder<>(Arrays.asList(elems));
+    @SafeVarargs
+    public static <E> FuzzySetBuilder<E> with(E... elems) {
+        if (elems != null) {
+            return new FuzzySetBuilder<>(Arrays.asList(elems));
+        } else {
+            return new FuzzySetBuilder<>(new ArrayList<>());
+        }
     }
     @Override
 
@@ -140,6 +149,7 @@ public class FuzzySet<T> implements Map<T, Double> {
             try {
                 return this.of(this.coll, lv);
             } catch (Exception e) {
+                e.printStackTrace();
                 return new FuzzySet<>();
             }
         }
@@ -151,13 +161,16 @@ public class FuzzySet<T> implements Map<T, Double> {
             declaredField.setAccessible(true);
             Map<K, Double> map = new HashMap<>();
             for (K elem : elements) {
-                if (declaredField.getType().equals(Integer.class)) {
-                    map.put(elem, lVariable.getFunction().calculate((Integer)declaredField.get(elem)));
-                } else {
-                    map.put(elem, lVariable.getFunction().calculate((Double)declaredField.get(elem)));
+                Object elemValue = declaredField.get(elem);
+                if (elemValue != null) {
+                    if (declaredField.getType().equals(Integer.class)) {
+                        map.put(elem, lVariable.getFunction().calculate((Integer) elemValue));
+                    } else {
+                        map.put(elem, lVariable.getFunction().calculate((Double) elemValue));
+                    }
                 }
             }
-            return new FuzzySet<>(map);
+            return new FuzzySet<>(map, lVariable);
         }
     }
 }

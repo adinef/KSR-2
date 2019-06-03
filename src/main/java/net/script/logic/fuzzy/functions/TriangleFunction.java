@@ -6,7 +6,6 @@ import lombok.ToString;
 import static java.lang.Math.*;
 
 @AllArgsConstructor
-@ToString
 public class TriangleFunction implements QFunction {
 
     private final double num;
@@ -32,5 +31,10 @@ public class TriangleFunction implements QFunction {
     @Override
     public double square() {
         return num - dis;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Funkcja triangularna, współczynniki: %f, %f", num, dis);
     }
 }

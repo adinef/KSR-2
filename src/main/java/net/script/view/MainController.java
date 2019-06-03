@@ -12,8 +12,10 @@ import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.config.main.ApplicationVariables;
+import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.CachingRepository;
 import net.script.data.annotations.enums.Author;
+import net.script.logic.fuzzy.FuzzySet;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.qualifier.QualifiersReader;
@@ -25,9 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Supplier;
 
 @Controller
@@ -108,7 +108,7 @@ public class MainController implements Initializable {
         tableView.getColumns().addAll(simpleColumns);
         tableView.setPrefHeight(700);
         this.fillColumns(tableView, this.repository::findAll);
-        tab1.getTabPane().getTabs().addAll( new Tab("Dane", tableView) );
+        tab1.getTabPane().getTabs().addAll(new Tab("Dane", tableView));
     }
 
     @SuppressWarnings("unchecked")
@@ -141,7 +141,7 @@ public class MainController implements Initializable {
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         ObservableList<T> read = FXCollections.observableArrayList();
         try {
-            read =  FXCollections.observableList(listSupplier.get());
+            read = FXCollections.observableList(listSupplier.get());
         } catch (Exception e) {
             CommonFXUtils.noDataPopup("Wystapił błąd", e.getLocalizedMessage(), Main.getCurrentStage().getScene());
             e.printStackTrace();

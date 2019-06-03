@@ -4,6 +4,8 @@ import net.script.config.paths.PathInjection;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
+import net.script.logic.fuzzy.linguistic.Range;
+import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.Reader;
 import net.script.logic.settings.SimpleLinguisticVariableSetting;
@@ -39,7 +41,13 @@ public class QuantifiersReader implements Reader<Quantifier> {
             List<SimpleLinguisticVariableSetting> quantifiers = read.getQuantifiers();
             for (SimpleLinguisticVariableSetting setting : quantifiers) {
                 QFunction function = QFunctionFactory.getFunction(setting.getFunctionSetting());
-                this.cached.add( new Quantifier(setting.getName(), setting.getMember(), function) );
+                this.cached.add(
+                        new Quantifier(
+                                setting.getName(),
+                                setting.getMember(),
+                                function,
+                                new Range(setting.getRangeStart(), setting.getRangeEnd()))
+                );
             }
         }
         return this.cached;
