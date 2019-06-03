@@ -1,6 +1,6 @@
 <quantifiers>
    <definitions>
-      <quantifier name="Bathrooms ???" member="noBathrooms">
+      <quantifier name="Bathrooms ???" member="BATHRM">
          <range>
             <start>0</start>
             <end>10</end>

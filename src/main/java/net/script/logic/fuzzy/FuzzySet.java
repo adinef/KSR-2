@@ -2,6 +2,7 @@ package net.script.logic.fuzzy;
 
 import lombok.NonNull;
 import lombok.ToString;
+import net.script.data.annotations.Column;
 import net.script.data.entities.DCResMeasurement;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 
@@ -154,23 +155,41 @@ public class FuzzySet<T> implements Map<T, Double> {
             }
         }
 
-        private <K> FuzzySet<K> of(Collection<K> elements, LinguisticVariable lVariable) throws NoSuchFieldException, IllegalAccessException {
+        private <K> FuzzySet<K> of(Collection<K> elements, LinguisticVariable lVariable) throws IllegalAccessException {
             K next = elements.iterator().next();
             Class<?> aClass = next.getClass();
-            Field declaredField = aClass.getDeclaredField(lVariable.getMemberFieldName());
-            declaredField.setAccessible(true);
+            for (Field field : aClass.getDeclaredFields()) {
+                Column columnAnn = field.getAnnotation(Column.class);
+                if (columnAnn != null) {
+                    if (appliesToColumn(lVariable, columnAnn)) {
+                        field.setAccessible(true);
+                        Map<K, Double> map = extractAndMapValues(elements, lVariable, field);
+                        return new FuzzySet<>(map, lVariable);
+                    }
+                }
+            }
+            return new FuzzySet<>();
+        }
+
+        private <K> Map<K, Double> extractAndMapValues(Collection<K> elements,
+                                             LinguisticVariable lVariable,
+                                             Field field) throws IllegalAccessException {
             Map<K, Double> map = new HashMap<>();
             for (K elem : elements) {
-                Object elemValue = declaredField.get(elem);
+                Object elemValue = field.get(elem);
                 if (elemValue != null) {
-                    if (declaredField.getType().equals(Integer.class)) {
+                    if (field.getType().equals(Integer.class)) {
                         map.put(elem, lVariable.getFunction().calculate((Integer) elemValue));
                     } else {
                         map.put(elem, lVariable.getFunction().calculate((Double) elemValue));
                     }
                 }
             }
-            return new FuzzySet<>(map, lVariable);
+            return map;
+        }
+
+        private boolean appliesToColumn(LinguisticVariable lVariable, Column annotation) {
+            return annotation.value().equals(lVariable.getMemberFieldName());
         }
     }
 }
