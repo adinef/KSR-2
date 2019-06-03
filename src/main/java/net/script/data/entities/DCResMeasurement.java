@@ -1,16 +1,19 @@
 package net.script.data.entities;
 
 import com.opencsv.bean.CsvBindByName;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.opencsv.bean.CsvCustomBindByName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.script.data.annotations.Column;
 import net.script.data.annotations.Comment;
 import net.script.data.annotations.enums.Author;
+import net.script.data.csv.LocalDateConverter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -124,13 +127,13 @@ public class DCResMeasurement {
     )
     private Float stories;
 
-    @Column("SALESDATE")
-    @CsvBindByName(column = "SALESDATE")
+    @Column("SALEDATE")
+    @CsvCustomBindByName(column = "SALEDATE", converter = LocalDateConverter.class)
     @Comment(
             value = "Date of most recent sale",
             madeBy = Author.AdrianFijalkowski
     )
-    private String dateOfRecentSale;
+    private LocalDate dateOfRecentSale;
 
     @Column("PRICE")
     @CsvBindByName(column = "PRICE")

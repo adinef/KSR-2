@@ -1,7 +1,9 @@
 package net.script.data.annotations.enums;
 
 public enum Author {
-    BartoszGoss("Bartosz Goss", 207230), AdrianFijalkowski("Adrian Fijałkowski", 210171);
+    BartoszGoss("Bartosz Goss", 207230),
+    AdrianFijalkowski("Adrian Fijałkowski", 210171),
+    NotSpecfified("Nikt", 0 );
 
     private final String name;
     private final Integer index;

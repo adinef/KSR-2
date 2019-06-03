@@ -89,8 +89,8 @@ public class MainController implements Initializable {
     @FXML
     private void about() {
         CommonFXUtils.noDataPopup(
-                "Author",
-                String.format("Project created by %s and %s on MIT licence.",
+                "Autorzy",
+                String.format("Projekt zrealizowany przez (z licencją MIT) ",
                         Author.AdrianFijalkowski.fullName() + " (" +
                                 Author.AdrianFijalkowski.indexNumber() + "), ",
                         Author.BartoszGoss.fullName() + " (" +

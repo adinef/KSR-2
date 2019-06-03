@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 public @interface Comment {
     String value();
-    Author madeBy();
+    Author madeBy() default Author.NotSpecfified;
 }

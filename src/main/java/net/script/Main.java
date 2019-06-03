@@ -51,6 +51,7 @@ public class Main extends Application {
             primaryStage.setY(e.getScreenY() - yOffset);
         });
         primaryStage.setScene(new Scene(root, 1055, 705));
+        primaryStage.setResizable(true);
         primaryStage.show();
         currentStage = primaryStage;
     }
