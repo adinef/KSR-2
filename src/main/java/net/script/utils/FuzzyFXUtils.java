@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.script.data.annotations.Coefficient;
 import net.script.data.annotations.Column;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
@@ -80,7 +81,13 @@ public class FuzzyFXUtils {
         Field[] declaredFields = function.getClass().getDeclaredFields();
         List<Node> nodes = new LinkedList<>();
         for (Field field : declaredFields) {
-            Label label = new Label(field.getName());
+            Coefficient coefficient = field.getAnnotation(Coefficient.class);
+            Label label;
+            if (coefficient != null) {
+                label = new Label(coefficient.value());
+            } else {
+                label = new Label(field.getName());
+            }
             field.setAccessible(true);
             JFXTextField textField;
             try {

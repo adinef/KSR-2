@@ -48,46 +48,48 @@
     </HBox>
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
-            <ToolBar prefHeight="40.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="28"
-                           prefWidth="139.0"
-                           ripplerFill="#8d2a2a" text="Wczytaj dane">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </JFXButton>
-                <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="28"
-                           prefWidth="139.0"
-                           ripplerFill="#042e8d" text="Kwantyfikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
+            <HBox>
+                <VBox prefWidth="200" spacing="20">
+                    <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="28"
+                               prefWidth="139.0"
+                               ripplerFill="#8d2a2a" text="Wczytaj dane">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </JFXButton>
+                    <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="28"
+                               prefWidth="139.0"
+                               ripplerFill="#042e8d" text="Kwantyfikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
 
-                </JFXButton>
-                <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="28"
-                           prefWidth="139.0"
-                           ripplerFill="#042e8d" text="Kwalifikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </JFXButton>
-
-                <JFXButton fx:id="saveQuantifiers" buttonType="RAISED" onAction="#saveQuantifiers" prefHeight="28"
-                           prefWidth="250.0"
-                           ripplerFill="#042e8d" text="Zapisz zmienione kwantyfikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </JFXButton>
-                <JFXButton fx:id="saveQualifiers" buttonType="RAISED" onAction="#saveQualifiers" prefHeight="28"
-                           prefWidth="250.0"
-                           ripplerFill="#042e8d" text="Zapisz zmienione kwalifikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </JFXButton>
-                
-            </ToolBar>
+                    </JFXButton>
+                    <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="28"
+                               prefWidth="139.0"
+                               ripplerFill="#042e8d" text="Kwalifikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </JFXButton>
+                </VBox>
+                <VBox prefWidth="200" spacing="20">
+                    <JFXButton fx:id="saveQuantifiers" buttonType="RAISED" onAction="#saveQuantifiers" prefHeight="28"
+                               prefWidth="250.0"
+                               ripplerFill="#042e8d" text="Zapisz zmienione kwantyfikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </JFXButton>
+                    <JFXButton fx:id="saveQualifiers" buttonType="RAISED" onAction="#saveQualifiers" prefHeight="28"
+                               prefWidth="250.0"
+                               ripplerFill="#042e8d" text="Zapisz zmienione kwalifikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </JFXButton>
+                </VBox>
+            </HBox>
         </Tab>
     </TabPane>
 </VBox>
