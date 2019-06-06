@@ -2,10 +2,6 @@ package net.script.utils;
 
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.*;
-import com.jfoenix.utils.JFXUtilities;
-import com.jfoenix.validation.DoubleValidator;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,31 +9,29 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.script.data.FieldColumnTuple;
 import net.script.data.Named;
 import net.script.data.annotations.Coefficient;
 import net.script.data.annotations.Column;
+import net.script.data.annotations.Function;
+import net.script.logic.fuzzy.functions.FunctionSetting;
 import net.script.logic.fuzzy.functions.QFunction;
+import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.fuzzy.linguistic.Range;
-import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -268,7 +262,7 @@ public class FuzzyFXUtils {
     private static void addListenOnNumber(JFXTextField textField, Consumer<Double> doubleConsumer) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches(PROPER_NUMBER_PATTERN)) {
-                doubleConsumer.accept(Double.parseDouble(oldValue));
+                textField.setText(oldValue);
             } else {
                 doubleConsumer.accept(Double.parseDouble(newValue));
             }
@@ -279,5 +273,159 @@ public class FuzzyFXUtils {
         rangeEnd.textProperty().addListener((observable, oldValue, newValue) -> {
             stringConsumer.accept(newValue);
         });
+    }
+
+    public static <T extends LinguisticVariable> Optional<T> newLinguisticVariablePopup(Class<T> tClass, Scene scene) {
+        AtomicBoolean aborted = new AtomicBoolean(false);
+        JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        JFXDialogLayout layout = new JFXDialogLayout();
+        JFXButton closeButton = new JFXButton("Anuluj");
+        JFXButton saveButton = new JFXButton("Zapisz");
+        VBox vBox = new VBox();
+
+        Constructor<T> constructor;
+        try {
+            constructor = tClass.getConstructor(String.class, String.class, QFunction.class, Range.class);
+        } catch (NoSuchMethodException e) {
+            log.error(e.getLocalizedMessage());
+            return Optional.empty();
+        }
+
+        Range range = new Range(0D, 0D);
+
+        T obj;
+
+        try {
+            obj = constructor.newInstance("", "", null, range);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            log.error(e.getLocalizedMessage());
+            return Optional.empty();
+        }
+
+        List<Node> paramsForName = newFormParamString("Nazwa", obj::getName, obj::setName);
+
+        List<Node> paramsForMember = newFormParamString("Pole", obj::getMemberFieldName, obj::setMemberFieldName);
+
+        T finalObj = obj;
+        List<Node> paramsForRangeStart = newFormParamDouble("Zasięg - początek",
+                () -> finalObj.getLvRange().getBegin().toString(), (nv) -> finalObj.getLvRange().setBegin(nv));
+
+        List<Node> paramsForRangeEnd = newFormParamDouble("Zasięg - koniec",
+                () -> finalObj.getLvRange().getEnd().toString(), (nv) -> finalObj.getLvRange().setEnd(nv));
+
+        Label functionLabel = new Label("Funkcja przynależności");
+        List<Class<? extends QFunction>> functionClasses = QFunctionFactory.functionTypes();
+        ObservableList<FunctionParamsHolder> nameAndParamList = getNameAndParamList(functionClasses);
+        JFXComboBox<FunctionParamsHolder> functionComboBox = new JFXComboBox<>(nameAndParamList);
+        functionComboBox.setConverter(
+                new StringConverter<FunctionParamsHolder>() {
+                    @Override
+                    public String toString(FunctionParamsHolder functionParamsHolder) {
+                        if (functionParamsHolder != null) {
+                            return functionParamsHolder.functionName;
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public FunctionParamsHolder fromString(String s) {
+                        for (FunctionParamsHolder functionParamsHolder : nameAndParamList) {
+                            if (functionParamsHolder.functionName.equals(s)) {
+                                return functionParamsHolder;
+                            }
+                        }
+                        return null;
+                    }
+                }
+        );
+
+        VBox funcEditBox = new VBox();
+        functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
+            funcEditBox.getChildren().clear();
+            funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
+        });
+
+        vBox.getChildren().addAll(paramsForName);
+        vBox.getChildren().addAll(paramsForMember);
+        vBox.getChildren().addAll(paramsForRangeStart);
+        vBox.getChildren().addAll(paramsForRangeEnd);
+        vBox.getChildren().addAll(functionLabel);
+        vBox.getChildren().addAll(functionComboBox);
+        vBox.getChildren().addAll(funcEditBox);
+
+        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
+        closeButton.setOnAction(event -> {
+            aborted.lazySet(true);
+            alert.hideWithAnimation();
+        });
+
+        saveButton.setButtonType(JFXButton.ButtonType.FLAT);
+        saveButton.setOnAction(event -> {
+            obj.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
+            alert.hideWithAnimation();
+        });
+
+        layout.setHeading(new Label("Nowy element"));
+        layout.setBody(vBox);
+        layout.setActions(closeButton, saveButton);
+        alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setOverlayClose(false);
+        alert.setContent(layout);
+        alert.showAndWait();
+
+        if (aborted.get()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(obj);
+        }
+    }
+
+    private static ObservableList<Node> generateFunctionParametersEditBoxes(FunctionParamsHolder selectedItem) {
+        Map<String, Double> coefficients = selectedItem.getCoefficients();
+        ObservableList<Node> nodes = FXCollections.observableArrayList();
+        for (Map.Entry<String, Double> coeff : coefficients.entrySet()) {
+            nodes.addAll(newFormParamDouble(coeff.getKey(), coeff::getValue, (d) -> coefficients.put(coeff.getKey(), d)));
+        }
+        return nodes;
+    }
+
+    private static ObservableList<FunctionParamsHolder> getNameAndParamList(List<Class<? extends QFunction>> functionClasses) {
+        ObservableList<FunctionParamsHolder> paramsHolders = FXCollections.observableArrayList();
+        for (Class<? extends QFunction> functionClass : functionClasses) {
+            Function annotation = functionClass.getAnnotation(Function.class);
+            if (annotation != null) {
+                String name = annotation.value();
+                HashMap<String, Double> coeffMapping = new HashMap<>();
+                Field[] fields = functionClass.getDeclaredFields();
+                for (Field field : fields) {
+                    Coefficient coeff = field.getAnnotation(Coefficient.class);
+                    if (coeff != null) {
+                        coeffMapping.put(coeff.value(), 0D);
+                    }
+                }
+                FunctionParamsHolder paramHolder = new FunctionParamsHolder();
+                paramHolder.functionName = name;
+                paramHolder.coefficients = coeffMapping;
+                paramsHolders.add(paramHolder);
+            }
+        }
+        return paramsHolders;
+    }
+
+    @Data
+    private static class FunctionParamsHolder implements FunctionSetting {
+        private String functionName;
+        private Map<String, Double> coefficients;
+
+        @Override
+        public String getName() {
+            return functionName;
+        }
+
+        @Override
+        public Map<String, Double> getCoefficients() {
+            return coefficients;
+        }
     }
 }

@@ -19,12 +19,14 @@ public class LongTask extends Service<Boolean> {
 
     @Override
     protected Task<Boolean> createTask() {
-        return new Task<>() {
+        return new Task<Boolean>() {
             @Override
             protected Boolean call() {
                 try {
                     runnable.run();
                 } catch (Exception e) {
+                    log.error(e.getMessage());
+                    e.printStackTrace();
                     return false;
                 }
                 return true;

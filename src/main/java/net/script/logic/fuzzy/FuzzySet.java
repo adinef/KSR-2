@@ -1,9 +1,7 @@
 package net.script.logic.fuzzy;
 
-import lombok.NonNull;
 import lombok.ToString;
 import net.script.data.annotations.Column;
-import net.script.data.entities.DCResMeasurement;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 
 import java.lang.reflect.Field;

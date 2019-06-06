@@ -3,6 +3,8 @@ package net.script.logic.fuzzy.functions.factory;
 import lombok.NonNull;
 import net.script.logic.fuzzy.functions.*;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class QFunctionFactory {
@@ -27,4 +29,9 @@ public class QFunctionFactory {
             throw new RuntimeException("Could not load QFunction. Not found.");
         }
     }
+
+    public static List<Class<? extends QFunction>> functionTypes() {
+        return Arrays.asList( TrapezoidFunction.class, TriangleFunction.class, RectangularFunction.class );
+    }
+
 }

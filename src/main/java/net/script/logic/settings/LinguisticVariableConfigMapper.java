@@ -18,32 +18,7 @@ public class LinguisticVariableConfigMapper {
 
         QFunction function = variable.getFunction();
         FunctionsSettings.SingleFunctionSetting singleFunctionSetting = null;
-        if (function != null) {
-            Function funAnn = function.getClass().getAnnotation(Function.class);
-            if (funAnn != null) {
-                singleFunctionSetting =
-                        FunctionsSettings.SingleFunctionSetting
-                                .builder()
-                                .name(funAnn.value())
-                                .coefficients(new HashMap<>())
-                                .build();
-                for (Field field : function.getClass().getDeclaredFields()) {
-                    field.setAccessible(true);
-                    Coefficient kpAnn = field.getAnnotation(Coefficient.class);
-                    if (kpAnn != null) {
-                        Object val;
-                        try {
-                            val = field.get(function);
-                        } catch (IllegalAccessException e) {
-                            continue;
-                        }
-                        if (val instanceof Double) {
-                            singleFunctionSetting.getCoefficients().put(kpAnn.value(), (Double) val);
-                        }
-                    }
-                }
-            }
-        }
+        singleFunctionSetting = getSingleFunctionSetting(function, singleFunctionSetting);
         SimpleLinguisticVariableSetting setting = SimpleLinguisticVariableSetting
                 .builder()
                 .functionSetting(singleFunctionSetting)
@@ -53,6 +28,7 @@ public class LinguisticVariableConfigMapper {
                 .rangeEnd(variable.getLvRange().getEnd())
                 .build();
         return setting;
+
     }
 
     public static SimpleQuantifierSetting getQuantifierSimpleWithFunction(
@@ -60,6 +36,18 @@ public class LinguisticVariableConfigMapper {
 
         QFunction function = variable.getFunction();
         FunctionsSettings.SingleFunctionSetting singleFunctionSetting = null;
+        singleFunctionSetting = getSingleFunctionSetting(function, singleFunctionSetting);
+        SimpleQuantifierSetting setting = SimpleQuantifierSetting
+                .builder()
+                .functionSetting(singleFunctionSetting)
+                .name(variable.getName())
+                .build();
+        return setting;
+
+    }
+
+    private static FunctionsSettings.SingleFunctionSetting getSingleFunctionSetting(QFunction function,
+                                                                                    FunctionsSettings.SingleFunctionSetting singleFunctionSetting) {
         if (function != null) {
             Function funAnn = function.getClass().getAnnotation(Function.class);
             if (funAnn != null) {
@@ -86,11 +74,6 @@ public class LinguisticVariableConfigMapper {
                 }
             }
         }
-        SimpleQuantifierSetting setting = SimpleQuantifierSetting
-                .builder()
-                .functionSetting(singleFunctionSetting)
-                .name(variable.getName())
-                .build();
-        return setting;
+        return singleFunctionSetting;
     }
 }

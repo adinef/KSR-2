@@ -12,5 +12,15 @@
             <coefficient name="d" value="6.0"/>
          </function>
       </qualifier>
+      <qualifier name="asd" member="12">
+         <range>
+            <start>1.0</start>
+            <end>2.0</end>
+         </range>
+         <function name="triangular">
+            <coefficient name="a" value="1.0"/>
+            <coefficient name="b" value="2.0"/>
+         </function>
+      </qualifier>
    </definitions>
 </qualifiers>

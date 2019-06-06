@@ -81,6 +81,13 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
+                    <Button fx:id="addNewQualifierButton" onAction="#newQualifier" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Dodaj nowy kwalifikator">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
                     <Button fx:id="saveQualifiersButton" onAction="#saveQualifiers" prefHeight="28"
                             prefWidth="250.0" disable="true"
                             text="Zapisz zmienione kwalifikatory">

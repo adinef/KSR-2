@@ -61,6 +61,10 @@ public class MainController implements Initializable {
     private SelectionState selectionState = new SelectionState();
     // ************************************
 
+    // ************** TableView to class mapping ****************
+    private Map<String, TableView> tableViewMap = new HashMap<>();
+    // **********************************************************
+
     @Autowired
     public MainController(
             FuzzyData fuzzyData,
@@ -140,8 +144,8 @@ public class MainController implements Initializable {
     @FXML
     private void saveQualifiers() {
         CommonFXUtils.longTaskWithMessages(
-                fuzzyData::saveQuantifiers,
-                "Pomyślnie zapisano kwantyfikatory",
+                fuzzyData::saveQualifiers,
+                "Pomyślnie zapisano kwalifikatory",
                 "Wystąpił błąd zapisu",
                 Main.getCurrentStage().getScene());
     }
@@ -150,7 +154,7 @@ public class MainController implements Initializable {
     private void saveQuantifiers() {
         CommonFXUtils.longTaskWithMessages(
                 fuzzyData::saveQuantifiers,
-                "Pomyślnie zapisano kwalifikatory",
+                "Pomyślnie zapisano kwantyfikatory",
                 "Wystąpił błąd zapisu",
                 Main.getCurrentStage().getScene());
     }
@@ -233,12 +237,38 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void newQualifier(ActionEvent actionEvent) {
+            Optional<Qualifier> qualifier =
+                    FuzzyFXUtils.newLinguisticVariablePopup(Qualifier.class, Main.getCurrentStage().getScene());
+            qualifier.ifPresent(
+                    (q) -> {
+                        try {
+                            this.fuzzyData.qualifiers().add(q);
+                            this.saveQualifiersButton.setDisable(false);
+                            TableView tableViewOrNull = this.tableViewMap
+                                    .getOrDefault(Qualifier.class.getName(), null);
+                            if (tableViewOrNull != null) {
+                                log.info("updating tab for qualifiers");
+                                tableViewOrNull.refresh();
+                            }
+                        } catch (Exception e) {
+                            CommonFXUtils.noDataPopup(
+                                    "Błąd",
+                                    "Wystapił błąd przy odczycie kwalifikatorów. " + e.getLocalizedMessage(),
+                                    Main.getCurrentStage().getScene()
+                            );
+                        }
+                    }
+            );
+    }
+
+    @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
 
     }
 
-    // HELPER METHODS
 
+    // HELPER METHODS
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         ObservableList<T> read = FXCollections.observableArrayList();
         try {
@@ -269,6 +299,7 @@ public class MainController implements Initializable {
                 }
         );
         task.start();
+        this.tableViewMap.put(tClass.getName(), tableView);
     }
 
     private void listenForTableDoubleClick(MouseEvent mouseEvent, TableView tableView) {
