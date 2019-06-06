@@ -6,15 +6,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
+import net.script.data.FieldColumnTuple;
 import net.script.data.annotations.enums.Author;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
+import net.script.logic.access.WorkingData;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
@@ -32,17 +35,43 @@ public class MainController implements Initializable {
 
     private final CachingRepository repository;
     private final FuzzyData fuzzyData;
+    private final WorkingData workingData;
     private boolean isFullscreen;
+
+    private LvSelectBarrier barrier = LvSelectBarrier.of(2);
 
     @FXML
     private Tab tab1;
 
+    @FXML
+    private Button saveQualifiersButton;
+
+    @FXML
+    private Button saveQuantifiersButton;
+
+    @FXML
+    private Button selectQualifiersButton;
+
+    @FXML
+    private Button selectQuantifiersButton;
+
+    @FXML
+    private Button calculateButton;
+
+    // ************** DATA ****************
+    List<Qualifier> qualifiers;
+    List<Quantifier> quantifiers;
+    ObservableList<FieldColumnTuple> fieldToTakeIntoAccount = FXCollections.emptyObservableList();
+    // ************************************
+
     @Autowired
     public MainController(
             FuzzyData fuzzyData,
+            WorkingData workingData,
             CachingRepository repository) {
         this.repository = repository;
         this.fuzzyData = fuzzyData;
+        this.workingData = workingData;
     }
 
     @FXML
@@ -100,6 +129,7 @@ public class MainController implements Initializable {
                 Quantifier.class, "Kwantyfikatory",
                 fuzzyData::quantifiers
         );
+        this.saveQuantifiersButton.setDisable(false);
     }
 
     public void showQualifiers() {
@@ -107,6 +137,7 @@ public class MainController implements Initializable {
                 "Kwalifikatory",
                 fuzzyData::qualifiers
         );
+        this.saveQualifiersButton.setDisable(false);
     }
 
     @FXML
@@ -133,11 +164,65 @@ public class MainController implements Initializable {
 
     @FXML
     private void selectQuantifiers(ActionEvent actionEvent) {
-
+        try {
+            this.workingData.setWorkingQuantifiers(this.fuzzyData.quantifiers());
+        } catch (Exception e) {
+            CommonFXUtils.noDataPopup(
+                    "Błąd",
+                    "Błąd w trakcie wyboru kwantyfikatorów. " + e.getLocalizedMessage(),
+                    Main.getCurrentStage().getScene()
+            );
+            e.printStackTrace();
+            return;
+        }
+        List<Quantifier> inputData = this.workingData.workingQuantifiers(this.fieldToTakeIntoAccount);
+        List<Quantifier> quantifiers = FuzzyFXUtils
+                .checkBoxSelectAlert(
+                        inputData,
+                        Main.getCurrentStage().getScene()
+                );
+        System.out.println(quantifiers);
+        if (this.barrier.checkIn("sQf")) {
+            calculateButton.setDisable(false);
+        }
     }
 
     @FXML
     private void selectQualifiers(ActionEvent actionEvent) {
+        try {
+            this.workingData.setWorkingQualifiers(this.fuzzyData.qualifiers());
+        } catch (Exception e) {
+            CommonFXUtils.noDataPopup(
+                    "Błąd",
+                    "Błąd w trakcie wyboru kwalifikatorów. " + e.getLocalizedMessage(),
+                    Main.getCurrentStage().getScene()
+            );
+            e.printStackTrace();
+            return;
+        }
+        List<Qualifier> qualifiers = FuzzyFXUtils
+                .checkBoxSelectAlert(
+                        this.workingData.workingQualifiers(this.fieldToTakeIntoAccount),
+                        Main.getCurrentStage().getScene()
+                );
+        if(this.barrier.checkIn("sQl")) {
+            calculateButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void selectAcceptableFields(ActionEvent actionEvent) {
+        this.fieldToTakeIntoAccount = FuzzyFXUtils.selectFieldByClassPopup(
+                repository.getItemClass(),
+                Main.getCurrentStage().getScene()
+        );
+        System.out.println(fieldToTakeIntoAccount);
+        this.selectQuantifiersButton.setDisable(false);
+        this.selectQualifiersButton.setDisable(false);
+    }
+
+    @FXML
+    private void proceedWithSummarization(ActionEvent actionEvent) {
 
     }
 

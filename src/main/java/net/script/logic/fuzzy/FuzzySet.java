@@ -28,6 +28,14 @@ public class FuzzySet<T> implements Map<T, Double> {
 
     }
 
+    public static <E> Double sumWithCardinality(FuzzySet<E> set, int cardinality) {
+        Double val = 0.0;
+        for (Double currVal : set.values()) {
+            val += currVal;
+        }
+        return val / cardinality;
+    }
+
     public static <E> FuzzySet<E> intersect(FuzzySet<E> firstSet, FuzzySet<E> secondSet) {
         FuzzySet<E> operationResult = new FuzzySet<>();
         for (Map.Entry<E, Double> entry : firstSet.entrySet()) {
@@ -74,8 +82,8 @@ public class FuzzySet<T> implements Map<T, Double> {
             return new FuzzySetBuilder<>(new ArrayList<>());
         }
     }
-    @Override
 
+    @Override
     public int size() {
         return this.elementsValuesMapping.size();
     }

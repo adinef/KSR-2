@@ -1,17 +1,17 @@
 package net.script.utils;
 
 import com.jfoenix.animation.alert.JFXAlertAnimation;
-import com.jfoenix.controls.JFXAlert;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialogLayout;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import com.jfoenix.utils.JFXUtilities;
 import com.jfoenix.validation.DoubleValidator;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,7 +19,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
+import net.script.data.FieldColumnTuple;
+import net.script.data.Named;
 import net.script.data.annotations.Coefficient;
 import net.script.data.annotations.Column;
 import net.script.logic.fuzzy.functions.QFunction;
@@ -40,6 +43,98 @@ import java.util.function.Supplier;
 public class FuzzyFXUtils {
 
     public static final String PROPER_NUMBER_PATTERN = "\\d{0,7}([\\.]\\d{0,4})?";
+
+    public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass, Scene scene) {
+        Field[] declaredFields = tClass.getDeclaredFields();
+        ObservableList<FieldColumnTuple> acceptableData = FXCollections.observableArrayList();
+        for (Field field : declaredFields) {
+            Column annotation = field.getAnnotation(Column.class);
+            if (annotation != null) {
+                acceptableData.add(new FieldColumnTuple(field, annotation));
+            }
+        }
+        VBox data = new VBox();
+        data.setMinHeight(500);
+        data.setSpacing(10);
+        ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
+        for (FieldColumnTuple fieldColumnTuple : acceptableData) {
+            checkBoxes.add( new JFXCheckBox(fieldColumnTuple.getColumn().value()) );
+        }
+        data.getChildren().addAll(checkBoxes);
+
+        JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        JFXDialogLayout layout = new JFXDialogLayout();
+        JFXButton closeButton = new JFXButton("Zamknij");
+        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
+        closeButton.setOnAction(event -> {
+            alert.hideWithAnimation();
+        });
+        layout.setHeading(new Label("Wybierz pola"));
+        layout.setBody(data);
+        layout.setActions(closeButton);
+        alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.setOverlayClose(true);
+        alert.setContent(layout);
+        alert.showAndWait();
+
+        ObservableList<FieldColumnTuple> selectedElements = FXCollections.observableArrayList();
+        for (FieldColumnTuple fieldColumnTuple : acceptableData) {
+            Optional<JFXCheckBox> first = checkBoxes
+                    .stream()
+                    .filter((e) -> e.getText().equals(fieldColumnTuple.getColumn().value()))
+                    .findFirst();
+            first.ifPresent((e) -> {
+                if (e.isSelected()) {
+                    selectedElements.add(fieldColumnTuple);
+                }
+            });
+        }
+        return selectedElements;
+    }
+
+    public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene) {
+
+        JFXScrollPane data = new JFXScrollPane();
+        JFXButton closeButton = new JFXButton("Zamknij");
+        JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.setOverlayClose(true);
+        alert.showAndWait();
+        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
+        closeButton.setOnAction(event -> {
+            alert.hideWithAnimation();
+        });
+        data.getTopBar().getChildren().add(new Label("Wybierz elementy"));
+        data.getBottomBar().getChildren().add(closeButton);
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
+        data.setMinHeight(500);
+        data.setMaxHeight(500);
+        ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
+        for (T col : inputData) {
+            checkBoxes.add( new JFXCheckBox(col.getName()) );
+        }
+        vBox.getChildren().addAll(checkBoxes);
+        data.setContent(vBox);
+        alert.setContent(data);
+
+        ObservableList<T> selectedElements = FXCollections.observableArrayList();
+        for (T elem : inputData) {
+            Optional<JFXCheckBox> first = checkBoxes
+                    .stream()
+                    .filter((e) -> e.getText().equals(elem.getName()))
+                    .findFirst();
+            first.ifPresent((e) -> {
+                if (e.isSelected()) {
+                    selectedElements.add(elem);
+                }
+            });
+        }
+        return selectedElements;
+    }
+
 
     public static <T extends LinguisticVariable> Optional editLVPopup(String title, T elem, Scene scene) {
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
