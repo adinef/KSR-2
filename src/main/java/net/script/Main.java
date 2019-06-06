@@ -38,7 +38,9 @@ public class Main extends Application {
             primaryStage.setX(e.getScreenX() - xOffset);
             primaryStage.setY(e.getScreenY() - yOffset);
         });
-        primaryStage.setScene(new Scene(root, 1055, 705));
+        Scene scene = new Scene(root, 1055, 705);
+        scene.getStylesheets().add( getClass().getResource("/css/style.css").toExternalForm() );
+        primaryStage.setScene(scene);
         primaryStage.show();
         currentStage = primaryStage;
     }

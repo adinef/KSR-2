@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import java.net.URL?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="705.0" prefWidth="1055.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
@@ -49,45 +49,61 @@
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
             <HBox>
-                <VBox prefWidth="200" spacing="20">
-                    <JFXButton buttonType="RAISED" onAction="#loadData" prefHeight="28"
+                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Button onAction="#loadData" prefHeight="28"
                                prefWidth="139.0"
-                               ripplerFill="#8d2a2a" text="Wczytaj dane">
+                               text="Wczytaj dane">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
-                    </JFXButton>
-                    <JFXButton fx:id="showQuantifiers" buttonType="RAISED" onAction="#showQuantifiers" prefHeight="28"
+                    </Button>
+                    <Button fx:id="showQuantifiers" onAction="#showQuantifiers" prefHeight="28"
                                prefWidth="139.0"
-                               ripplerFill="#042e8d" text="Kwantyfikatory">
+                               text="Kwantyfikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
 
-                    </JFXButton>
-                    <JFXButton fx:id="showQualifiers" buttonType="RAISED" onAction="#showQualifiers" prefHeight="28"
+                    </Button>
+                    <Button fx:id="showQualifiers" onAction="#showQualifiers" prefHeight="28"
                                prefWidth="139.0"
-                               ripplerFill="#042e8d" text="Kwalifikatory">
+                               text="Kwalifikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
-                    </JFXButton>
+                    </Button>
                 </VBox>
-                <VBox prefWidth="200" spacing="20">
-                    <JFXButton fx:id="saveQuantifiers" buttonType="RAISED" onAction="#saveQuantifiers" prefHeight="28"
+                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Button fx:id="saveQuantifiers" onAction="#saveQuantifiers" prefHeight="28"
                                prefWidth="250.0"
-                               ripplerFill="#042e8d" text="Zapisz zmienione kwantyfikatory">
+                               text="Zapisz zmienione kwantyfikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
-                    </JFXButton>
-                    <JFXButton fx:id="saveQualifiers" buttonType="RAISED" onAction="#saveQualifiers" prefHeight="28"
+                    </Button>
+                    <Button fx:id="saveQualifiers" onAction="#saveQualifiers" prefHeight="28"
                                prefWidth="250.0"
-                               ripplerFill="#042e8d" text="Zapisz zmienione kwalifikatory">
+                               text="Zapisz zmienione kwalifikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
-                    </JFXButton>
+                    </Button>
+                </VBox>
+                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Button fx:id="selectQuantifiers" onAction="#selectQuantifiers" prefHeight="28"
+                               prefWidth="250.0"
+                               text="Wybierz kwantyfikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button fx:id="selectQualifiers" onAction="#selectQualifiers" prefHeight="28"
+                               prefWidth="250.0"
+                               text="Wybierz kwalifikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
                 </VBox>
             </HBox>
         </Tab>

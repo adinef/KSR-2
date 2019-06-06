@@ -11,6 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import net.script.Main;
 import net.script.data.annotations.Column;
 
 import java.lang.reflect.Field;
@@ -57,5 +58,23 @@ public class CommonFXUtils {
             column.setCellValueFactory(new PropertyValueFactory<>(field.getName()));
             columns.add(column);
         }
+    }
+
+    public static void longTaskWithMessages(RunnableWithException r, String onSuccess, String onFailure, Scene scene) {
+        LongTask longTask = new LongTask(r);
+        longTask.setOnSucceeded( (e) -> {
+            if (e.getSource().getValue().equals(true)) {
+                CommonFXUtils.noDataPopup("Sukces",
+                        onSuccess,
+                        Main.getCurrentStage().getScene()
+                );
+            } else {
+                CommonFXUtils.noDataPopup("Porażka",
+                        onFailure,
+                        Main.getCurrentStage().getScene()
+                );
+            }
+        });
+        longTask.start();
     }
 }

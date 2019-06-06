@@ -12,18 +12,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
-import net.script.config.main.ApplicationVariables;
 import net.script.data.annotations.enums.Author;
 import net.script.data.repositories.CachingRepository;
+import net.script.logic.access.FuzzyData;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
-import net.script.logic.settings.qualifier.QualifiersConfigAccessor;
-import net.script.logic.settings.quantifier.QuantifiersConfigAccessor;
-import net.script.utils.CommonFXUtils;
-import net.script.utils.EntityReadService;
-import net.script.utils.FuzzyFXUtils;
-import net.script.utils.SupplierWithException;
+import net.script.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -35,9 +30,8 @@ import java.util.function.Supplier;
 @Slf4j
 public class MainController implements Initializable {
 
-    private final QuantifiersConfigAccessor quantifiersReader;
-    private final QualifiersConfigAccessor qualifiersReader;
     private final CachingRepository repository;
+    private final FuzzyData fuzzyData;
     private boolean isFullscreen;
 
     @FXML
@@ -45,12 +39,10 @@ public class MainController implements Initializable {
 
     @Autowired
     public MainController(
-            QuantifiersConfigAccessor quantifiersReader,
-            QualifiersConfigAccessor qualifiersReader,
+            FuzzyData fuzzyData,
             CachingRepository repository) {
-        this.quantifiersReader = quantifiersReader;
-        this.qualifiersReader = qualifiersReader;
         this.repository = repository;
+        this.fuzzyData = fuzzyData;
     }
 
     @FXML
@@ -106,17 +98,50 @@ public class MainController implements Initializable {
     public void showQuantifiers() {
         this.showLinguisticData(
                 Quantifier.class, "Kwantyfikatory",
-                () -> quantifiersReader.read(ApplicationVariables.determineRuntimeConfig())
+                fuzzyData::quantifiers
         );
     }
 
     public void showQualifiers() {
         this.showLinguisticData(Qualifier.class,
                 "Kwalifikatory",
-                () -> qualifiersReader.read(ApplicationVariables.determineRuntimeConfig())
+                fuzzyData::qualifiers
         );
     }
 
+    @FXML
+    private void saveQualifiers() {
+        CommonFXUtils.longTaskWithMessages(
+                fuzzyData::saveQuantifiers,
+                "Pomyślnie zapisano kwantyfikatory",
+                "Wystąpił błąd zapisu",
+                Main.getCurrentStage().getScene());
+    }
+
+    @FXML
+    private void saveQuantifiers() {
+        CommonFXUtils.longTaskWithMessages(
+                fuzzyData::saveQuantifiers,
+                "Pomyślnie zapisano kwalifikatory",
+                "Wystąpił błąd zapisu",
+                Main.getCurrentStage().getScene());
+    }
+
+    private double prefTabContentHeight() {
+        return Main.getCurrentStage().getHeight() - 100;
+    }
+
+    @FXML
+    private void selectQuantifiers(ActionEvent actionEvent) {
+
+    }
+
+    @FXML
+    private void selectQualifiers(ActionEvent actionEvent) {
+
+    }
+
+    // HELPER METHODS
 
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         var ref = new Object() {
@@ -155,45 +180,11 @@ public class MainController implements Initializable {
         if (mouseEvent.getClickCount() == 2) {
             Object selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof LinguisticVariable) {
-                LinguisticVariable lv = (LinguisticVariable)selectedItem;
+                LinguisticVariable lv = (LinguisticVariable) selectedItem;
                 Optional editQualifierOptional =
                         FuzzyFXUtils.editLVPopup("Edytuj kwalifikator", lv, Main.getCurrentStage().getScene());
                 editQualifierOptional.ifPresent((e) -> tableView.refresh());
             }
         }
     }
-
-    @FXML
-    private void saveQualifiers() {
-        try {
-            qualifiersReader.saveCachedData();
-        } catch (Exception e) {
-            e.printStackTrace();
-            CommonFXUtils.noDataPopup(
-                    "Błąd",
-                    "Wystąpił błąd przy zapisie. " + e.getLocalizedMessage(),
-                    Main.getCurrentStage().getScene()
-            );
-        }
-    }
-
-    @FXML
-    private void saveQuantifiers() {
-        try {
-            quantifiersReader.saveCachedData();
-        } catch (Exception e) {
-            e.printStackTrace();
-            CommonFXUtils.noDataPopup(
-                    "Błąd",
-                    "Wystąpił błąd przy zapisie. " + e.getLocalizedMessage(),
-                    Main.getCurrentStage().getScene()
-            );
-        }
-    }
-
-    private double prefTabContentHeight() {
-        return Main.getCurrentStage().getHeight() - 100;
-    }
-
-
 }

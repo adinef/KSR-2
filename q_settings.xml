@@ -22,7 +22,7 @@
             <coefficient name="b" value="2.0"/>
          </function>
       </quantifier>
-      <quantifier name="tt1" member="id">
+      <quantifier name="test2" member="id">
          <range>
             <start>0.0</start>
             <end>10.0</end>
