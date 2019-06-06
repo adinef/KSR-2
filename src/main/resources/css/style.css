@@ -1,6 +1,6 @@
 .vbox_bordered {
-    -fx-border-color: beige;
+    -fx-border-color: gray;
     -fx-border-insets: 5;
-    -fx-border-width: 3;
+    -fx-border-width: 0.5;
     -fx-border-style: solid;
 }

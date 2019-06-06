@@ -1,7 +1,9 @@
 package net.script.logic.settings.functions;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.script.logic.fuzzy.functions.FunctionSetting;
 import org.simpleframework.xml.*;
 
@@ -15,6 +17,8 @@ public class FunctionsSettings {
     private List<SingleFunctionSetting> functions;
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class SingleFunctionSetting implements FunctionSetting {
         @Attribute(name = "name")

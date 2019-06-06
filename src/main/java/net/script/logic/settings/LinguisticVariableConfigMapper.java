@@ -14,15 +14,17 @@ public class LinguisticVariableConfigMapper {
     public static SimpleLinguisticVariableSetting getSimpleWithFunction(
             LinguisticVariable variable) {
 
-        SimpleLinguisticVariableSetting setting = new SimpleLinguisticVariableSetting();
         QFunction function = variable.getFunction();
+        FunctionsSettings.SingleFunctionSetting singleFunctionSetting = null;
         if (function != null) {
             Function funAnn = function.getClass().getAnnotation(Function.class);
             if (funAnn != null) {
-                FunctionsSettings.SingleFunctionSetting singleFunctionSetting =
-                        new FunctionsSettings.SingleFunctionSetting();
-                singleFunctionSetting.setName(funAnn.value());
-                singleFunctionSetting.setCoefficients(new HashMap<>());
+                singleFunctionSetting =
+                        FunctionsSettings.SingleFunctionSetting
+                                .builder()
+                                .name(funAnn.value())
+                                .coefficients(new HashMap<>())
+                                .build();
                 for (Field field : function.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     Coefficient kpAnn = field.getAnnotation(Coefficient.class);
@@ -38,13 +40,16 @@ public class LinguisticVariableConfigMapper {
                         }
                     }
                 }
-                setting.setFunctionSetting(singleFunctionSetting);
             }
         }
-        setting.setMember(variable.getMemberFieldName());
-        setting.setName(variable.getName());
-        setting.setRangeStart(variable.getLvRange().getBegin());
-        setting.setRangeEnd(variable.getLvRange().getEnd());
+        SimpleLinguisticVariableSetting setting = SimpleLinguisticVariableSetting
+                .builder()
+                .functionSetting(singleFunctionSetting)
+                .member(variable.getMemberFieldName())
+                .name(variable.getName())
+                .rangeStart(variable.getLvRange().getBegin())
+                .rangeEnd(variable.getLvRange().getEnd())
+                .build();
         return setting;
     }
 }

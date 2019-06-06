@@ -118,14 +118,14 @@ public class FuzzyFXUtils {
     private static <T> List<Node> newFormParamString(String name, Supplier<T> valSupplier, Consumer<String> newValConsumer) {
         Label label = new Label(name);
         JFXTextField textField = new JFXTextField(valSupplier.get().toString());
-        addListenerOnRegular(textField, newValConsumer::accept);
+        addListenerOnRegular(textField, newValConsumer);
         return Arrays.asList(label, textField);
     }
 
     private static <T> List<Node> newFormParamDouble(String name, Supplier<T> valSupplier, Consumer<Double> newValConsumer) {
         Label label = new Label(name);
         JFXTextField textField = new JFXTextField(valSupplier.get().toString());
-        addListenOnNumber(textField, newValConsumer::accept);
+        addListenOnNumber(textField, newValConsumer);
         return Arrays.asList(label, textField);
     }
 
