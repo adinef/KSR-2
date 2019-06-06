@@ -317,27 +317,7 @@ public class FuzzyFXUtils {
         List<Class<? extends QFunction>> functionClasses = QFunctionFactory.functionTypes();
         ObservableList<FunctionParamsHolder> nameAndParamList = getNameAndParamList(functionClasses);
         JFXComboBox<FunctionParamsHolder> functionComboBox = new JFXComboBox<>(nameAndParamList);
-        functionComboBox.setConverter(
-                new StringConverter<FunctionParamsHolder>() {
-                    @Override
-                    public String toString(FunctionParamsHolder functionParamsHolder) {
-                        if (functionParamsHolder != null) {
-                            return functionParamsHolder.functionName;
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    public FunctionParamsHolder fromString(String s) {
-                        for (FunctionParamsHolder functionParamsHolder : nameAndParamList) {
-                            if (functionParamsHolder.functionName.equals(s)) {
-                                return functionParamsHolder;
-                            }
-                        }
-                        return null;
-                    }
-                }
-        );
+        setConnverterForParamsHolder((ObservableList<FunctionParamsHolder>) nameAndParamList, (JFXComboBox<FunctionParamsHolder>) functionComboBox);
 
         VBox funcEditBox = new VBox();
         functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
@@ -379,6 +359,87 @@ public class FuzzyFXUtils {
         } else {
             return Optional.of(obj);
         }
+    }
+
+    public static Optional<Quantifier> newQuantifierPopup(Scene scene) {
+        AtomicBoolean aborted = new AtomicBoolean(false);
+        JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        JFXDialogLayout layout = new JFXDialogLayout();
+        JFXButton closeButton = new JFXButton("Anuluj");
+        JFXButton saveButton = new JFXButton("Zapisz");
+        VBox vBox = new VBox();
+
+        Quantifier quantifier = new Quantifier("", null);
+
+        List<Node> paramsForName = newFormParamString("Nazwa", quantifier::getName, quantifier::setName);
+
+        Label functionLabel = new Label("Funkcja przynależności");
+        List<Class<? extends QFunction>> functionClasses = QFunctionFactory.functionTypes();
+        ObservableList<FunctionParamsHolder> nameAndParamList = getNameAndParamList(functionClasses);
+        JFXComboBox<FunctionParamsHolder> functionComboBox = new JFXComboBox<>(nameAndParamList);
+        setConnverterForParamsHolder(nameAndParamList, functionComboBox);
+
+        VBox funcEditBox = new VBox();
+        functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
+            funcEditBox.getChildren().clear();
+            funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
+        });
+
+        vBox.getChildren().addAll(paramsForName);
+        vBox.getChildren().addAll(functionLabel);
+        vBox.getChildren().addAll(functionComboBox);
+        vBox.getChildren().addAll(funcEditBox);
+
+        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
+        closeButton.setOnAction(event -> {
+            aborted.lazySet(true);
+            alert.hideWithAnimation();
+        });
+
+        saveButton.setButtonType(JFXButton.ButtonType.FLAT);
+        saveButton.setOnAction(event -> {
+            quantifier.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
+            alert.hideWithAnimation();
+        });
+
+        layout.setHeading(new Label("Nowy element"));
+        layout.setBody(vBox);
+        layout.setActions(closeButton, saveButton);
+        alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setOverlayClose(false);
+        alert.setContent(layout);
+        alert.showAndWait();
+
+        if (aborted.get()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(quantifier);
+        }
+    }
+
+    private static void setConnverterForParamsHolder(ObservableList<FunctionParamsHolder> nameAndParamList, JFXComboBox<FunctionParamsHolder> functionComboBox) {
+        functionComboBox.setConverter(
+                new StringConverter<FunctionParamsHolder>() {
+                    @Override
+                    public String toString(FunctionParamsHolder functionParamsHolder) {
+                        if (functionParamsHolder != null) {
+                            return functionParamsHolder.functionName;
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public FunctionParamsHolder fromString(String s) {
+                        for (FunctionParamsHolder functionParamsHolder : nameAndParamList) {
+                            if (functionParamsHolder.functionName.equals(s)) {
+                                return functionParamsHolder;
+                            }
+                        }
+                        return null;
+                    }
+                }
+        );
     }
 
     private static ObservableList<Node> generateFunctionParametersEditBoxes(FunctionParamsHolder selectedItem) {

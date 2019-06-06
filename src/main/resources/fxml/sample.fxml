@@ -66,6 +66,13 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
+                    <Button fx:id="addNewQuantifierButton" onAction="#newQuantifier" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Dodaj nowy kwantyfikator">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
                     <Button fx:id="saveQuantifiersButton" onAction="#saveQuantifiers" prefHeight="28"
                             prefWidth="250.0" disable="true"
                             text="Zapisz zmienione kwantyfikatory">

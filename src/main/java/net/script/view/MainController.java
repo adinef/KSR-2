@@ -263,6 +263,31 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void newQuantifier(ActionEvent actionEvent) {
+        Optional<Quantifier> quantifier =
+                FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene());
+        quantifier.ifPresent(
+                (q) -> {
+                    try {
+                        this.fuzzyData.quantifiers().add(q);
+                        this.saveQuantifiersButton.setDisable(false);
+                        TableView tableViewOrNull = this.tableViewMap
+                                .getOrDefault(Quantifier.class.getName(), null);
+                        if (tableViewOrNull != null) {
+                            log.info("updating tab for quantifiers");
+                            tableViewOrNull.refresh();
+                        }
+                    } catch (Exception e) {
+                        CommonFXUtils.noDataPopup(
+                                "Błąd",
+                                "Wystapił błąd przy odczycie kwantyfikatorów. " + e.getLocalizedMessage(),
+                                Main.getCurrentStage().getScene()
+                        );
+                    }
+                }
+        );
+    }
+    @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
 
     }
