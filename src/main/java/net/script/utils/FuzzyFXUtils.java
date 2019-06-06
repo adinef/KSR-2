@@ -30,6 +30,7 @@ import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.fuzzy.linguistic.Range;
 import net.script.logic.qualifier.Qualifier;
+import net.script.logic.quantifier.Quantifier;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -168,6 +169,34 @@ public class FuzzyFXUtils {
         vBox.getChildren().addAll(paramsForMember);
         vBox.getChildren().addAll(paramsForRangeStart);
         vBox.getChildren().addAll(paramsForRangeEnd);
+        vBox.getChildren().addAll(functionLabel);
+        vBox.getChildren().addAll(editFuncVarNodes);
+
+        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
+        closeButton.setOnAction(event -> alert.hideWithAnimation());
+
+        layout.setHeading(new Label(title));
+        layout.setBody(vBox);
+        layout.setActions(closeButton);
+        alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setOverlayClose(false);
+        alert.setContent(layout);
+        return alert.showAndWait();
+    }
+
+    public static Optional editQuantifierPopup(String title, Quantifier elem, Scene scene) {
+        JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        JFXDialogLayout layout = new JFXDialogLayout();
+        JFXButton closeButton = new JFXButton("Zamknij");
+
+        VBox vBox = new VBox();
+
+        List<Node> paramsForName = newFormParamString("Nazwa", elem::getName, elem::setName);
+        Label functionLabel = new Label("Wartości funkcji przynależności");
+        List<Node> editFuncVarNodes = getNodesForFuncEdit(elem.getFunction());
+
+        vBox.getChildren().addAll(paramsForName);
         vBox.getChildren().addAll(functionLabel);
         vBox.getChildren().addAll(editFuncVarNodes);
 

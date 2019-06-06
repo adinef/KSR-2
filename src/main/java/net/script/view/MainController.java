@@ -13,7 +13,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
-import net.script.data.FieldColumnTuple;
 import net.script.data.annotations.enums.Author;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
@@ -177,7 +176,7 @@ public class MainController implements Initializable {
                 FXCollections.observableList(
                         FuzzyFXUtils
                                 .checkBoxSelectAlert(
-                                        this.workingData.workingQuantifiers(selectionState.getAllowedFields()),
+                                        this.workingData.workingQuantifiers(),
                                         Main.getCurrentStage().getScene(),
                                         selectionState.getQuantifiers()
                                 )
@@ -241,16 +240,15 @@ public class MainController implements Initializable {
     // HELPER METHODS
 
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
-        var ref = new Object() {
-            ObservableList<T> read = FXCollections.observableArrayList();
-        };
+        ObservableList<T> read = FXCollections.observableArrayList();
         try {
-            ref.read = FXCollections.observableList(listSupplier.get());
+            read = FXCollections.observableList(listSupplier.get());
         } catch (Exception e) {
             CommonFXUtils.noDataPopup("Wystapił błąd", e.getLocalizedMessage(), Main.getCurrentStage().getScene());
             e.printStackTrace();
         }
-        this.newTabWithContent(tClass, tabname, () -> ref.read);
+        ObservableList<T> finalRead = read;
+        this.newTabWithContent(tClass, tabname, () -> finalRead);
     }
 
 
@@ -279,8 +277,22 @@ public class MainController implements Initializable {
             if (selectedItem instanceof LinguisticVariable) {
                 LinguisticVariable lv = (LinguisticVariable) selectedItem;
                 Optional editQualifierOptional =
-                        FuzzyFXUtils.editLVPopup("Edytuj kwalifikator", lv, Main.getCurrentStage().getScene());
+                        FuzzyFXUtils.editLVPopup(
+                                "Edytuj kwalifikator",
+                                lv,
+                                Main.getCurrentStage().getScene()
+                        );
                 editQualifierOptional.ifPresent((e) -> tableView.refresh());
+            }
+            if (selectedItem instanceof Quantifier) {
+                Quantifier quantifier = (Quantifier) selectedItem;
+                Optional editQuantifierOptional =
+                        FuzzyFXUtils.editQuantifierPopup(
+                                "Edytuj kwantyfikator",
+                                quantifier,
+                                Main.getCurrentStage().getScene()
+                        );
+                editQuantifierOptional.ifPresent((e) -> tableView.refresh());
             }
         }
     }

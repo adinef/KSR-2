@@ -62,17 +62,4 @@ public class WorkingData {
     public List<Quantifier> workingQuantifiers() {
         return this.quantifiers;
     }
-
-    public List<Quantifier> workingQuantifiers(List<FieldColumnTuple> tuples) {
-        List<Quantifier> filtered = new LinkedList<>();
-        List<Quantifier> quantifiers = workingQuantifiers();
-        if (quantifiers != null) {
-            for (Quantifier quantifier : quantifiers) {
-                if (tuples.stream().anyMatch( (e) -> e.getColumn().value().equals(quantifier.getMemberFieldName()) )) {
-                    filtered.add(quantifier);
-                }
-            }
-        }
-        return filtered;
-    }
 }

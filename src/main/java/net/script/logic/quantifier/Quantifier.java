@@ -1,26 +1,22 @@
 package net.script.logic.quantifier;
 
 import lombok.*;
-import net.script.data.annotations.Comment;
-import net.script.data.annotations.enums.Author;
+import net.script.data.Named;
+import net.script.data.annotations.Column;
 import net.script.logic.fuzzy.functions.QFunction;
-import net.script.logic.fuzzy.linguistic.LinguisticVariable;
-import net.script.logic.fuzzy.linguistic.Range;
 
-@Comment(
-        value = "Klasa reprezentująca kwantyfikator",
-        madeBy = Author.AdrianFijalkowski
-)
 @Data
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @Builder
 @NoArgsConstructor
-public class Quantifier extends LinguisticVariable {
+@AllArgsConstructor
+public class Quantifier implements Named {
 
-    public Quantifier(String name, String member, QFunction function, Range range) {
-        super(name, member, function, range);
-    }
+    @Column("Nazwa")
+    private String name;
+
+    @Column("Funkcja")
+    private QFunction function;
 
     public double calculate(double x) {
         return getFunction().calculate(x);

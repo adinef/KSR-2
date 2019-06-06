@@ -1,32 +1,20 @@
 <quantifiers>
    <definitions class="java.util.LinkedList">
-      <quantifier name="Bathrooms ???" member="BATHRM">
-         <range>
-            <start>0.0</start>
-            <end>10.0</end>
-         </range>
+      <quantifier name="Większość">
          <function name="trapezoid">
-            <coefficient name="a" value="0.0"/>
-            <coefficient name="b" value="1.0"/>
+            <coefficient name="a" value="2.0"/>
+            <coefficient name="b" value="2.0"/>
             <coefficient name="c" value="2.0"/>
             <coefficient name="d" value="4.0"/>
          </function>
       </quantifier>
-      <quantifier name="asdasdasd" member="id">
-         <range>
-            <start>0.0</start>
-            <end>10.0</end>
-         </range>
+      <quantifier name="asdasdasd">
          <function name="triangular">
             <coefficient name="a" value="1.0"/>
             <coefficient name="b" value="2.0"/>
          </function>
       </quantifier>
-      <quantifier name="test2" member="id">
-         <range>
-            <start>0.0</start>
-            <end>10.0</end>
-         </range>
+      <quantifier name="test2">
          <function name="triangular">
             <coefficient name="a" value="2.0"/>
             <coefficient name="b" value="3.0"/>

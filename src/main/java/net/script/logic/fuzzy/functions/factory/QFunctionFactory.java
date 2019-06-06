@@ -1,10 +1,7 @@
 package net.script.logic.fuzzy.functions.factory;
 
 import lombok.NonNull;
-import net.script.logic.fuzzy.functions.FunctionSetting;
-import net.script.logic.fuzzy.functions.QFunction;
-import net.script.logic.fuzzy.functions.TrapezoidFunction;
-import net.script.logic.fuzzy.functions.TriangleFunction;
+import net.script.logic.fuzzy.functions.*;
 
 import java.util.Map;
 
@@ -22,6 +19,10 @@ public class QFunctionFactory {
             @NonNull Double a = coefficients.getOrDefault("a", null);
             @NonNull Double b = coefficients.getOrDefault("b", null);
             return new TriangleFunction(a, b);
+        } else if ("rectangular".equalsIgnoreCase(name)) {
+            @NonNull Double a = coefficients.getOrDefault("a", null);
+            @NonNull Double b = coefficients.getOrDefault("b", null);
+            return new RectangularFunction(a, b);
         } else {
             throw new RuntimeException("Could not load QFunction. Not found.");
         }

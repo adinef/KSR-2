@@ -48,8 +48,9 @@
     </HBox>
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
-            <HBox>
+            <HBox spacing="10" alignment="CENTER">
                 <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Label styleClass="header">Dane</Label>
                     <Button onAction="#loadData" prefHeight="28"
                                prefWidth="139.0"
                                text="Wczytaj dane">
@@ -57,14 +58,22 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
+                    <Label styleClass="smallHeader">Dane kwantyfikatorów</Label>
                     <Button fx:id="showQuantifiers" onAction="#showQuantifiers" prefHeight="28"
                                prefWidth="139.0"
                                text="Kwantyfikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
-
                     </Button>
+                    <Button fx:id="saveQuantifiersButton" onAction="#saveQuantifiers" prefHeight="28"
+                            prefWidth="250.0" disable="true"
+                            text="Zapisz zmienione kwantyfikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Label styleClass="smallHeader">Dane kwalifikatorów</Label>
                     <Button fx:id="showQualifiers" onAction="#showQualifiers" prefHeight="28"
                                prefWidth="139.0"
                                text="Kwalifikatory">
@@ -72,24 +81,17 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
-                </VBox>
-                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
-                    <Button fx:id="saveQuantifiersButton" onAction="#saveQuantifiers" prefHeight="28"
-                               prefWidth="250.0" disable="true"
-                               text="Zapisz zmienione kwantyfikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
                     <Button fx:id="saveQualifiersButton" onAction="#saveQualifiers" prefHeight="28"
-                               prefWidth="250.0" disable="true"
-                               text="Zapisz zmienione kwalifikatory">
+                            prefWidth="250.0" disable="true"
+                            text="Zapisz zmienione kwalifikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
                 </VBox>
+                <Separator orientation="VERTICAL"/>
                 <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Label styleClass="header">Podsumowania</Label>
                     <Button fx:id="selectAcceptableFieldsButton" onAction="#selectAcceptableFields" prefHeight="28"
                                prefWidth="250.0"
                                text="Wybierz pola">

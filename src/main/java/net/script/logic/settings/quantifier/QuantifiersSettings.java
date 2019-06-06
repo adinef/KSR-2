@@ -14,5 +14,5 @@ import java.util.Map;
 @Root(name = "quantifiers")
 public class QuantifiersSettings {
     @ElementList(name = "definitions", entry = "quantifier")
-    private List<SimpleLinguisticVariableSetting> quantifiers;
+    private List<SimpleQuantifierSetting> quantifiers;
 }
