@@ -63,15 +63,14 @@ public class FuzzyData {
 
     public synchronized void realoadData() throws Exception {
         qualifierConfigAccessor.read(false);
-        quantifierConfigAccessor.read(false);
     }
 
     public synchronized void saveQualifiers() throws Exception {
-        qualifierConfigAccessor.saveCachedData();;
+        qualifierConfigAccessor.saveCachedData();
     }
 
     public synchronized void saveQuantifiers() throws Exception {
-        quantifierConfigAccessor.saveCachedData();;
+        quantifierConfigAccessor.saveCachedData();
     }
 
     private <T extends QFunction> String functionNameFromClass(Class<T> tClass) {

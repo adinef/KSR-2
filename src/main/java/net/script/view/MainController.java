@@ -38,7 +38,7 @@ public class MainController implements Initializable {
     private final WorkingData workingData;
     private boolean isFullscreen;
 
-    private LvSelectBarrier barrier = LvSelectBarrier.of(2);
+    private Barrier barrier = Barrier.of(2);
 
     @FXML
     private Tab tab1;
@@ -59,9 +59,7 @@ public class MainController implements Initializable {
     private Button calculateButton;
 
     // ************** DATA ****************
-    List<Qualifier> qualifiers;
-    List<Quantifier> quantifiers;
-    ObservableList<FieldColumnTuple> fieldToTakeIntoAccount = FXCollections.emptyObservableList();
+    private SelectionState selectionState = new SelectionState();
     // ************************************
 
     @Autowired
@@ -175,13 +173,17 @@ public class MainController implements Initializable {
             e.printStackTrace();
             return;
         }
-        List<Quantifier> inputData = this.workingData.workingQuantifiers(this.fieldToTakeIntoAccount);
-        List<Quantifier> quantifiers = FuzzyFXUtils
-                .checkBoxSelectAlert(
-                        inputData,
-                        Main.getCurrentStage().getScene()
-                );
-        System.out.println(quantifiers);
+        selectionState.setQuantifiers(
+                FXCollections.observableList(
+                        FuzzyFXUtils
+                                .checkBoxSelectAlert(
+                                        this.workingData.workingQuantifiers(selectionState.getAllowedFields()),
+                                        Main.getCurrentStage().getScene(),
+                                        selectionState.getQuantifiers()
+                                )
+                )
+        );
+        System.out.println(selectionState.getQuantifiers());
         if (this.barrier.checkIn("sQf")) {
             calculateButton.setDisable(false);
         }
@@ -200,23 +202,33 @@ public class MainController implements Initializable {
             e.printStackTrace();
             return;
         }
-        List<Qualifier> qualifiers = FuzzyFXUtils
-                .checkBoxSelectAlert(
-                        this.workingData.workingQualifiers(this.fieldToTakeIntoAccount),
-                        Main.getCurrentStage().getScene()
-                );
-        if(this.barrier.checkIn("sQl")) {
+        selectionState.setQualifiers(
+                FXCollections.observableList(
+                        FuzzyFXUtils
+                                .checkBoxSelectAlert(
+                                        this.workingData.workingQualifiers(selectionState.getAllowedFields()),
+                                        Main.getCurrentStage().getScene(),
+                                        selectionState.getQualifiers()
+                                )
+                )
+        );
+        System.out.println(selectionState.getQualifiers());
+        if (this.barrier.checkIn("sQl")) {
             calculateButton.setDisable(false);
         }
     }
 
     @FXML
     private void selectAcceptableFields(ActionEvent actionEvent) {
-        this.fieldToTakeIntoAccount = FuzzyFXUtils.selectFieldByClassPopup(
-                repository.getItemClass(),
-                Main.getCurrentStage().getScene()
+        selectionState.setAllowedFields(
+                FuzzyFXUtils
+                        .selectFieldByClassPopup(
+                                repository.getItemClass(),
+                                Main.getCurrentStage().getScene(),
+                                selectionState.getAllowedFields()
+                        )
         );
-        System.out.println(fieldToTakeIntoAccount);
+        System.out.println(selectionState.getAllowedFields());
         this.selectQuantifiersButton.setDisable(false);
         this.selectQualifiersButton.setDisable(false);
     }

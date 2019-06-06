@@ -15,7 +15,17 @@ public class WorkingData {
     private List<Quantifier> quantifiers;
 
     public void setWorkingQualifiers(List<Qualifier> qualifiers) {
-        this.qualifiers = qualifiers;
+        this.setWorkingQualifiers(qualifiers, false);
+    }
+
+    public void setWorkingQualifiers(List<Qualifier> qualifiers, boolean setIfEmpty) {
+        if (setIfEmpty) {
+            if (this.qualifiers == null) {
+                this.qualifiers = qualifiers;
+            }
+        } else {
+            this.qualifiers = qualifiers;
+        }
     }
 
     public List<Qualifier> workingQualifiers() {
@@ -36,7 +46,17 @@ public class WorkingData {
     }
 
     public void setWorkingQuantifiers(List<Quantifier> quantifiers) {
-        this.quantifiers = quantifiers;
+        this.setWorkingQuantifiers(quantifiers, false);
+    }
+
+    public void setWorkingQuantifiers(List<Quantifier> quantifiers, boolean setIfEmpty) {
+        if (setIfEmpty) {
+            if (this.quantifiers == null) {
+                this.quantifiers = quantifiers;
+            }
+        } else {
+            this.quantifiers = quantifiers;
+        }
     }
 
     public List<Quantifier> workingQuantifiers() {

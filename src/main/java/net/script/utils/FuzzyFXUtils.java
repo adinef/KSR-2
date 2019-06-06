@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -44,7 +45,7 @@ public class FuzzyFXUtils {
 
     public static final String PROPER_NUMBER_PATTERN = "\\d{0,7}([\\.]\\d{0,4})?";
 
-    public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass, Scene scene) {
+    public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass, Scene scene, List<FieldColumnTuple> alreadySelected) {
         Field[] declaredFields = tClass.getDeclaredFields();
         ObservableList<FieldColumnTuple> acceptableData = FXCollections.observableArrayList();
         for (Field field : declaredFields) {
@@ -58,7 +59,11 @@ public class FuzzyFXUtils {
         data.setSpacing(10);
         ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
         for (FieldColumnTuple fieldColumnTuple : acceptableData) {
-            checkBoxes.add( new JFXCheckBox(fieldColumnTuple.getColumn().value()) );
+            JFXCheckBox checkBox = new JFXCheckBox(fieldColumnTuple.getColumn().value());
+            if (alreadySelected.contains(fieldColumnTuple)) {
+                checkBox.setSelected(true);
+            }
+            checkBoxes.add(checkBox);
         }
         data.getChildren().addAll(checkBoxes);
 
@@ -93,33 +98,40 @@ public class FuzzyFXUtils {
         return selectedElements;
     }
 
-    public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene) {
 
-        JFXScrollPane data = new JFXScrollPane();
+    public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene, List<T> alreadySelected) {
+
+        ScrollPane data = new ScrollPane();
         JFXButton closeButton = new JFXButton("Zamknij");
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
         alert.initModality(Modality.WINDOW_MODAL);
         alert.setOverlayClose(true);
-        alert.showAndWait();
         closeButton.setButtonType(JFXButton.ButtonType.FLAT);
         closeButton.setOnAction(event -> {
             alert.hideWithAnimation();
         });
-        data.getTopBar().getChildren().add(new Label("Wybierz elementy"));
-        data.getBottomBar().getChildren().add(closeButton);
         VBox vBox = new VBox();
         vBox.setSpacing(10);
+        vBox.setPadding(new Insets(20));
+        vBox.setMinWidth(400);
+        data.setMinWidth(390);
         data.setMinHeight(500);
         data.setMaxHeight(500);
         ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
         for (T col : inputData) {
-            checkBoxes.add( new JFXCheckBox(col.getName()) );
+            JFXCheckBox checkBox = new JFXCheckBox(col.getName());
+            if (alreadySelected.contains(col)) {
+                checkBox.setSelected(true);
+            }
+            checkBoxes.add(checkBox);
         }
         vBox.getChildren().addAll(checkBoxes);
+        vBox.getChildren().add(closeButton);
         data.setContent(vBox);
         alert.setContent(data);
 
+        alert.showAndWait();
         ObservableList<T> selectedElements = FXCollections.observableArrayList();
         for (T elem : inputData) {
             Optional<JFXCheckBox> first = checkBoxes
