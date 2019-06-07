@@ -43,14 +43,14 @@ public class TestInitMain {
         log.info("Fuzzy set creation start");
 
 
-        Qualifier bathrooms = new Qualifier("dużo łazienek", "BATHRM", new TriangleFunction(5D, 2D), new Range(3D, 4D));
-        Qualifier landarea = new Qualifier("ogromną działkę", "LANDAREA", new TriangleFunction(500000D, 470000D), new Range(0D, 0D));
+        Qualifier bathrooms = new Qualifier("dużo łazienek", "BATHRM", new TriangleFunction(3.0, 5.0, 7.0), new Range(3D, 4D));
+        Qualifier landarea = new Qualifier("ogromną działkę", "LANDAREA", new TriangleFunction(30000D, 500000D, 970000D), new Range(0D, 0D));
 
-        Quantifier duzoQuant = new Quantifier("dużo", new TriangleFunction(0.75D, 0.26D));
-        Quantifier maloQuant = new Quantifier("mało", new TriangleFunction(0.25D, 0.26D));
+        Quantifier duzoQuant = new Quantifier("dużo", new TriangleFunction(0.49, 0.75D, 1.01D));
+        Quantifier maloQuant = new Quantifier("mało", new TriangleFunction(0.00,0.25D, 0.48D));
         //Quantifier pojebanyQuant = new Quantifier("chuj mnie to obchodzi ile", new RectangularFunction(0D, 1D));
 
-        Summarizer bedroomsSum = new Summarizer("wchuj sypialni", "BEDRM", new TriangleFunction(50D, 40D), new Range(0D, 0D));
+        Summarizer bedroomsSum = new Summarizer("wchuj sypialni", "BEDRM", new TriangleFunction(10D,50D, 90D), new Range(0D, 0D));
 
         List<Qualifier> qualifiers = new ArrayList<>();
         qualifiers.add(bathrooms);
