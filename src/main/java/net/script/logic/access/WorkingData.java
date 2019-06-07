@@ -35,7 +35,7 @@ public class WorkingData {
     }
 
     public void setWorkingSummarizers(List<Summarizer> summarizers) {
-        this.setWorkingQualifiers(qualifiers, false);
+        this.setWorkingSummarizers(summarizers, false);
     }
 
     public void setWorkingSummarizers(List<Summarizer> summarizers, boolean setIfEmpty) {
