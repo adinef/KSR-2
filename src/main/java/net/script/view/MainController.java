@@ -7,15 +7,16 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.Named;
+import net.script.data.annotations.Column;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
 import net.script.logic.access.WorkingData;
@@ -32,6 +33,7 @@ import net.script.utils.tasking.EntityReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -368,27 +370,54 @@ public class MainController implements Initializable {
     @SuppressWarnings("unchecked")
     private <T> void newTabWithContent(Class<T> tClass, String name, Supplier<Iterable<T>> dataSupplier) {
         EntityReadService<T> task = new EntityReadService<>(dataSupplier);
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
         StackPane stackPane = new StackPane();
         JFXSpinner jfxSpinner = new JFXSpinner();
         jfxSpinner.setRadius(50);
         TableView tableView = new TableView();
+        vBox.getChildren().add(stackPane);
         stackPane.getChildren().addAll(tableView, jfxSpinner);
         tableView.setPrefHeight(prefTabContentHeight());
         List<TableColumn<String, T>> simpleColumns =
                 CommonFXUtils.getSimpleColumnsForClass(tClass, false);
+        setColumnToolTipIfAvailible(tClass, simpleColumns);
         tableView.getColumns().addAll(simpleColumns);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
-        Tab e1 = new Tab(name, stackPane);
+        Tab e1 = new Tab(name, vBox);
         tab1.getTabPane().getTabs().add(e1);
+        HBox hBox = new HBox();
+        Label quantityLabel = new Label("Ilość elementów: ");
+        Label actualQuantity = new Label("0");
+        hBox.getChildren().addAll(quantityLabel, actualQuantity);
+        vBox.getChildren().add(hBox);
         task.setOnSucceeded(
                 e -> {
                     Collection data = (Collection) e.getSource().getValue();
                     tableView.setItems(FXCollections.observableList(new ArrayList<>(data)));
+                    actualQuantity.setText(String.valueOf(data.size()));
                     stackPane.getChildren().remove(jfxSpinner);
                 }
         );
         task.start();
         this.tableViewMap.put(tClass.getName(), tableView);
+    }
+
+    private <T> void setColumnToolTipIfAvailible(Class<T> tClass, List<TableColumn<String, T>> simpleColumns) {
+        for (TableColumn col : simpleColumns) {
+            for (Field field : tClass.getDeclaredFields()) {
+                Column colAnn = field.getAnnotation(Column.class);
+                if (colAnn != null && !colAnn.tooltip().isEmpty()) {
+                    if (colAnn.value().equals(col.getText())) {
+                        Label label = new Label(col.getText());
+                        label.setFont(new Font(12));
+                        label.setTooltip(new Tooltip(colAnn.tooltip()));
+                        col.setGraphic(label);
+                    }
+                }
+            }
+        }
     }
 
     private void listenForTableDoubleClick(MouseEvent mouseEvent, TableView tableView) {

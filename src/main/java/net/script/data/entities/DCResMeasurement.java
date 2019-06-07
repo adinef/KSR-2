@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.script.data.annotations.Column;
-import net.script.data.annotations.Comment;
-import net.script.data.annotations.enums.Author;
 import net.script.data.csv.LocalDateConverter;
 
 import javax.persistence.Entity;
@@ -22,147 +20,86 @@ import java.time.LocalDate;
 @Table(name = "data_points")
 public class DCResMeasurement {
     @Id
-    @Column("OBJECTID")
+    @Column(value = "OBJECTID", tooltip = "Auto-generated internal unique ID")
     @CsvBindByName(column = "OBJECTID")
-    @Comment(
-            value = "Auto-generated internal unique ID"
-    )
     private Integer id;
 
-    @Column("SSL")
+    @Column(value = "SSL", tooltip = "Square, suffix, lot ID")
     @CsvBindByName(column = "SSL")
-    @Comment(
-            value = "Square, suffix, lot ID"
-    )
     private String lotID;
 
-    @Column(value = "BATHRM", fuzzable = true)
+    @Column(value = "BATHRM", tooltip = "Number of full bathrooms", fuzzable = true)
     @CsvBindByName(column = "BATHRM")
-    @Comment(
-            value = "Number of full bathrooms"
-    )
     private Integer noBathrooms;
 
-    @Column(value = "HF_BATHRM", fuzzable = true)
+    @Column(value = "HF_BATHRM", tooltip = "Number of half bathrooms (no shower or tub)", fuzzable = true)
     @CsvBindByName(column = "HF_BATHRM")
-    @Comment(
-            value = "Number of half bathrooms (no shower or tub)"
-    )
     private Integer noHalfBathrooms;
 
-    @Column("HEAD")
+    @Column(value = "HEAD", tooltip = "Heating code")
     @CsvBindByName(column = "HEAD")
-    @Comment(
-            value = "Heating code"
-    )
     private Integer heatingCode;
 
-    @Column("HEAD_D")
+    @Column(value = "HEAD_D", tooltip = "Heating description")
     @CsvBindByName(column = "HEAD_D")
-    @Comment(
-            value = "Heating description"
-    )
     private String heatingDescription;
 
-    @Column("AC")
+    @Column(value = "AC", tooltip = "Air conditioning (Y/N)")
     @CsvBindByName(column = "AC")
-    @Comment(
-            value = "Air conditioning (Y/N)"
-    )
     private String isAirConditioned;
 
-    @Column(value = "NUM_UNITS", fuzzable = true)
+    @Column(value = "NUM_UNITS", tooltip = "Number of units", fuzzable = true)
     @CsvBindByName(column = "NUM_UNITS")
-    @Comment(
-            value = "Number of units"
-    )
     private Integer noUnits;
 
-    @Column(value = "ROOMS", fuzzable = true)
+    @Column(value = "ROOMS", tooltip = "Number of rooms", fuzzable = true)
     @CsvBindByName(column = "ROOMS")
-    @Comment(
-            value = "Number of rooms"
-    )
     private Integer noRooms;
 
-    @Column(value = "BEDRM", fuzzable = true)
+    @Column(value = "BEDRM", tooltip = "Number of bedrooms", fuzzable = true)
     @CsvBindByName(column = "BEDRM")
-    @Comment(
-            value = "Number of bedrooms"
-    )
     private Integer noBedrooms;
 
-    @Column(value = "AYB", fuzzable = true)
+    @Column(value = "AYB",
+            tooltip = "The earliest time the main portion of the building was built." +
+            "It is not affected by subsequent construction.",
+            fuzzable = true)
     @CsvBindByName(column = "AYB")
-    @Comment(
-            value = "The earliest time the main portion of the building was built." +
-                    "It is not affected by subsequent construction."
-    )
     private Integer yearBuilt;
 
-    @Column(value = "YR_RMDL", fuzzable = true)
+    @Column(value = "YR_RMDL", tooltip = "Last year residence was remodeled", fuzzable = true)
     @CsvBindByName(column = "YR_RMDL")
-    @Comment(
-            value = "Last year residence was remodeled"
-    )
     private Integer yearRemodelled;
 
-    @Column(value = "STORIES", fuzzable = true)
+    @Column(value = "STORIES", tooltip = "Stories", fuzzable = true)
     @CsvBindByName(column = "STORIES")
-    @Comment(
-            value = "Stories"
-    )
     private Float stories;
 
-    @Column("SALEDATE")
+    @Column(value = "SALEDATE", tooltip = "Date of most recent sale")
     @CsvCustomBindByName(column = "SALEDATE", converter = LocalDateConverter.class)
-    @Comment(
-            value = "Date of most recent sale",
-            madeBy = Author.AdrianFijalkowski
-    )
     private LocalDate dateOfRecentSale;
 
-    @Column(value = "PRICE", fuzzable = true)
+    @Column(value = "PRICE", tooltip = "Price of most recent sale", fuzzable = true)
     @CsvBindByName(column = "PRICE")
-    @Comment(
-            value = "Price of most recent sale",
-            madeBy = Author.AdrianFijalkowski
-    )
     private Float recentSalePrice;
 
-    @Column(value = "SALE_NUM", fuzzable = true)
+    @Column(value = "SALE_NUM", tooltip = "Sale number since May 2014", fuzzable = true)
     @CsvBindByName(column = "SALE_NUM")
-    @Comment(
-            value = "Sale number since May 2014",
-            madeBy = Author.AdrianFijalkowski
-    )
     private String saleNumber;
 
-    @Column(value = "GBA", fuzzable = true)
+    @Column(value = "GBA", tooltip = "Gross building area in square feet", fuzzable = true)
     @CsvBindByName(column = "GBA")
-    @Comment(
-            value = "Gross building area in square feet "
-    )
     private Integer gbArea;
 
-    @Column(value = "KITCHENS", fuzzable = true)
+    @Column(value = "KITCHENS", tooltip = "Number of kitchens", fuzzable = true)
     @CsvBindByName(column = "KITCHENS")
-    @Comment(
-            value = "Number of kitchens "
-    )
     private Integer noKitchens;
 
-    @Column(value = "FIREPLACES", fuzzable = true)
+    @Column(value = "FIREPLACES", tooltip = "Number of fireplaces ", fuzzable = true)
     @CsvBindByName(column = "FIREPLACES")
-    @Comment(
-            value = "Number of fireplaces "
-    )
     private Integer noFireplaces;
 
-    @Column(value = "LANDAREA", fuzzable = true)
+    @Column(value = "LANDAREA", tooltip = "Land area of property in square feet", fuzzable = true)
     @CsvBindByName(column = "LANDAREA")
-    @Comment(
-            value = "Land area of property in square feet"
-    )
     private Integer landArea;
 }
