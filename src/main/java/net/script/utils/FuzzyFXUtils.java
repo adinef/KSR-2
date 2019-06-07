@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
@@ -120,13 +121,13 @@ public class FuzzyFXUtils {
     }
 
 
-    public static <T extends LinguisticVariable> Optional editLVPopup(String title, T elem, Scene scene) {
+    public static <T extends LinguisticVariable> Optional editLVPopup(String title, T elem, Scene scene, Class<?> entityClass) {
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
         VBox vBox = new VBox();
 
         List<Node> paramsForName = newFormParamString("Nazwa", elem::getName, elem::setName);
-        List<Node> paramsForMember = newFormParamString("Pole", elem::getMemberFieldName, elem::setMemberFieldName);
+        List<Node> paramsForMember = newFormComboForMember("Pole", elem::getMemberFieldName, elem::setMemberFieldName, entityClass);
         List<Node> paramsForRangeStart = newFormParamDouble("Zasięg - początek",
                 () -> elem.getLvRange().getBegin().toString(), (nv) -> elem.getLvRange().setBegin(nv));
         List<Node> paramsForRangeEnd = newFormParamDouble("Zasięg - koniec",
@@ -150,6 +151,28 @@ public class FuzzyFXUtils {
         alert.setOverlayClose(false);
         alert.setContent(layout);
         return alert.showAndWait();
+    }
+
+    private static List<Node> newFormComboForMember(String name,
+                                                    Supplier<String> getMemberFieldName,
+                                                    Consumer<String> setMemberFieldName,
+                                                    Class<?> entityClass) {
+        Label label = new Label(name);
+        JFXComboBox<String> comboBox = new JFXComboBox<>();
+        List<String> acceptable = new ArrayList<>();
+        for (Field field : entityClass.getDeclaredFields()) {
+            Column annotation = field.getAnnotation(Column.class);
+            if (annotation != null) {
+                acceptable.add(annotation.value());
+            }
+        }
+        comboBox.getItems().addAll(acceptable);
+        comboBox.getSelectionModel().select(getMemberFieldName.get());
+        comboBox.valueProperty().addListener(
+                (obc, oV, nV) -> {
+                    setMemberFieldName.accept(nV);
+                });
+        return Arrays.asList(label, comboBox);
     }
 
     public static Optional editQuantifierPopup(String title, Quantifier elem, Scene scene) {
@@ -241,7 +264,7 @@ public class FuzzyFXUtils {
         });
     }
 
-    public static <T extends LinguisticVariable> Optional<T> newLinguisticVariablePopup(Class<T> tClass, Scene scene) {
+    public static <T extends LinguisticVariable> Optional<T> newLinguisticVariablePopup(Class<T> tClass, Scene scene, Class<?> entityClass) {
         AtomicBoolean aborted = new AtomicBoolean(false);
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
@@ -264,7 +287,7 @@ public class FuzzyFXUtils {
         }
 
         List<Node> paramsForName = newFormParamString("Nazwa", obj::getName, obj::setName);
-        List<Node> paramsForMember = newFormParamString("Pole", obj::getMemberFieldName, obj::setMemberFieldName);
+        List<Node> paramsForMember = newFormComboForMember("Pole", obj::getMemberFieldName, obj::setMemberFieldName, entityClass);
 
         T finalObj = obj;
         List<Node> paramsForRangeStart = newFormParamDouble("Zasięg - początek",
@@ -282,7 +305,7 @@ public class FuzzyFXUtils {
         VBox funcEditBox = new VBox();
         functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
             funcEditBox.getChildren().clear();
-            funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
+            funcEditBox.getChildren().addAll(generateFunctionParametersEditBoxes(newVal));
         });
 
         fillVBox(vBox,
@@ -337,7 +360,7 @@ public class FuzzyFXUtils {
         VBox funcEditBox = new VBox();
         functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
             funcEditBox.getChildren().clear();
-            funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
+            funcEditBox.getChildren().addAll(generateFunctionParametersEditBoxes(newVal));
         });
         fillVBox(vBox, paramsForName, functionLabel, functionComboBox, funcEditBox);
 
@@ -446,10 +469,10 @@ public class FuzzyFXUtils {
         if (data != null) {
             for (Object elem : data) {
                 if (elem instanceof List) {
-                    vBox.getChildren().addAll((List)elem);
+                    vBox.getChildren().addAll((List) elem);
                 }
                 if (elem instanceof Node) {
-                    vBox.getChildren().add((Node)elem);
+                    vBox.getChildren().add((Node) elem);
                 }
             }
         }
@@ -466,9 +489,9 @@ public class FuzzyFXUtils {
         ObservableList<FieldColumnTuple> data = FXCollections.observableArrayList();
         Arrays
                 .stream(fields)
-                .forEach( (field) -> {
+                .forEach((field) -> {
                     extractColumn(field)
-                            .ifPresent( column -> {
+                            .ifPresent(column -> {
                                 if (column.fuzzable()) {
                                     data.add(new FieldColumnTuple(field, column));
                                 }
