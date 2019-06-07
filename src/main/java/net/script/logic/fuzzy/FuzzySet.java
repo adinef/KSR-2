@@ -46,10 +46,15 @@ public class FuzzySet<T> implements Map<T, Double> {
 
     public static <E> FuzzySet<E> sum(FuzzySet<E> firstSet, FuzzySet<E> secondSet) {
         FuzzySet<E> operationResult = new FuzzySet<>();
-        for (Map.Entry<E, Double> entry : secondSet.entrySet()) {
-            if (operationResult.containsKey(entry.getKey())) {
-                operationResult.put(entry.getKey(), Double.max(entry.getValue(), operationResult.get(entry.getKey())));
+        for (Map.Entry<E, Double> entry : firstSet.entrySet()) {
+            if (secondSet.containsKey(entry.getKey())) {
+                operationResult.put(entry.getKey(), Double.max(entry.getValue(), secondSet.get(entry.getKey())));
             } else {
+                operationResult.put(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Map.Entry<E, Double> entry : secondSet.entrySet()) {
+            if (!firstSet.containsKey(entry.getKey())) {
                 operationResult.put(entry.getKey(), entry.getValue());
             }
         }

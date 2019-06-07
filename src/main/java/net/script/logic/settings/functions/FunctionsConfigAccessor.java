@@ -1,11 +1,11 @@
 package net.script.logic.settings.functions;
 
-import jdk.jshell.spi.ExecutionControl;
 import net.script.config.paths.PathInjection;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.settings.ConfigAccessor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class FunctionsConfigAccessor implements ConfigAccessor<QFunction> {
 
     @Override
     public void saveCachedData() throws Exception {
-        throw new ExecutionControl.NotImplementedException("Not yet implemented");
+        throw new NotImplementedException("Not yet implemented");
     }
 
     @Override
