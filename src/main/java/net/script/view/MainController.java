@@ -29,6 +29,7 @@ import org.springframework.stereotype.Controller;
 
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Controller
@@ -295,80 +296,60 @@ public class MainController implements Initializable {
 
     @FXML
     private void newQualifier(ActionEvent actionEvent) {
-            Optional<Qualifier> qualifier =
-                    FuzzyFXUtils.newLinguisticVariablePopup(Qualifier.class, Main.getCurrentStage().getScene());
-            qualifier.ifPresent(
-                    (q) -> {
-                        try {
-                            this.fuzzyData.qualifiers().add(q);
-                            this.saveQualifiersButton.setDisable(false);
-                            TableView tableViewOrNull = this.tableViewMap
-                                    .getOrDefault(Qualifier.class.getName(), null);
-                            if (tableViewOrNull != null) {
-                                log.info("updating tab for qualifiers");
-                                tableViewOrNull.refresh();
-                            }
-                        } catch (Exception e) {
-                            CommonFXUtils.noDataPopup(
-                                    "Błąd",
-                                    "Wystapił błąd przy odczycie kwalifikatorów. " + e.getLocalizedMessage(),
-                                    Main.getCurrentStage().getScene()
-                            );
-                        }
-                    }
-            );
+        this.newElement(
+                () -> FuzzyFXUtils.newLinguisticVariablePopup(Qualifier.class, Main.getCurrentStage().getScene()),
+                (e) -> this.fuzzyData.qualifiers().add(e),
+                this.saveQualifiersButton,
+                Qualifier.class
+        );
     }
     @FXML
     private void newSummarizer(ActionEvent actionEvent) {
-            Optional<Summarizer> summarizer =
-                    FuzzyFXUtils.newLinguisticVariablePopup(Summarizer.class, Main.getCurrentStage().getScene());
-        summarizer.ifPresent(
-                    (s) -> {
-                        try {
-                            this.fuzzyData.summarizers().add(s);
-                            this.saveQualifiersButton.setDisable(false);
-                            TableView tableViewOrNull = this.tableViewMap
-                                    .getOrDefault(Summarizer.class.getName(), null);
-                            if (tableViewOrNull != null) {
-                                log.info("updating tab for summarizers");
-                                tableViewOrNull.refresh();
-                            }
-                        } catch (Exception e) {
-                            CommonFXUtils.noDataPopup(
-                                    "Błąd",
-                                    "Wystapił błąd przy odczycie summaryzatorów. " + e.getLocalizedMessage(),
-                                    Main.getCurrentStage().getScene()
-                            );
-                        }
-                    }
-            );
+        this.newElement(
+                () -> FuzzyFXUtils.newLinguisticVariablePopup(Summarizer.class, Main.getCurrentStage().getScene()),
+                (e) -> this.fuzzyData.summarizers().add(e),
+                this.saveSummarizersButton,
+                Summarizer.class
+        );
     }
 
     @FXML
     private void newQuantifier(ActionEvent actionEvent) {
-        Optional<Quantifier> quantifier =
-                FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene());
-        quantifier.ifPresent(
-                (q) -> {
+        this.newElement(
+                () -> FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene()),
+                (e) -> this.fuzzyData.quantifiers().add(e),
+                this.saveQualifiersButton,
+                Quantifier.class
+        );
+    }
+
+    private <T> void newElement(Supplier<Optional<T>> elemSupplier,
+                                ConsumerWithException<T> consumer,
+                                Button connectedButton,
+                                Class<T> objectClass) {
+        Optional<T> elem = elemSupplier.get();
+        elem.ifPresent(
+                (e) -> {
                     try {
-                        this.fuzzyData.quantifiers().add(q);
-                        this.saveQuantifiersButton.setDisable(false);
+                        consumer.consume(e);
+                        connectedButton.setDisable(false);
                         TableView tableViewOrNull = this.tableViewMap
-                                .getOrDefault(Quantifier.class.getName(), null);
+                                .getOrDefault(objectClass.getName(), null);
                         if (tableViewOrNull != null) {
-                            log.info("updating tab for quantifiers");
+                            log.info("updating tab for " + objectClass.getName());
                             tableViewOrNull.refresh();
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ex) {
                         CommonFXUtils.noDataPopup(
                                 "Błąd",
-                                "Wystapił błąd przy odczycie kwantyfikatorów. " + e.getLocalizedMessage(),
+                                "Wystapił błąd przy odczycie. " + ex.getLocalizedMessage(),
                                 Main.getCurrentStage().getScene()
                         );
                     }
                 }
         );
     }
+
     @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
 
