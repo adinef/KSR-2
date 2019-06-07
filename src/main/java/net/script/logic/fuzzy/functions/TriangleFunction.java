@@ -11,35 +11,36 @@ import static java.lang.Math.abs;
 public class TriangleFunction implements QFunction {
 
     @Coefficient("a")
-    private final double num;
+    private final double a;
 
     @Coefficient("b")
-    private final double dis;
+    private final double b;
+
+    @Coefficient("c")
+    private final double c;
 
     @Override
     public double calculate(double x) {
-        if (x > num - dis && x < num + dis) {
-            if (x < num) {
-                return ((1/dis) * (x - (num - dis)));
-            } else {
-                return (-(1/dis) * (x - (num + dis)));
-            }
+        if ( x > a && x <= b) {
+            return (1.0/(b-a)) * (x - a);
+        } else if (x > b && x < c) {
+            return (-1.0/(c-b))*(x-c);
         }
         return 0;
     }
 
     @Override
     public double distance() {
-        return num;
+        return c - a;
     }
 
     @Override
     public double square() {
-        return num - dis;
+        return 0;
     }
 
     @Override
     public String toString() {
-        return String.format("Funkcja triangularna, współczynniki: %f, %f", num, dis);
+        return String.format("Funkcja triangularna, współczynniki: %f, %f, %s", a, b, c);
     }
 }

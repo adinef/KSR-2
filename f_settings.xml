@@ -9,6 +9,7 @@
       <function name="triangular">
          <coefficient name="a" value="1.0"/>
          <coefficient name="b" value="10.0"/>
+         <coefficient name="c" value="12.0"/>
       </function>
    </definitions>
 </functions>

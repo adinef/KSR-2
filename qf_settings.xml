@@ -20,6 +20,7 @@
          <function name="triangular">
             <coefficient name="a" value="1.0"/>
             <coefficient name="b" value="2.0"/>
+            <coefficient name="c" value="3.0"/>
          </function>
       </qualifier>
    </definitions>

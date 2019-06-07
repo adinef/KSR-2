@@ -20,7 +20,8 @@ public class QFunctionFactory {
         } else if ("triangular".equalsIgnoreCase(name)) {
             @NonNull Double a = coefficients.getOrDefault("a", null);
             @NonNull Double b = coefficients.getOrDefault("b", null);
-            return new TriangleFunction(a, b);
+            @NonNull Double c = coefficients.getOrDefault("c", null);
+            return new TriangleFunction(a, b, c);
         } else if ("rectangular".equalsIgnoreCase(name)) {
             @NonNull Double a = coefficients.getOrDefault("a", null);
             @NonNull Double b = coefficients.getOrDefault("b", null);
