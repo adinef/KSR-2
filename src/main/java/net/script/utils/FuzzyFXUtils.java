@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -142,7 +144,13 @@ public class FuzzyFXUtils {
                 functionLabel,
                 editFuncVarNodes);
         JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
-
+        closeButton.setDefaultButton(true);
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                closeButton.fire();
+                e.consume();
+            }
+        });
         layout.setHeading(new Label(title));
         layout.setBody(vBox);
         layout.setActions(closeButton);
@@ -186,6 +194,13 @@ public class FuzzyFXUtils {
         fillVBox(vBox, paramsForName, functionLabel, getNodesForFuncEdit(elem.getFunction()));
 
         JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
+        closeButton.setDefaultButton(true);
+        closeButton.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                closeButton.fire();
+                e.consume();
+            }
+        });
         layout.setHeading(new Label(title));
         layout.setBody(vBox);
         layout.setActions(closeButton);
@@ -325,12 +340,19 @@ public class FuzzyFXUtils {
             obj.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
             alert.hideWithAnimation();
         });
-
+        saveButton.setDefaultButton(true);
+        saveButton.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                saveButton.fire();
+                e.consume();
+            }
+        });
         layout.setHeading(new Label("Nowy element"));
         layout.setBody(vBox);
         layout.setActions(closeButton, saveButton);
         alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setHideOnEscape(false);
         alert.setOverlayClose(false);
         alert.setContent(layout);
         alert.showAndWait();
@@ -372,6 +394,13 @@ public class FuzzyFXUtils {
             quantifier.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
             alert.hideWithAnimation();
         });
+        saveButton.setDefaultButton(true);
+        saveButton.addEventHandler(KeyEvent.KEY_PRESSED, (e) -> {
+            if (e.getCode() == KeyCode.ENTER) {
+                saveButton.fire();
+                e.consume();
+            }
+        });
 
         layout.setHeading(new Label("Nowy element"));
         layout.setBody(vBox);
@@ -379,6 +408,7 @@ public class FuzzyFXUtils {
         alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setOverlayClose(false);
+        alert.setHideOnEscape(false);
         alert.setContent(layout);
         alert.showAndWait();
 
