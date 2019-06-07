@@ -1,4 +1,4 @@
-package net.script.view;
+package net.script.utils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

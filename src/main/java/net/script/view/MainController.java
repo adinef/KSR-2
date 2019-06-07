@@ -1,8 +1,6 @@
 package net.script.view;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSpinner;
-import com.sun.javafx.menu.MenuItemBase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -61,6 +59,9 @@ public class MainController implements Initializable {
 
     @FXML
     private Button saveSummarizersButton;
+
+    @FXML
+    private Button selectSummarizersButton;
 
     @FXML
     private Button calculateButton;
@@ -289,6 +290,7 @@ public class MainController implements Initializable {
         System.out.println(selectionState.getAllowedFields());
         this.selectQuantifiersButton.setDisable(false);
         this.selectQualifiersButton.setDisable(false);
+        this.selectSummarizersButton.setDisable(false);
     }
 
     @FXML

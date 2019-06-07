@@ -44,8 +44,8 @@ public class FuzzyFXUtils {
     public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass,
                                                                                Scene scene,
                                                                                List<FieldColumnTuple> alreadySelected,
-                                                                               boolean numericOnly) {
-        ObservableList<FieldColumnTuple> acceptableData = extractAcceptableData(tClass.getDeclaredFields(), numericOnly);
+                                                                               boolean fuzzyableOnly) {
+        ObservableList<FieldColumnTuple> acceptableData = extractAcceptableData(tClass.getDeclaredFields(), fuzzyableOnly);
         ObservableList<JFXCheckBox> checkBoxes =
                 checkBoxesFor(acceptableData, alreadySelected, FieldColumnTuple::name);
         VBox mainVBox = new VBox();
@@ -462,14 +462,14 @@ public class FuzzyFXUtils {
         return button;
     }
 
-    private static ObservableList<FieldColumnTuple> extractAcceptableData(Field[] fields, boolean numericOnly) {
+    private static ObservableList<FieldColumnTuple> extractAcceptableData(Field[] fields, boolean fuzzyableOnly) {
         ObservableList<FieldColumnTuple> data = FXCollections.observableArrayList();
         Arrays
                 .stream(fields)
                 .forEach( (field) -> {
                     extractColumn(field)
                             .ifPresent( column -> {
-                                if (Number.class.isAssignableFrom(field.getType())) {
+                                if (column.fuzzyable()) {
                                     data.add(new FieldColumnTuple(field, column));
                                 }
                             });

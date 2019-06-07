@@ -25,105 +25,92 @@ public class DCResMeasurement {
     @Column("OBJECTID")
     @CsvBindByName(column = "OBJECTID")
     @Comment(
-            value = "Auto-generated internal unique ID",
-            madeBy = Author.AdrianFijalkowski
+            value = "Auto-generated internal unique ID"
     )
     private Integer id;
 
     @Column("SSL")
     @CsvBindByName(column = "SSL")
     @Comment(
-            value = "Square, suffix, lot ID",
-            madeBy = Author.AdrianFijalkowski
+            value = "Square, suffix, lot ID"
     )
     private String lotID;
 
-    @Column("BATHRM")
+    @Column(value = "BATHRM", fuzzyable = true)
     @CsvBindByName(column = "BATHRM")
     @Comment(
-            value = "Number of full bathrooms",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of full bathrooms"
     )
     private Integer noBathrooms;
 
-    @Column("HF_BATHRM")
+    @Column(value = "HF_BATHRM", fuzzyable = true)
     @CsvBindByName(column = "HF_BATHRM")
     @Comment(
-            value = "Number of half bathrooms (no shower or tub)",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of half bathrooms (no shower or tub)"
     )
     private Integer noHalfBathrooms;
 
     @Column("HEAD")
     @CsvBindByName(column = "HEAD")
     @Comment(
-            value = "Heating code",
-            madeBy = Author.AdrianFijalkowski
+            value = "Heating code"
     )
     private Integer heatingCode;
 
     @Column("HEAD_D")
     @CsvBindByName(column = "HEAD_D")
     @Comment(
-            value = "Heating description",
-            madeBy = Author.AdrianFijalkowski
+            value = "Heating description"
     )
     private String heatingDescription;
 
     @Column("AC")
     @CsvBindByName(column = "AC")
     @Comment(
-            value = "Air conditioning (Y/N)",
-            madeBy = Author.AdrianFijalkowski
+            value = "Air conditioning (Y/N)"
     )
     private String isAirConditioned;
 
-    @Column("NUM_UNITS")
+    @Column(value = "NUM_UNITS", fuzzyable = true)
     @CsvBindByName(column = "NUM_UNITS")
     @Comment(
-            value = "Number of units",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of units"
     )
     private Integer noUnits;
 
-    @Column("ROOMS")
+    @Column(value = "ROOMS", fuzzyable = true)
     @CsvBindByName(column = "ROOMS")
     @Comment(
-            value = "Number of rooms",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of rooms"
     )
     private Integer noRooms;
 
-    @Column("BEDRM")
+    @Column(value = "BEDRM", fuzzyable = true)
     @CsvBindByName(column = "BEDRM")
     @Comment(
-            value = "Number of bedrooms",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of bedrooms"
     )
     private Integer noBedrooms;
 
-    @Column("AYB")
+    @Column(value = "AYB", fuzzyable = true)
     @CsvBindByName(column = "AYB")
     @Comment(
             value = "The earliest time the main portion of the building was built." +
-                    "It is not affected by subsequent construction.",
-            madeBy = Author.AdrianFijalkowski
+                    "It is not affected by subsequent construction."
     )
     private Integer yearBuilt;
 
-    @Column("YR_RMDL")
+    @Column(value = "YR_RMDL", fuzzyable = true)
     @CsvBindByName(column = "YR_RMDL")
     @Comment(
-            value = "Last year residence was remodeled",
-            madeBy = Author.AdrianFijalkowski
+            value = "Last year residence was remodeled"
     )
     private Integer yearRemodelled;
 
-    @Column("STORIES")
+    @Column(value = "STORIES", fuzzyable = true)
     @CsvBindByName(column = "STORIES")
     @Comment(
-            value = "Stories",
-            madeBy = Author.AdrianFijalkowski
+            value = "Stories"
     )
     private Float stories;
 
@@ -135,7 +122,7 @@ public class DCResMeasurement {
     )
     private LocalDate dateOfRecentSale;
 
-    @Column("PRICE")
+    @Column(value = "PRICE", fuzzyable = true)
     @CsvBindByName(column = "PRICE")
     @Comment(
             value = "Price of most recent sale",
@@ -143,7 +130,7 @@ public class DCResMeasurement {
     )
     private Float recentSalePrice;
 
-    @Column("SALE_NUM")
+    @Column(value = "SALE_NUM", fuzzyable = true)
     @CsvBindByName(column = "SALE_NUM")
     @Comment(
             value = "Sale number since May 2014",
@@ -151,35 +138,31 @@ public class DCResMeasurement {
     )
     private String saleNumber;
 
-    @Column("GBA")
+    @Column(value = "GBA", fuzzyable = true)
     @CsvBindByName(column = "GBA")
     @Comment(
-            value = "Gross building area in square feet ",
-            madeBy = Author.AdrianFijalkowski
+            value = "Gross building area in square feet "
     )
     private Integer gbArea;
 
-    @Column("KITCHENS")
+    @Column(value = "KITCHENS", fuzzyable = true)
     @CsvBindByName(column = "KITCHENS")
     @Comment(
-            value = "Number of kitchens ",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of kitchens "
     )
     private Integer noKitchens;
 
-    @Column("FIREPLACES")
+    @Column(value = "FIREPLACES", fuzzyable = true)
     @CsvBindByName(column = "FIREPLACES")
     @Comment(
-            value = "Number of fireplaces ",
-            madeBy = Author.AdrianFijalkowski
+            value = "Number of fireplaces "
     )
     private Integer noFireplaces;
 
-    @Column("LANDAREA")
+    @Column(value = "LANDAREA", fuzzyable = true)
     @CsvBindByName(column = "LANDAREA")
     @Comment(
-            value = "Land area of property in square feet",
-            madeBy = Author.AdrianFijalkowski
+            value = "Land area of property in square feet"
     )
     private Integer landArea;
 }
