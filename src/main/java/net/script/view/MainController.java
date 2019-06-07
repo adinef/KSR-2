@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.Named;
 import net.script.data.annotations.Column;
+import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
 import net.script.logic.access.WorkingData;
@@ -24,6 +25,8 @@ import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.summarizer.Summarizer;
+import net.script.logic.summary.SummaryGeneratorK;
+import net.script.logic.summary.SummaryGeneratorY;
 import net.script.utils.*;
 import net.script.utils.functional.ConsumerWithException;
 import net.script.utils.functional.RunnableWithException;
@@ -349,7 +352,13 @@ public class MainController implements Initializable {
     private void proceedWithSummarization(ActionEvent actionEvent) {
         // TEMPORARILY
         if (selectionState.isAllSelected()) {
-            this.newTabWithContent(Summary.class, "Podsumowania", FXCollections::emptyObservableList);
+            //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
+            //FIRST TYPE SUMMARIZATION
+            List<Summary> summaries = new ArrayList<>();
+            for(Summarizer s : selectionState.getSummarizers()) {
+                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(),workingData.workingQuantifiers(),s));
+            }
+            this.newTabWithContent(Summary.class, "Podsumowania", ()->FXCollections.observableList(summaries));
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
