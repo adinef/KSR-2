@@ -313,7 +313,7 @@ public class MainController implements Initializable {
         this.newElement(
                 () -> FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene()),
                 (e) -> this.fuzzyData.quantifiers().add(e),
-                this.saveQualifiersButton,
+                this.saveQuantifiersButton,
                 Quantifier.class
         );
     }

@@ -331,6 +331,7 @@ public class FuzzyFXUtils {
         layout.setActions(closeButton, saveButton);
         alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setHideOnEscape(false);
         alert.setOverlayClose(false);
         alert.setContent(layout);
         alert.showAndWait();
@@ -379,6 +380,7 @@ public class FuzzyFXUtils {
         alert.setAnimation(JFXAlertAnimation.TOP_ANIMATION);
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.setOverlayClose(false);
+        alert.setHideOnEscape(false);
         alert.setContent(layout);
         alert.showAndWait();
 
