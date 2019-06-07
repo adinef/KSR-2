@@ -55,7 +55,7 @@ public class WorkingData {
     public List<Summarizer> workingSummarizers(List<FieldColumnTuple> tuples) {
         List<Summarizer> filtered = new LinkedList<>();
         List<Summarizer> summarizers = workingSummarizers();
-        if (qualifiers != null) {
+        if (summarizers != null) {
             for (Summarizer summarizer : summarizers) {
                 if (tuples.stream().anyMatch( (e) -> e.getColumn().value().equals(summarizer.getMemberFieldName()) )) {
                     filtered.add(summarizer);

@@ -339,7 +339,15 @@ public class MainController implements Initializable {
 
     @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
-
+        // TEMPORARILY
+        if (selectionState.isAllSelected()) {
+            this.newTabWithContent(Summary.class, "Podsumowania", () -> FXCollections.emptyObservableList());
+        } else {
+            CommonFXUtils.noDataPopup("Dane",
+                    "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
+                    Main.getCurrentStage().getScene()
+            );
+        }
     }
 
 

@@ -14,4 +14,8 @@ public class SelectionState {
     private ObservableList<Qualifier> qualifiers = FXCollections.emptyObservableList();
     private ObservableList<Summarizer> summarizers = FXCollections.emptyObservableList();
     private ObservableList<FieldColumnTuple> allowedFields = FXCollections.emptyObservableList();
+
+    public boolean isAllSelected() {
+        return !qualifiers.isEmpty() && !qualifiers.isEmpty() && !summarizers.isEmpty();
+    }
 }
