@@ -1,4 +1,4 @@
-package net.script.logic.settings.functions;
+package net.script.logic.settings;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

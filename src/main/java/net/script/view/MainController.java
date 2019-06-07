@@ -1,5 +1,6 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -7,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -17,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
+import net.script.data.FieldColumnTuple;
 import net.script.data.Named;
 import net.script.data.annotations.Column;
 import net.script.data.repositories.CachingRepository;
@@ -40,6 +43,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.script.data.annotations.enums.Author.*;
 
@@ -50,20 +54,24 @@ public class MainController implements Initializable {
     private final CachingRepository repository;
     private final FuzzyData fuzzyData;
     private final WorkingData workingData;
+    private final SettingsPopup settingsPopup;
     private boolean isFullscreen;
     private List<Summary> summaries = new ArrayList<>();
+
+    @FXML
+    private HBox summaryDataChosenBox;
 
     @FXML
     private Tab tab1;
 
     @FXML
-    private Button saveQualifiersButton;
+    private MenuItem saveQualifiersOption;
 
     @FXML
-    private Button saveQuantifiersButton;
+    private MenuItem saveQuantifiersOption;
 
     @FXML
-    private Button saveSummarizersButton;
+    private MenuItem saveSummarizersOption;
 
     // ************** DATA ****************
     private SelectionState selectionState = new SelectionState();
@@ -73,14 +81,19 @@ public class MainController implements Initializable {
     private Map<String, TableView> tableViewMap = new HashMap<>();
     // **********************************************************
 
+    //*************** Selected data elems mapping ***************
+    private Map<Class, List<Node>> nodesMapping = new HashMap<>();
+    // **********************************************************
+
     @Autowired
     public MainController(
             FuzzyData fuzzyData,
             WorkingData workingData,
-            CachingRepository repository) {
+            CachingRepository repository, SettingsPopup settingsPopup) {
         this.repository = repository;
         this.fuzzyData = fuzzyData;
         this.workingData = workingData;
+        this.settingsPopup = settingsPopup;
     }
 
     @FXML
@@ -144,7 +157,7 @@ public class MainController implements Initializable {
                 "Kwantyfikatory",
                 workingData::workingQuantifiers
         );
-        this.saveQuantifiersButton.setDisable(false);
+        this.saveQuantifiersOption.setDisable(false);
     }
 
     public void showQualifiers() {
@@ -152,7 +165,7 @@ public class MainController implements Initializable {
                 "Kwalifikatory",
                 workingData::workingQualifiers
         );
-        this.saveQualifiersButton.setDisable(false);
+        this.saveQualifiersOption.setDisable(false);
     }
 
     public void showSummarizers() {
@@ -160,7 +173,7 @@ public class MainController implements Initializable {
                 "Summaryzatory",
                 workingData::workingSummarizers
         );
-        this.saveSummarizersButton.setDisable(false);
+        this.saveSummarizersOption.setDisable(false);
     }
 
     @FXML
@@ -203,6 +216,13 @@ public class MainController implements Initializable {
                 this.workingData::workingQuantifiers,
                 () -> selectionState.getQuantifiers()
         );
+        if (!selectionState.getQuantifiers().isEmpty()) {
+            this.setListView(
+                    Quantifier.class,
+                    "Wybrane kwantyfikatory",
+                    () -> selectionState.getQuantifiers().stream().map(Quantifier::getName).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -214,6 +234,13 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
                 () -> selectionState.getQualifiers()
         );
+        if (!selectionState.getQualifiers().isEmpty()) {
+            this.setListView(
+                    Qualifier.class,
+                    "Wybrane kwalifikatory",
+                    () -> selectionState.getQualifiers().stream().map(Qualifier::getName).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -225,6 +252,39 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
                 () -> selectionState.getSummarizers()
         );
+        if (!selectionState.getSummarizers().isEmpty()) {
+            this.setListView(
+                    Summarizer.class,
+                    "Wybrane sumaryzatory",
+                    () -> selectionState.getSummarizers().stream().map(Summarizer::getName).collect(Collectors.toList())
+            );
+        }
+    }
+
+    private void setListView(Class<?> elemClass,
+                             String title,
+                             Supplier<List<String>> valuesSupplier) {
+        List<Node> nodes;
+        if (this.nodesMapping.containsKey(elemClass)) {
+            nodes = this.nodesMapping.get(elemClass);
+            nodes.clear();
+        } else {
+            nodes = new ArrayList<>();
+            this.nodesMapping.put(elemClass, nodes);
+        }
+        VBox vBox = new VBox();
+        Label label = new Label(title);
+        JFXListView<String> list = new JFXListView<>();
+        list.setMinHeight(500);
+        list.getItems().addAll(
+                valuesSupplier.get()
+        );
+        vBox.getChildren().addAll(label, list);
+        nodes.add(vBox);
+        this.summaryDataChosenBox.getChildren().clear();
+        for (List<Node> valList : this.nodesMapping.values()) {
+            this.summaryDataChosenBox.getChildren().addAll(valList);
+        }
     }
 
 
@@ -267,6 +327,13 @@ public class MainController implements Initializable {
                                 true
                         )
         );
+        if (!selectionState.getAllowedFields().isEmpty()) {
+            this.setListView(
+                    FieldColumnTuple.class,
+                    "Wybrane pola",
+                    () -> selectionState.getAllowedFields().stream().map(FieldColumnTuple::name).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -277,7 +344,7 @@ public class MainController implements Initializable {
                         Main.getCurrentStage().getScene(),
                         this.repository.getItemClass()),
                 (e) -> this.fuzzyData.qualifiers().add(e),
-                this.saveQualifiersButton,
+                this.saveQualifiersOption,
                 Qualifier.class
         );
     }
@@ -290,7 +357,7 @@ public class MainController implements Initializable {
                         Main.getCurrentStage().getScene(),
                         this.repository.getItemClass()),
                 (e) -> this.fuzzyData.summarizers().add(e),
-                this.saveSummarizersButton,
+                this.saveSummarizersOption,
                 Summarizer.class
         );
     }
@@ -300,21 +367,21 @@ public class MainController implements Initializable {
         this.newElement(
                 () -> FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene()),
                 (e) -> this.fuzzyData.quantifiers().add(e),
-                this.saveQuantifiersButton,
+                this.saveQuantifiersOption,
                 Quantifier.class
         );
     }
 
     private <T> void newElement(Supplier<Optional<T>> elemSupplier,
                                 ConsumerWithException<T> consumer,
-                                Button connectedButton,
+                                MenuItem option,
                                 Class<T> objectClass) {
         Optional<T> elem = elemSupplier.get();
         elem.ifPresent(
                 (e) -> {
                     try {
                         consumer.consume(e);
-                        connectedButton.setDisable(false);
+                        option.setDisable(false);
                         TableView tableViewOrNull = this.tableViewMap
                                 .getOrDefault(objectClass.getName(), null);
                         if (tableViewOrNull != null) {
@@ -351,8 +418,8 @@ public class MainController implements Initializable {
         }
     }
 
-
     // HELPER METHODS
+
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         ObservableList<T> read = FXCollections.observableArrayList();
         try {
@@ -479,5 +546,10 @@ public class MainController implements Initializable {
                 editQuantifierOptional.ifPresent((e) -> tableView.refresh());
             }
         }
+    }
+
+    @FXML
+    private void settings(ActionEvent actionEvent) {
+        settingsPopup.show(Main.getCurrentStage().getScene());
     }
 }

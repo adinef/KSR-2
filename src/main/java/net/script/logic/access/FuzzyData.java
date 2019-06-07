@@ -4,16 +4,13 @@ import net.script.config.main.ApplicationVariables;
 import net.script.data.annotations.Function;
 import net.script.logic.fuzzy.functions.FunctionSetting;
 import net.script.logic.fuzzy.functions.QFunction;
-import net.script.logic.fuzzy.functions.TrapezoidFunction;
-import net.script.logic.fuzzy.functions.TriangleFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.ConfigAccessor;
-import net.script.logic.settings.functions.FunctionsSettings;
+import net.script.logic.settings.FunctionsSettings;
 import net.script.logic.summarizer.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

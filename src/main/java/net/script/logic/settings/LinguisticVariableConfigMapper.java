@@ -5,7 +5,6 @@ import net.script.data.annotations.Function;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.quantifier.Quantifier;
-import net.script.logic.settings.functions.FunctionsSettings;
 import net.script.logic.settings.quantifier.SimpleQuantifierSetting;
 
 import java.lang.reflect.Field;

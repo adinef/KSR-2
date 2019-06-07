@@ -1,6 +1,6 @@
 package net.script.logic.settings.qualifier;
 
-import net.script.config.paths.PathInjection;
+import net.script.config.paths.PathConfig;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
@@ -15,26 +15,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class QualifiersConfigAccessor implements ConfigAccessor<Qualifier> {
 
-    private final Path SETTINGS_FILE_PATH;
+    private final PathConfig pathConfig;
 
     private List<Qualifier> cached = null;
 
     @Autowired
-    public QualifiersConfigAccessor(@PathInjection(PathType.QUALIFIERS) Path settings_file_path) {
-        SETTINGS_FILE_PATH = settings_file_path;
+    public QualifiersConfigAccessor(PathConfig pathConfig) {
+        this.pathConfig = pathConfig;
     }
 
     public List<Qualifier> read(boolean reloadCache) throws Exception {
         if (cached == null || reloadCache) {
             Serializer serializer = new Persister();
-            File file = new File(SETTINGS_FILE_PATH.toString());
+            File file = new File(pathConfig.knownPathFor(PathType.QUALIFIERS));
             QualifiersSettings read = serializer.read(QualifiersSettings.class, file);
             this.cached = new LinkedList<>();
             List<SimpleLinguisticVariableSetting> quantifiers = read.getQualifiers();
@@ -56,7 +55,7 @@ public class QualifiersConfigAccessor implements ConfigAccessor<Qualifier> {
     public void saveCachedData() throws Exception {
         QualifiersSettings newSettings = this.mapToSettings(this.cached);
         Serializer serializer = new Persister();
-        File file = new File(this.SETTINGS_FILE_PATH.toString());
+        File file = new File(this.pathConfig.knownPathFor(PathType.QUALIFIERS));
         serializer.write(newSettings, file);
     }
 
