@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.script.logic.fuzzy.functions.FunctionSetting;
-import net.script.logic.settings.functions.FunctionsSettings;
+import net.script.logic.settings.FunctionsSettings;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 

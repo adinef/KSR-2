@@ -1,13 +1,12 @@
 package net.script.logic.settings.quantifier;
 
-import net.script.config.paths.PathInjection;
+import net.script.config.paths.PathConfig;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.ConfigAccessor;
 import net.script.logic.settings.LinguisticVariableConfigMapper;
-import net.script.logic.settings.SimpleLinguisticVariableSetting;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +20,20 @@ import java.util.List;
 @Service
 public class QuantifiersConfigAccessor implements ConfigAccessor<Quantifier> {
 
-    private final Path SETTINGS_FILE_PATH;
+    private final PathConfig pathConfig;
 
     private List<Quantifier> cached = null;
 
 
     @Autowired
-    public QuantifiersConfigAccessor(@PathInjection(PathType.QUANTIFIERS) Path settings_file_path) {
-        SETTINGS_FILE_PATH = settings_file_path;
+    public QuantifiersConfigAccessor(PathConfig pathConfig) {
+        this.pathConfig = pathConfig;
     }
 
     public List<Quantifier> read(boolean reloadCache) throws Exception {
         if (cached == null || reloadCache) {
             Serializer serializer = new Persister();
-            File file = new File(SETTINGS_FILE_PATH.toString());
+            File file = new File(pathConfig.knownPathFor(PathType.QUANTIFIERS));
             QuantifiersSettings read = serializer.read(QuantifiersSettings.class, file);
             this.cached = new LinkedList<>();
             List<SimpleQuantifierSetting> quantifiers = read.getQuantifiers();
@@ -54,7 +53,7 @@ public class QuantifiersConfigAccessor implements ConfigAccessor<Quantifier> {
     public void saveCachedData() throws Exception {
         QuantifiersSettings newSettings = this.mapToSettings(this.cached);
         Serializer serializer = new Persister();
-        File file = new File(this.SETTINGS_FILE_PATH.toString());
+        File file = new File(this.pathConfig.knownPathFor(PathType.QUANTIFIERS));
         serializer.write(newSettings, file);
     }
 

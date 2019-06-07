@@ -1,11 +1,10 @@
 package net.script.logic.settings.summarizer;
 
-import net.script.config.paths.PathInjection;
+import net.script.config.paths.PathConfig;
 import net.script.config.paths.PathType;
 import net.script.logic.fuzzy.functions.QFunction;
 import net.script.logic.fuzzy.functions.factory.QFunctionFactory;
 import net.script.logic.fuzzy.linguistic.Range;
-import net.script.logic.qualifier.Qualifier;
 import net.script.logic.settings.ConfigAccessor;
 import net.script.logic.settings.LinguisticVariableConfigMapper;
 import net.script.logic.settings.SimpleLinguisticVariableSetting;
@@ -23,19 +22,19 @@ import java.util.List;
 @Service
 public class SummarizersConfigAccessor implements ConfigAccessor<Summarizer> {
 
-    private final Path SETTINGS_FILE_PATH;
+    private final PathConfig pathConfig;
 
     private List<Summarizer> cached = null;
 
     @Autowired
-    public SummarizersConfigAccessor(@PathInjection(PathType.SUMMARIZERS) Path settings_file_path) {
-        SETTINGS_FILE_PATH = settings_file_path;
+    public SummarizersConfigAccessor(PathConfig pathConfig) {
+        this.pathConfig = pathConfig;
     }
 
     public List<Summarizer> read(boolean reloadCache) throws Exception {
         if (cached == null || reloadCache) {
             Serializer serializer = new Persister();
-            File file = new File(SETTINGS_FILE_PATH.toString());
+            File file = new File(pathConfig.knownPathFor(PathType.SUMMARIZERS));
             SummarizersSettings read = serializer.read(SummarizersSettings.class, file);
             this.cached = new LinkedList<>();
             List<SimpleLinguisticVariableSetting> summarizers = read.getSummarizers();
@@ -57,7 +56,7 @@ public class SummarizersConfigAccessor implements ConfigAccessor<Summarizer> {
     public void saveCachedData() throws Exception {
         SummarizersSettings newSettings = this.mapToSettings(this.cached);
         Serializer serializer = new Persister();
-        File file = new File(this.SETTINGS_FILE_PATH.toString());
+        File file = new File(this.pathConfig.knownPathFor(PathType.SUMMARIZERS));
         serializer.write(newSettings, file);
     }
 

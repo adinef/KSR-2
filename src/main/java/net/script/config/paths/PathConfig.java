@@ -1,34 +1,64 @@
 package net.script.config.paths;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.extern.slf4j.Slf4j;
+import net.script.data.csv.CsvReader;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.List;
 
-@Configuration
+@Component
+@Slf4j
 public class PathConfig {
-    @PathInjection(PathType.FUNCTIONS)
-    @Bean
-    public Path functionsPath() {
-        return Paths.get("f_settings.xml");
+
+    private static final String PATHS_FILE = "paths.xml";
+    PathSettings pathSettings;
+
+    public String knownPathFor(PathType pathType) {
+        if (this.pathSettings == null) {
+            try {
+                Serializer serializer = new Persister();
+                this.pathSettings = serializer.read(PathSettings.class, new File(PATHS_FILE));
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+        switch (pathType) {
+            case QUALIFIERS:
+                return this.pathSettings.getQualifierSettings();
+            case QUANTIFIERS:
+                return this.pathSettings.getQuantifierSettings();
+            case SUMMARIZERS:
+                return this.pathSettings.getSummarizerSettings();
+        }
+        return "";
     }
 
-    @PathInjection(PathType.QUANTIFIERS)
-    @Bean
-    public Path quantifiersPath() {
-        return Paths.get("q_settings.xml");
+    public void setValue(PathType type, String value) {
+        switch (type) {
+            case QUALIFIERS:
+                this.pathSettings.setQualifierSettings(value);
+                break;
+            case QUANTIFIERS:
+                this.pathSettings.setQuantifierSettings(value);
+                break;
+            case SUMMARIZERS:
+                this.pathSettings.setSummarizerSettings(value);
+                break;
+        }
     }
 
-    @PathInjection(PathType.QUALIFIERS)
-    @Bean
-    public Path qualifiersPath() {
-        return Paths.get("qf_settings.xml");
-    }
-
-    @PathInjection(PathType.SUMMARIZERS)
-    @Bean
-    public Path summarizersPath() {
-        return Paths.get("s_settings.xml");
+    public void savePathSettings() {
+        Serializer serializer = new Persister();
+        try {
+            serializer.write(this.pathSettings, new File(PATHS_FILE));
+        } catch (Exception e) {
+            log.error("Error persisting config for paths. " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

@@ -50,19 +50,20 @@ public class MainController implements Initializable {
     private final CachingRepository repository;
     private final FuzzyData fuzzyData;
     private final WorkingData workingData;
+    private final SettingsPopup settingsPopup;
     private boolean isFullscreen;
 
     @FXML
     private Tab tab1;
 
     @FXML
-    private Button saveQualifiersButton;
+    private MenuItem saveQualifiersOption;
 
     @FXML
-    private Button saveQuantifiersButton;
+    private MenuItem saveQuantifiersOption;
 
     @FXML
-    private Button saveSummarizersButton;
+    private MenuItem saveSummarizersOption;
 
     // ************** DATA ****************
     private SelectionState selectionState = new SelectionState();
@@ -72,14 +73,16 @@ public class MainController implements Initializable {
     private Map<String, TableView> tableViewMap = new HashMap<>();
     // **********************************************************
 
+
     @Autowired
     public MainController(
             FuzzyData fuzzyData,
             WorkingData workingData,
-            CachingRepository repository) {
+            CachingRepository repository, SettingsPopup settingsPopup) {
         this.repository = repository;
         this.fuzzyData = fuzzyData;
         this.workingData = workingData;
+        this.settingsPopup = settingsPopup;
     }
 
     @FXML
@@ -143,7 +146,7 @@ public class MainController implements Initializable {
                 "Kwantyfikatory",
                 workingData::workingQuantifiers
         );
-        this.saveQuantifiersButton.setDisable(false);
+        this.saveQuantifiersOption.setDisable(false);
     }
 
     public void showQualifiers() {
@@ -151,7 +154,7 @@ public class MainController implements Initializable {
                 "Kwalifikatory",
                 workingData::workingQualifiers
         );
-        this.saveQualifiersButton.setDisable(false);
+        this.saveQualifiersOption.setDisable(false);
     }
 
     public void showSummarizers() {
@@ -159,7 +162,7 @@ public class MainController implements Initializable {
                 "Summaryzatory",
                 workingData::workingSummarizers
         );
-        this.saveSummarizersButton.setDisable(false);
+        this.saveSummarizersOption.setDisable(false);
     }
 
     @FXML
@@ -276,7 +279,7 @@ public class MainController implements Initializable {
                         Main.getCurrentStage().getScene(),
                         this.repository.getItemClass()),
                 (e) -> this.fuzzyData.qualifiers().add(e),
-                this.saveQualifiersButton,
+                this.saveQualifiersOption,
                 Qualifier.class
         );
     }
@@ -289,7 +292,7 @@ public class MainController implements Initializable {
                         Main.getCurrentStage().getScene(),
                         this.repository.getItemClass()),
                 (e) -> this.fuzzyData.summarizers().add(e),
-                this.saveSummarizersButton,
+                this.saveSummarizersOption,
                 Summarizer.class
         );
     }
@@ -299,21 +302,21 @@ public class MainController implements Initializable {
         this.newElement(
                 () -> FuzzyFXUtils.newQuantifierPopup(Main.getCurrentStage().getScene()),
                 (e) -> this.fuzzyData.quantifiers().add(e),
-                this.saveQuantifiersButton,
+                this.saveQuantifiersOption,
                 Quantifier.class
         );
     }
 
     private <T> void newElement(Supplier<Optional<T>> elemSupplier,
                                 ConsumerWithException<T> consumer,
-                                Button connectedButton,
+                                MenuItem option,
                                 Class<T> objectClass) {
         Optional<T> elem = elemSupplier.get();
         elem.ifPresent(
                 (e) -> {
                     try {
                         consumer.consume(e);
-                        connectedButton.setDisable(false);
+                        option.setDisable(false);
                         TableView tableViewOrNull = this.tableViewMap
                                 .getOrDefault(objectClass.getName(), null);
                         if (tableViewOrNull != null) {
@@ -351,8 +354,8 @@ public class MainController implements Initializable {
         }
     }
 
-
     // HELPER METHODS
+
     private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         ObservableList<T> read = FXCollections.observableArrayList();
         try {
@@ -479,5 +482,10 @@ public class MainController implements Initializable {
                 editQuantifierOptional.ifPresent((e) -> tableView.refresh());
             }
         }
+    }
+
+    @FXML
+    private void settings(ActionEvent actionEvent) {
+        settingsPopup.show(Main.getCurrentStage().getScene());
     }
 }

@@ -4,14 +4,33 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import java.net.URL?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="705.0" prefWidth="1055.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
     <HBox onMouseClicked="#barClicked">
         <MenuBar style="-fx-background-color: transparent;">
             <Menu mnemonicParsing="false" text="Plik">
+                <MenuItem mnemonicParsing="false" text="Ustawienia" onAction="#settings"/>
+                <SeparatorMenuItem/>
                 <MenuItem mnemonicParsing="false" text="Zamknij" onAction="#closeWindow"/>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Dane">
+                <MenuItem mnemonicParsing="false" text="Wczytaj dane" onAction="#loadData"/>
+                <Menu mnemonicParsing="false" text="Kwantyfikatory">
+                    <MenuItem mnemonicParsing="false" text="Wczytaj i pokaż" onAction="#showQuantifiers"/>
+                    <MenuItem mnemonicParsing="false" text="Nowy" onAction="#newQuantifier"/>
+                    <MenuItem mnemonicParsing="false" text="Zapisz zmiany" onAction="#saveQuantifiers" fx:id="saveQuantifiersOption" disable="true"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Kwalifikatory">
+                    <MenuItem mnemonicParsing="false" text="Wczytaj i pokaż" onAction="#showQualifiers"/>
+                    <MenuItem mnemonicParsing="false" text="Nowy" onAction="#newQualifier"/>
+                    <MenuItem mnemonicParsing="false" text="Zapisz zmiany" onAction="#saveQualifiers" fx:id="saveQualifiersOption" disable="true"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Sumaryzatory">
+                    <MenuItem mnemonicParsing="false" text="Wczytaj i pokaż" onAction="#showSummarizers"/>
+                    <MenuItem mnemonicParsing="false" text="Nowy" onAction="#newSummarizer"/>
+                    <MenuItem mnemonicParsing="false" text="Zapisz zmiany" onAction="#saveSummarizers" fx:id="saveSummarizersOption" disable="true"/>
+                </Menu>
             </Menu>
             <Menu mnemonicParsing="false" text="Pomoc">
                 <MenuItem mnemonicParsing="false" text="O nas" onAction="#about"/>
@@ -48,122 +67,44 @@
     </HBox>
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
-            <HBox spacing="10" alignment="CENTER">
-                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
-                    <Label styleClass="header">Dane</Label>
-                    <Button onAction="#loadData" prefHeight="28"
-                               prefWidth="139.0"
-                               text="Wczytaj dane">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Label styleClass="smallHeader">Dane kwantyfikatorów</Label>
-                    <Button fx:id="showQuantifiers" onAction="#showQuantifiers" prefHeight="28"
-                               prefWidth="139.0"
-                               text="Kwantyfikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="addNewQuantifierButton" onAction="#newQuantifier" prefHeight="28"
-                            prefWidth="250.0"
-                            text="Dodaj nowy kwantyfikator">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="saveQuantifiersButton" onAction="#saveQuantifiers" prefHeight="28"
-                            prefWidth="250.0" disable="true"
-                            text="Zapisz zmienione kwantyfikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Label styleClass="smallHeader">Dane kwalifikatorów</Label>
-                    <Button fx:id="showQualifiers" onAction="#showQualifiers" prefHeight="28"
-                               prefWidth="139.0"
-                               text="Kwalifikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="addNewQualifierButton" onAction="#newQualifier" prefHeight="28"
-                            prefWidth="250.0"
-                            text="Dodaj nowy kwalifikator">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="saveQualifiersButton" onAction="#saveQualifiers" prefHeight="28"
-                            prefWidth="250.0" disable="true"
-                            text="Zapisz zmienione kwalifikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button><Label styleClass="smallHeader">Dane summaryzatorów</Label>
-                    <Button fx:id="showSummarizers" onAction="#showSummarizers" prefHeight="28"
-                               prefWidth="139.0"
-                               text="Summaryzatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="addNewSummarizerButton" onAction="#newSummarizer" prefHeight="28"
-                            prefWidth="250.0"
-                            text="Dodaj nowy sumarryzator">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="saveSummarizersButton" onAction="#saveSummarizers" prefHeight="28"
-                            prefWidth="250.0" disable="true"
-                            text="Zapisz zmienione summaryzatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                </VBox>
-                <Separator orientation="VERTICAL"/>
-                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
-                    <Label styleClass="header">Podsumowania</Label>
-                    <Button fx:id="selectAcceptableFieldsButton" onAction="#selectAcceptableFields" prefHeight="28"
-                               prefWidth="250.0"
-                               text="Wybierz pola">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="selectQuantifiersButton" onAction="#selectQuantifiers" prefHeight="28"
-                               prefWidth="250.0"
-                               text="Wybierz kwantyfikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="selectQualifiersButton" onAction="#selectQualifiers" prefHeight="28"
-                               prefWidth="250.0"
-                               text="Wybierz kwalifikatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="selectSummarizersButton" onAction="#selectSummarizers" prefHeight="28"
-                               prefWidth="250.0"
-                               text="Wybierz summaryzatory">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <Button fx:id="calculateButton" onAction="#proceedWithSummarization" prefHeight="28"
-                               prefWidth="250.0"
-                               text="Start">
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                </VBox>
-            </HBox>
+            <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                <Label styleClass="header">Podsumowania</Label>
+                <Button fx:id="selectAcceptableFieldsButton" onAction="#selectAcceptableFields" prefHeight="28"
+                        prefWidth="250.0"
+                        text="Wybierz pola">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="selectQuantifiersButton" onAction="#selectQuantifiers" prefHeight="28"
+                        prefWidth="250.0"
+                        text="Wybierz kwantyfikatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="selectQualifiersButton" onAction="#selectQualifiers" prefHeight="28"
+                        prefWidth="250.0"
+                        text="Wybierz kwalifikatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="selectSummarizersButton" onAction="#selectSummarizers" prefHeight="28"
+                        prefWidth="250.0"
+                        text="Wybierz summaryzatory">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+                <Button fx:id="calculateButton" onAction="#proceedWithSummarization" prefHeight="28"
+                        prefWidth="250.0"
+                        text="Start">
+                    <cursor>
+                        <Cursor fx:constant="HAND"/>
+                    </cursor>
+                </Button>
+            </VBox>
         </Tab>
     </TabPane>
 </VBox>
