@@ -135,28 +135,28 @@
                         </cursor>
                     </Button>
                     <Button fx:id="selectQuantifiersButton" onAction="#selectQuantifiers" prefHeight="28"
-                               prefWidth="250.0" disable="true"
+                               prefWidth="250.0"
                                text="Wybierz kwantyfikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
                     <Button fx:id="selectQualifiersButton" onAction="#selectQualifiers" prefHeight="28"
-                               prefWidth="250.0" disable="true"
+                               prefWidth="250.0"
                                text="Wybierz kwalifikatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
                     <Button fx:id="selectSummarizersButton" onAction="#selectSummarizers" prefHeight="28"
-                               prefWidth="250.0" disable="true"
+                               prefWidth="250.0"
                                text="Wybierz summaryzatory">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
                     <Button fx:id="calculateButton" onAction="#proceedWithSummarization" prefHeight="28"
-                               prefWidth="250.0" disable="true"
+                               prefWidth="250.0"
                                text="Start">
                         <cursor>
                             <Cursor fx:constant="HAND"/>

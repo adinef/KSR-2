@@ -16,6 +16,14 @@ public class SelectionState {
     private ObservableList<FieldColumnTuple> allowedFields = FXCollections.emptyObservableList();
 
     public boolean isAllSelected() {
-        return !qualifiers.isEmpty() && !qualifiers.isEmpty() && !summarizers.isEmpty();
+        return !qualifiers.isEmpty() && !qualifiers.isEmpty() && !summarizers.isEmpty() && !allowedFields.isEmpty();
+    }
+
+    public boolean firstTypeReady() {
+        return !quantifiers.isEmpty() && !summarizers.isEmpty() && !allowedFields.isEmpty();
+    }
+
+    public boolean secondTypeReady() {
+        return isAllSelected();
     }
 }

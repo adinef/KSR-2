@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.Named;
 import net.script.data.annotations.Column;
-import net.script.data.entities.DCResMeasurement;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
 import net.script.logic.access.WorkingData;
@@ -27,13 +26,11 @@ import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.summarizer.Summarizer;
-import net.script.logic.summary.SummaryGeneratorK;
 import net.script.logic.summary.SummaryGeneratorY;
 import net.script.utils.*;
 import net.script.utils.functional.ConsumerWithException;
 import net.script.utils.functional.RunnableWithException;
 import net.script.utils.functional.SupplierWithException;
-import net.script.utils.tasking.Barrier;
 import net.script.utils.tasking.EntityReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,8 +52,6 @@ public class MainController implements Initializable {
     private final WorkingData workingData;
     private boolean isFullscreen;
 
-    private Barrier barrier = Barrier.of(3);
-
     @FXML
     private Tab tab1;
 
@@ -67,19 +62,7 @@ public class MainController implements Initializable {
     private Button saveQuantifiersButton;
 
     @FXML
-    private Button selectQualifiersButton;
-
-    @FXML
-    private Button selectQuantifiersButton;
-
-    @FXML
     private Button saveSummarizersButton;
-
-    @FXML
-    private Button selectSummarizersButton;
-
-    @FXML
-    private Button calculateButton;
 
     // ************** DATA ****************
     private SelectionState selectionState = new SelectionState();
@@ -270,10 +253,6 @@ public class MainController implements Initializable {
                                 )
                 )
         );
-        System.out.println(currentStateSupplier.get());
-        if (this.barrier.checkIn(objClass.getName())) {
-            calculateButton.setDisable(false);
-        }
     }
 
     @FXML
@@ -287,10 +266,6 @@ public class MainController implements Initializable {
                                 true
                         )
         );
-        System.out.println(selectionState.getAllowedFields());
-        this.selectQuantifiersButton.setDisable(false);
-        this.selectQualifiersButton.setDisable(false);
-        this.selectSummarizersButton.setDisable(false);
     }
 
     @FXML
@@ -359,7 +334,7 @@ public class MainController implements Initializable {
     @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
         // TEMPORARILY
-        if (selectionState.isAllSelected()) {
+        if (selectionState.firstTypeReady()) {
             //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
             //FIRST TYPE SUMMARIZATION
             List<Summary> summaries = new ArrayList<>();
