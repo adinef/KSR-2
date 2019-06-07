@@ -11,6 +11,7 @@ import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.settings.ConfigAccessor;
 import net.script.logic.settings.functions.FunctionsSettings;
+import net.script.logic.summarizer.Summarizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,15 @@ public class FuzzyData {
 
     private final ConfigAccessor<Qualifier> qualifierConfigAccessor;
     private final ConfigAccessor<Quantifier> quantifierConfigAccessor;
+    private final ConfigAccessor<Summarizer> summarizerConfigAccessor;
 
     @Autowired
-    public FuzzyData(ConfigAccessor<Qualifier> qualifierConfigAccessor, ConfigAccessor<Quantifier> quantifierConfigAccessor) {
+    public FuzzyData(ConfigAccessor<Qualifier> qualifierConfigAccessor,
+                     ConfigAccessor<Quantifier> quantifierConfigAccessor,
+                     ConfigAccessor<Summarizer> summarizerConfigAccessor) {
         this.qualifierConfigAccessor = qualifierConfigAccessor;
         this.quantifierConfigAccessor = quantifierConfigAccessor;
+        this.summarizerConfigAccessor = summarizerConfigAccessor;
     }
 
     public <T extends QFunction> Optional<QFunction> createFunctionForClass(Class<T> qFunctionClass, Double... params) {
@@ -61,8 +66,17 @@ public class FuzzyData {
         return qualifierConfigAccessor.read();
     }
 
+    public synchronized List<Summarizer> summarizers() throws Exception {
+        if (ApplicationVariables.determineRuntimeConfig()) {
+            return summarizerConfigAccessor.read(false);
+        }
+        return summarizerConfigAccessor.read();
+    }
+
     public synchronized void realoadData() throws Exception {
         qualifierConfigAccessor.read(false);
+        quantifierConfigAccessor.read(false);
+        summarizerConfigAccessor.read(false);
     }
 
     public synchronized void saveQualifiers() throws Exception {
@@ -71,6 +85,10 @@ public class FuzzyData {
 
     public synchronized void saveQuantifiers() throws Exception {
         quantifierConfigAccessor.saveCachedData();
+    }
+
+    public synchronized void saveSummarizers() throws Exception {
+        summarizerConfigAccessor.saveCachedData();
     }
 
     private <T extends QFunction> String functionNameFromClass(Class<T> tClass) {

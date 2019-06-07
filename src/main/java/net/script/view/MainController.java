@@ -1,6 +1,8 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSpinner;
+import com.sun.javafx.menu.MenuItemBase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +24,7 @@ import net.script.logic.access.WorkingData;
 import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
+import net.script.logic.summarizer.Summarizer;
 import net.script.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +42,7 @@ public class MainController implements Initializable {
     private final WorkingData workingData;
     private boolean isFullscreen;
 
-    private Barrier barrier = Barrier.of(2);
+    private Barrier barrier = Barrier.of(3);
 
     @FXML
     private Tab tab1;
@@ -55,6 +58,9 @@ public class MainController implements Initializable {
 
     @FXML
     private Button selectQuantifiersButton;
+
+    @FXML
+    private Button saveSummarizersButton;
 
     @FXML
     private Button calculateButton;
@@ -143,6 +149,14 @@ public class MainController implements Initializable {
         this.saveQualifiersButton.setDisable(false);
     }
 
+    public void showSummarizers() {
+        this.showLinguisticData(Summarizer.class,
+                "Summaryzatory",
+                fuzzyData::summarizers
+        );
+        this.saveSummarizersButton.setDisable(false);
+    }
+
     @FXML
     private void saveQualifiers() {
         CommonFXUtils.longTaskWithMessages(
@@ -157,6 +171,15 @@ public class MainController implements Initializable {
         CommonFXUtils.longTaskWithMessages(
                 fuzzyData::saveQuantifiers,
                 "Pomyślnie zapisano kwantyfikatory",
+                "Wystąpił błąd zapisu",
+                Main.getCurrentStage().getScene());
+    }
+
+    @FXML
+    private void saveSummarizers() {
+        CommonFXUtils.longTaskWithMessages(
+                fuzzyData::saveSummarizers,
+                "Pomyślnie zapisano saummaryzatory",
                 "Wystąpił błąd zapisu",
                 Main.getCurrentStage().getScene());
     }
@@ -224,11 +247,40 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void selectSummarizers(ActionEvent actionEvent) {
+        try {
+            this.workingData.setWorkingSummarizers(this.fuzzyData.summarizers());
+        } catch (Exception e) {
+            CommonFXUtils.noDataPopup(
+                    "Błąd",
+                    "Błąd w trakcie wyboru summaryzatorów. " + e.getLocalizedMessage(),
+                    Main.getCurrentStage().getScene()
+            );
+            e.printStackTrace();
+            return;
+        }
+        selectionState.setSummarizers(
+                FXCollections.observableList(
+                        FuzzyFXUtils
+                                .checkBoxSelectAlert(
+                                        this.workingData.workingSummarizers(selectionState.getAllowedFields()),
+                                        Main.getCurrentStage().getScene(),
+                                        selectionState.getSummarizers()
+                                )
+                )
+        );
+        System.out.println(selectionState.getSummarizers());
+        if (this.barrier.checkIn("sS")) {
+            calculateButton.setDisable(false);
+        }
+    }
+
+    @FXML
     private void selectAcceptableFields(ActionEvent actionEvent) {
         selectionState.setAllowedFields(
                 FuzzyFXUtils
                         .selectFieldByClassPopup(
-                                repository.getItemClass(),
+                                (Class<?>)repository.getItemClass(),
                                 Main.getCurrentStage().getScene(),
                                 selectionState.getAllowedFields(),
                                 true
@@ -258,6 +310,31 @@ public class MainController implements Initializable {
                             CommonFXUtils.noDataPopup(
                                     "Błąd",
                                     "Wystapił błąd przy odczycie kwalifikatorów. " + e.getLocalizedMessage(),
+                                    Main.getCurrentStage().getScene()
+                            );
+                        }
+                    }
+            );
+    }
+    @FXML
+    private void newSummarizer(ActionEvent actionEvent) {
+            Optional<Summarizer> summarizer =
+                    FuzzyFXUtils.newLinguisticVariablePopup(Summarizer.class, Main.getCurrentStage().getScene());
+        summarizer.ifPresent(
+                    (s) -> {
+                        try {
+                            this.fuzzyData.summarizers().add(s);
+                            this.saveQualifiersButton.setDisable(false);
+                            TableView tableViewOrNull = this.tableViewMap
+                                    .getOrDefault(Summarizer.class.getName(), null);
+                            if (tableViewOrNull != null) {
+                                log.info("updating tab for summarizers");
+                                tableViewOrNull.refresh();
+                            }
+                        } catch (Exception e) {
+                            CommonFXUtils.noDataPopup(
+                                    "Błąd",
+                                    "Wystapił błąd przy odczycie summaryzatorów. " + e.getLocalizedMessage(),
                                     Main.getCurrentStage().getScene()
                             );
                         }
@@ -341,7 +418,7 @@ public class MainController implements Initializable {
             Object selectedItem = tableView.getSelectionModel().getSelectedItem();
             if (selectedItem instanceof LinguisticVariable) {
                 LinguisticVariable lv = (LinguisticVariable) selectedItem;
-                Optional editQualifierOptional =
+                Optional<?> editQualifierOptional =
                         FuzzyFXUtils.editLVPopup(
                                 "Edytuj kwalifikator",
                                 lv,
@@ -351,7 +428,7 @@ public class MainController implements Initializable {
             }
             if (selectedItem instanceof Quantifier) {
                 Quantifier quantifier = (Quantifier) selectedItem;
-                Optional editQuantifierOptional =
+                Optional<?> editQuantifierOptional =
                         FuzzyFXUtils.editQuantifierPopup(
                                 "Edytuj kwantyfikator",
                                 quantifier,

@@ -25,4 +25,10 @@ public class PathConfig {
     public Path qualifiersPath() {
         return Paths.get("qf_settings.xml");
     }
+
+    @PathInjection(PathType.SUMMARIZERS)
+    @Bean
+    public Path summarizersPath() {
+        return Paths.get("s_settings.xml");
+    }
 }

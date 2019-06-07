@@ -6,10 +6,12 @@ import lombok.Data;
 import net.script.data.FieldColumnTuple;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
+import net.script.logic.summarizer.Summarizer;
 
 @Data
 public class SelectionState {
     private ObservableList<Quantifier> quantifiers = FXCollections.emptyObservableList();
     private ObservableList<Qualifier> qualifiers = FXCollections.emptyObservableList();
+    private ObservableList<Summarizer> summarizers = FXCollections.emptyObservableList();
     private ObservableList<FieldColumnTuple> allowedFields = FXCollections.emptyObservableList();
 }
