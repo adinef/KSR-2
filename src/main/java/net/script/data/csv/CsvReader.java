@@ -18,6 +18,7 @@ public class CsvReader {
                 .withIgnoreLeadingWhiteSpace(true)
                 .withMappingStrategy(mappingStrategy)
                 .build();
+
         return csvToBean.parse();
     }
 }

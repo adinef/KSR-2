@@ -22,5 +22,25 @@
             <coefficient name="b" value="2.0"/>
          </function>
       </summarizer>
+      <summarizer name="BTH" member="HF_BATHRM">
+         <range>
+            <start>0.0</start>
+            <end>1.0</end>
+         </range>
+         <function name="triangular">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="1.0"/>
+         </function>
+      </summarizer>
+      <summarizer name="BEDROOM" member="BEDRM">
+         <range>
+            <start>0.0</start>
+            <end>2.0</end>
+         </range>
+         <function name="triangular">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="2.0"/>
+         </function>
+      </summarizer>
    </definitions>
 </summarizers>

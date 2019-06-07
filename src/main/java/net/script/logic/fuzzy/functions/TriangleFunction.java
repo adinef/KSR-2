@@ -20,9 +20,9 @@ public class TriangleFunction implements QFunction {
     public double calculate(double x) {
         if (x > num - dis && x < num + dis) {
             if (x < num) {
-                return abs( abs(x) - abs(num) - dis ) / dis;
+                return ((1/dis) * (x - (num - dis)));
             } else {
-                return abs( abs(num) + dis - abs(x) ) / dis;
+                return (-(1/dis) * (x - (num + dis)));
             }
         }
         return 0;
