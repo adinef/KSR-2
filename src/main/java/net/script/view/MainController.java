@@ -286,7 +286,10 @@ public class MainController implements Initializable {
     @FXML
     private void newQualifier(ActionEvent actionEvent) {
         this.newElement(
-                () -> FuzzyFXUtils.newLinguisticVariablePopup(Qualifier.class, Main.getCurrentStage().getScene()),
+                () -> FuzzyFXUtils.newLinguisticVariablePopup(
+                        Qualifier.class,
+                        Main.getCurrentStage().getScene(),
+                        this.repository.getItemClass()),
                 (e) -> this.fuzzyData.qualifiers().add(e),
                 this.saveQualifiersButton,
                 Qualifier.class
@@ -295,7 +298,10 @@ public class MainController implements Initializable {
     @FXML
     private void newSummarizer(ActionEvent actionEvent) {
         this.newElement(
-                () -> FuzzyFXUtils.newLinguisticVariablePopup(Summarizer.class, Main.getCurrentStage().getScene()),
+                () -> FuzzyFXUtils.newLinguisticVariablePopup(
+                        Summarizer.class,
+                        Main.getCurrentStage().getScene(),
+                        this.repository.getItemClass()),
                 (e) -> this.fuzzyData.summarizers().add(e),
                 this.saveSummarizersButton,
                 Summarizer.class
@@ -343,7 +349,7 @@ public class MainController implements Initializable {
     private void proceedWithSummarization(ActionEvent actionEvent) {
         // TEMPORARILY
         if (selectionState.isAllSelected()) {
-            this.newTabWithContent(Summary.class, "Podsumowania", () -> FXCollections.emptyObservableList());
+            this.newTabWithContent(Summary.class, "Podsumowania", FXCollections::emptyObservableList);
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
@@ -429,7 +435,8 @@ public class MainController implements Initializable {
                         FuzzyFXUtils.editLVPopup(
                                 "Edytuj kwalifikator",
                                 lv,
-                                Main.getCurrentStage().getScene()
+                                Main.getCurrentStage().getScene(),
+                                this.repository.getItemClass()
                         );
                 editQualifierOptional.ifPresent((e) -> tableView.refresh());
             }
