@@ -10,5 +10,5 @@ public class Summary {
     private String content;
 
     @Column("Stopień prawdziwości")
-    private String degreeOfTruth;
+    private double degreeOfTruth;
 }

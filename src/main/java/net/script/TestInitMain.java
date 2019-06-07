@@ -44,10 +44,12 @@ public class TestInitMain {
 
 
         Qualifier bathrooms = new Qualifier("dużo łazienek", "BATHRM", new TriangleFunction(3.0, 5.0, 7.0), new Range(3D, 4D));
-        Qualifier landarea = new Qualifier("ogromną działkę", "LANDAREA", new TriangleFunction(30000D, 500000D, 970000D), new Range(0D, 0D));
+        Qualifier landarea = new Qualifier("ogromną działkę", "LANDAREA", new TriangleFunction(30000D, 500000D, 1000000D), new Range(0D, 0D));
 
         Quantifier duzoQuant = new Quantifier("dużo", new TriangleFunction(0.49, 0.75D, 1.01D));
+        Quantifier ponadPolowaQuant = new Quantifier("ponad połowa", new TriangleFunction(0.5,0.55,0.6));
         Quantifier maloQuant = new Quantifier("mało", new TriangleFunction(0.00,0.25D, 0.48D));
+        Quantifier prawieWszystkieQuant = new Quantifier("prawie wszystkie",new TriangleFunction(0.95,1.0,1.0));
         //Quantifier pojebanyQuant = new Quantifier("chuj mnie to obchodzi ile", new RectangularFunction(0D, 1D));
 
         Summarizer bedroomsSum = new Summarizer("wchuj sypialni", "BEDRM", new TriangleFunction(10D,50D, 90D), new Range(0D, 0D));
@@ -58,14 +60,16 @@ public class TestInitMain {
         List<Quantifier> quantifiers = new ArrayList<>();
         quantifiers.add(maloQuant);
         quantifiers.add(duzoQuant);
+        quantifiers.add(ponadPolowaQuant);
+        quantifiers.add(prawieWszystkieQuant);
         List<Summarizer> summarizers = new ArrayList<>();
         summarizers.add(bedroomsSum);
 
-        Summary summary = createSummary(dcResMeasurements, quantifiers, qualifiers, summarizers);
-        System.out.println(summary.getContent());
+        Summary summary = createSummaryThirdType(dcResMeasurements, quantifiers, qualifiers, summarizers);
+        System.out.println(summary.getContent() + " [" + summary.getDegreeOfTruth() + "]");
     }
 
-    private static Summary createSummary(List<?> dcResMeasurements, List<Quantifier> quantifiers, List<Qualifier> qualifiers, List<Summarizer> summarizers) {
+    private static Summary createSummaryThirdType(List<?> dcResMeasurements, List<Quantifier> quantifiers, List<Qualifier> qualifiers, List<Summarizer> summarizers) {
         List<FuzzySet> f = new ArrayList<>();
         for (Qualifier q : qualifiers) {
             f.add(FuzzySet.with(dcResMeasurements).from(q));
@@ -74,12 +78,13 @@ public class TestInitMain {
         FuzzySet summarizersSet = FuzzySet.with(dcResMeasurements).from(summarizers.get(0));
         FuzzySet wyrazenie = FuzzySet.intersect(qualifiersSet,summarizersSet);
         double finalSizeNormalized = wyrazenie.size() * 1.0/qualifiersSet.size();
+        System.out.println(finalSizeNormalized);
         assert wyrazenie.size() > 0;
-        double max = 0;
+        double max = 0.01;
         String name = "";
         for(Quantifier q : quantifiers) {
             if (q.calculate(finalSizeNormalized) > max) {
-                max = q.calculate(wyrazenie.size());
+                max = q.calculate(finalSizeNormalized);
                 name = q.getName();
             }
         }
@@ -90,6 +95,7 @@ public class TestInitMain {
         }
         podsumowanie += "ma " + summarizers.get(0).getName();
         s.setContent(podsumowanie);
+        s.setDegreeOfTruth(max);
         return s;
     }
 
