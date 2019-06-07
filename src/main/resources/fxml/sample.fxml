@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="705.0" prefWidth="1055.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
+      prefHeight="705.0" prefWidth="1200.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
     <HBox onMouseClicked="#barClicked">
         <MenuBar style="-fx-background-color: transparent;">
@@ -67,44 +67,49 @@
     </HBox>
     <TabPane tabMinWidth="75">
         <Tab fx:id="tab1" text="Panel ustawień" closable="false">
-            <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
-                <Label styleClass="header">Podsumowania</Label>
-                <Button fx:id="selectAcceptableFieldsButton" onAction="#selectAcceptableFields" prefHeight="28"
-                        prefWidth="250.0"
-                        text="Wybierz pola">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="selectQuantifiersButton" onAction="#selectQuantifiers" prefHeight="28"
-                        prefWidth="250.0"
-                        text="Wybierz kwantyfikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="selectQualifiersButton" onAction="#selectQualifiers" prefHeight="28"
-                        prefWidth="250.0"
-                        text="Wybierz kwalifikatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="selectSummarizersButton" onAction="#selectSummarizers" prefHeight="28"
-                        prefWidth="250.0"
-                        text="Wybierz summaryzatory">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <Button fx:id="calculateButton" onAction="#proceedWithSummarization" prefHeight="28"
-                        prefWidth="250.0"
-                        text="Start">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-            </VBox>
+            <HBox spacing="15" minHeight="700">
+                <VBox prefWidth="200" spacing="20" styleClass="vbox_bordered">
+                    <Label styleClass="header">Podsumowania</Label>
+                    <Button fx:id="selectAcceptableFieldsButton" onAction="#selectAcceptableFields" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Wybierz pola">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button fx:id="selectQuantifiersButton" onAction="#selectQuantifiers" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Wybierz kwantyfikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button fx:id="selectQualifiersButton" onAction="#selectQualifiers" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Wybierz kwalifikatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button fx:id="selectSummarizersButton" onAction="#selectSummarizers" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Wybierz summaryzatory">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <Button fx:id="calculateButton" onAction="#proceedWithSummarization" prefHeight="28"
+                            prefWidth="250.0"
+                            text="Start">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                </VBox>
+                <HBox fx:id="summaryDataChosenBox" spacing="15" maxWidth="Infinity">
+
+                </HBox>
+            </HBox>
         </Tab>
     </TabPane>
 </VBox>

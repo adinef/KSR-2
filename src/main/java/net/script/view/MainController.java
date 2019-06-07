@@ -1,5 +1,6 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -7,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -17,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
+import net.script.data.FieldColumnTuple;
 import net.script.data.Named;
 import net.script.data.annotations.Column;
 import net.script.data.repositories.CachingRepository;
@@ -40,6 +43,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.script.data.annotations.enums.Author.*;
 
@@ -52,6 +56,9 @@ public class MainController implements Initializable {
     private final WorkingData workingData;
     private final SettingsPopup settingsPopup;
     private boolean isFullscreen;
+
+    @FXML
+    private HBox summaryDataChosenBox;
 
     @FXML
     private Tab tab1;
@@ -73,6 +80,9 @@ public class MainController implements Initializable {
     private Map<String, TableView> tableViewMap = new HashMap<>();
     // **********************************************************
 
+    //*************** Selected data elems mapping ***************
+    private Map<Class, List<Node>> nodesMapping = new HashMap<>();
+    // **********************************************************
 
     @Autowired
     public MainController(
@@ -205,6 +215,13 @@ public class MainController implements Initializable {
                 this.workingData::workingQuantifiers,
                 () -> selectionState.getQuantifiers()
         );
+        if (!selectionState.getQuantifiers().isEmpty()) {
+            this.setListView(
+                    Quantifier.class,
+                    "Wybrane kwantyfikatory",
+                    () -> selectionState.getQuantifiers().stream().map(Quantifier::getName).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -216,6 +233,13 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
                 () -> selectionState.getQualifiers()
         );
+        if (!selectionState.getQualifiers().isEmpty()) {
+            this.setListView(
+                    Qualifier.class,
+                    "Wybrane kwalifikatory",
+                    () -> selectionState.getQualifiers().stream().map(Qualifier::getName).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -227,6 +251,39 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
                 () -> selectionState.getSummarizers()
         );
+        if (!selectionState.getSummarizers().isEmpty()) {
+            this.setListView(
+                    Summarizer.class,
+                    "Wybrane sumaryzatory",
+                    () -> selectionState.getSummarizers().stream().map(Summarizer::getName).collect(Collectors.toList())
+            );
+        }
+    }
+
+    private void setListView(Class<?> elemClass,
+                             String title,
+                             Supplier<List<String>> valuesSupplier) {
+        List<Node> nodes;
+        if (this.nodesMapping.containsKey(elemClass)) {
+            nodes = this.nodesMapping.get(elemClass);
+            nodes.clear();
+        } else {
+            nodes = new ArrayList<>();
+            this.nodesMapping.put(elemClass, nodes);
+        }
+        VBox vBox = new VBox();
+        Label label = new Label(title);
+        JFXListView<String> list = new JFXListView<>();
+        list.setMinHeight(500);
+        list.getItems().addAll(
+                valuesSupplier.get()
+        );
+        vBox.getChildren().addAll(label, list);
+        nodes.add(vBox);
+        this.summaryDataChosenBox.getChildren().clear();
+        for (List<Node> valList : this.nodesMapping.values()) {
+            this.summaryDataChosenBox.getChildren().addAll(valList);
+        }
     }
 
 
@@ -269,6 +326,13 @@ public class MainController implements Initializable {
                                 true
                         )
         );
+        if (!selectionState.getAllowedFields().isEmpty()) {
+            this.setListView(
+                    FieldColumnTuple.class,
+                    "Wybrane pola",
+                    () -> selectionState.getAllowedFields().stream().map(FieldColumnTuple::name).collect(Collectors.toList())
+            );
+        }
     }
 
     @FXML
@@ -341,11 +405,11 @@ public class MainController implements Initializable {
             //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
             //FIRST TYPE SUMMARIZATION
             List<Summary> summaries = new ArrayList<>();
-            for(Summarizer s : selectionState.getSummarizers()) {
+            for (Summarizer s : selectionState.getSummarizers()) {
 
-                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(),selectionState.getQuantifiers(),s));
+                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(), selectionState.getQuantifiers(), s));
             }
-            this.newTabWithContent(Summary.class, "Podsumowania", ()->FXCollections.observableList(summaries),false,null);
+            this.newTabWithContent(Summary.class, "Podsumowania", () -> FXCollections.observableList(summaries), false, null);
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
