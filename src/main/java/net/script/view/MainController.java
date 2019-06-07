@@ -364,7 +364,8 @@ public class MainController implements Initializable {
             //FIRST TYPE SUMMARIZATION
             List<Summary> summaries = new ArrayList<>();
             for(Summarizer s : selectionState.getSummarizers()) {
-                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(),workingData.workingQuantifiers(),s));
+
+                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(),selectionState.getQuantifiers(),s));
             }
             this.newTabWithContent(Summary.class, "Podsumowania", ()->FXCollections.observableList(summaries),false,null);
         } else {
