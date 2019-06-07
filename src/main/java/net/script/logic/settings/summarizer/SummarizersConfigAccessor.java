@@ -38,8 +38,8 @@ public class SummarizersConfigAccessor implements ConfigAccessor<Summarizer> {
             File file = new File(SETTINGS_FILE_PATH.toString());
             SummarizersSettings read = serializer.read(SummarizersSettings.class, file);
             this.cached = new LinkedList<>();
-            List<SimpleLinguisticVariableSetting> quantifiers = read.getSummarizers();
-            for (SimpleLinguisticVariableSetting setting : quantifiers) {
+            List<SimpleLinguisticVariableSetting> summarizers = read.getSummarizers();
+            for (SimpleLinguisticVariableSetting setting : summarizers) {
                 QFunction function = QFunctionFactory.getFunction(setting.getFunctionSetting());
                 this.cached.add(
                         new Summarizer(

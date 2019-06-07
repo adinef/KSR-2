@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
+import net.script.data.Named;
 import net.script.data.annotations.enums.Author;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
@@ -31,6 +32,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static net.script.data.annotations.enums.Author.*;
 
 @Controller
 @Slf4j
@@ -123,8 +126,8 @@ public class MainController implements Initializable {
         CommonFXUtils.noDataPopup(
                 "Autorzy",
                 String.format("Projekt zrealizowany przez %s (%s), %s (%s) ",
-                        Author.AdrianFijalkowski.fullName(), Author.AdrianFijalkowski.indexNumber(),
-                        Author.BartoszGoss.fullName(), Author.BartoszGoss.indexNumber()),
+                        AdrianFijalkowski.fullName(), AdrianFijalkowski.indexNumber(),
+                        BartoszGoss.fullName(), BartoszGoss.indexNumber()),
                 Main.getCurrentStage().getScene()
         );
     }
@@ -137,7 +140,8 @@ public class MainController implements Initializable {
 
     public void showQuantifiers() {
         this.showLinguisticData(
-                Quantifier.class, "Kwantyfikatory",
+                Quantifier.class,
+                "Kwantyfikatory",
                 fuzzyData::quantifiers
         );
         this.saveQuantifiersButton.setDisable(false);
@@ -192,87 +196,66 @@ public class MainController implements Initializable {
 
     @FXML
     private void selectQuantifiers(ActionEvent actionEvent) {
-        try {
-            this.workingData.setWorkingQuantifiers(this.fuzzyData.quantifiers());
-        } catch (Exception e) {
-            CommonFXUtils.noDataPopup(
-                    "Błąd",
-                    "Błąd w trakcie wyboru kwantyfikatorów. " + e.getLocalizedMessage(),
-                    Main.getCurrentStage().getScene()
-            );
-            e.printStackTrace();
-            return;
-        }
-        selectionState.setQuantifiers(
-                FXCollections.observableList(
-                        FuzzyFXUtils
-                                .checkBoxSelectAlert(
-                                        this.workingData.workingQuantifiers(),
-                                        Main.getCurrentStage().getScene(),
-                                        selectionState.getQuantifiers()
-                                )
-                )
+        this.selectData(
+                () -> this.workingData.setWorkingQuantifiers(this.fuzzyData.quantifiers()),
+                Quantifier.class,
+                (list) -> selectionState.setQuantifiers(list),
+                this.workingData::workingQuantifiers,
+                () -> selectionState.getQuantifiers()
         );
-        System.out.println(selectionState.getQuantifiers());
-        if (this.barrier.checkIn("sQf")) {
-            calculateButton.setDisable(false);
-        }
     }
 
     @FXML
     private void selectQualifiers(ActionEvent actionEvent) {
-        try {
-            this.workingData.setWorkingQualifiers(this.fuzzyData.qualifiers());
-        } catch (Exception e) {
-            CommonFXUtils.noDataPopup(
-                    "Błąd",
-                    "Błąd w trakcie wyboru kwalifikatorów. " + e.getLocalizedMessage(),
-                    Main.getCurrentStage().getScene()
-            );
-            e.printStackTrace();
-            return;
-        }
-        selectionState.setQualifiers(
-                FXCollections.observableList(
-                        FuzzyFXUtils
-                                .checkBoxSelectAlert(
-                                        this.workingData.workingQualifiers(selectionState.getAllowedFields()),
-                                        Main.getCurrentStage().getScene(),
-                                        selectionState.getQualifiers()
-                                )
-                )
+        this.selectData(
+                () -> this.workingData.setWorkingQualifiers(this.fuzzyData.qualifiers()),
+                Qualifier.class,
+                (list) -> selectionState.setQualifiers(list),
+                () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
+                () -> selectionState.getQualifiers()
         );
-        System.out.println(selectionState.getQualifiers());
-        if (this.barrier.checkIn("sQl")) {
-            calculateButton.setDisable(false);
-        }
     }
 
     @FXML
     private void selectSummarizers(ActionEvent actionEvent) {
+        this.selectData(
+                () -> this.workingData.setWorkingSummarizers(this.fuzzyData.summarizers()),
+                Summarizer.class,
+                (list) -> selectionState.setSummarizers(list),
+                () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
+                () -> selectionState.getSummarizers()
+        );
+    }
+
+
+    private <T extends Named> void selectData(RunnableWithException initializer,
+                                              Class<T> objClass,
+                                              Consumer<ObservableList<T>> selectionConsumer,
+                                              Supplier<List<T>> workingDataSupplier,
+                                              Supplier<List<T>> currentStateSupplier) {
         try {
-            this.workingData.setWorkingSummarizers(this.fuzzyData.summarizers());
+            initializer.run();
         } catch (Exception e) {
             CommonFXUtils.noDataPopup(
                     "Błąd",
-                    "Błąd w trakcie wyboru summaryzatorów. " + e.getLocalizedMessage(),
+                    "Błąd w trakcie wyboru " + objClass.getName() + ". " + e.getLocalizedMessage(),
                     Main.getCurrentStage().getScene()
             );
             e.printStackTrace();
             return;
         }
-        selectionState.setSummarizers(
-                FXCollections.observableList(
-                        FuzzyFXUtils
-                                .checkBoxSelectAlert(
-                                        this.workingData.workingSummarizers(selectionState.getAllowedFields()),
-                                        Main.getCurrentStage().getScene(),
-                                        selectionState.getSummarizers()
-                                )
-                )
+        selectionConsumer.accept(
+            FXCollections.observableList(
+                    FuzzyFXUtils
+                            .checkBoxSelectAlert(
+                                    workingDataSupplier.get(),
+                                    Main.getCurrentStage().getScene(),
+                                    currentStateSupplier.get()
+                            )
+            )
         );
-        System.out.println(selectionState.getSummarizers());
-        if (this.barrier.checkIn("sS")) {
+        System.out.println(currentStateSupplier.get());
+        if (this.barrier.checkIn(objClass.getName())) {
             calculateButton.setDisable(false);
         }
     }

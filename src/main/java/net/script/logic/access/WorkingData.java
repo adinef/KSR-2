@@ -40,7 +40,7 @@ public class WorkingData {
 
     public void setWorkingSummarizers(List<Summarizer> summarizers, boolean setIfEmpty) {
         if (setIfEmpty) {
-            if (this.qualifiers == null) {
+            if (this.summarizers == null) {
                 this.summarizers = summarizers;
             }
         } else {
