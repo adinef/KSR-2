@@ -45,5 +45,53 @@
             <coefficient name="c" value="4.0"/>
          </function>
       </summarizer>
+      <summarizer name="mało sypialni" member="BEDRM">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="1.0"/>
+            <coefficient name="c" value="2.0"/>
+            <coefficient name="d" value="4.0"/>
+         </function>
+      </summarizer>
+      <summarizer name="średnio sypialni" member="BEDRM">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="3.0"/>
+            <coefficient name="b" value="4.0"/>
+            <coefficient name="c" value="6.0"/>
+            <coefficient name="d" value="7.0"/>
+         </function>
+      </summarizer>
+      <summarizer name="dużo sypialni" member="BEDRM">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="5.0"/>
+            <coefficient name="b" value="7.0"/>
+            <coefficient name="c" value="30.0"/>
+            <coefficient name="d" value="31.0"/>
+         </function>
+      </summarizer>
+      <summarizer name="obojętnie jaką wielkość działki" member="LANDAREA">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="1000000.0"/>
+            <coefficient name="c" value="1000000.0"/>
+            <coefficient name="d" value="1000001.0"/>
+         </function>
+      </summarizer>
    </definitions>
 </summarizers>

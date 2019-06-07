@@ -23,5 +23,29 @@
             <coefficient name="c" value="3.0"/>
          </function>
       </qualifier>
+      <qualifier name="TWOJA STARA ŁAZIENKA" member="BATHRM">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="0.0"/>
+            <coefficient name="c" value="100.0"/>
+            <coefficient name="d" value="100.0"/>
+         </function>
+      </qualifier>
+      <qualifier name="PÓŁ TWOJEJ STAREJ ŁAZIENKI" member="HF_BATHRM">
+         <range>
+            <start>0.0</start>
+            <end>0.0</end>
+         </range>
+         <function name="trapezoid">
+            <coefficient name="a" value="0.0"/>
+            <coefficient name="b" value="0.0"/>
+            <coefficient name="c" value="100.0"/>
+            <coefficient name="d" value="100.0"/>
+         </function>
+      </qualifier>
    </definitions>
 </qualifiers>

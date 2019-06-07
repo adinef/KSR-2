@@ -26,7 +26,7 @@ import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.summarizer.Summarizer;
-import net.script.logic.summary.SummaryGeneratorY;
+import net.script.logic.summary.SummaryGenerator;
 import net.script.utils.*;
 import net.script.utils.functional.ConsumerWithException;
 import net.script.utils.functional.RunnableWithException;
@@ -51,6 +51,7 @@ public class MainController implements Initializable {
     private final FuzzyData fuzzyData;
     private final WorkingData workingData;
     private boolean isFullscreen;
+    private List<Summary> summaries = new ArrayList<>();
 
     @FXML
     private Tab tab1;
@@ -337,12 +338,11 @@ public class MainController implements Initializable {
         if (selectionState.firstTypeReady()) {
             //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
             //FIRST TYPE SUMMARIZATION
-            List<Summary> summaries = new ArrayList<>();
-            for(Summarizer s : selectionState.getSummarizers()) {
-
-                summaries.add(SummaryGeneratorY.createSummaryFirstType(repository.findAll(),selectionState.getQuantifiers(),s));
-            }
-            this.newTabWithContent(Summary.class, "Podsumowania", ()->FXCollections.observableList(summaries),false,null);
+            //List<Summary> summaries = new ArrayList<>();
+            summaries.addAll(SummaryGenerator.createSummary(repository.findAll(), selectionState.getQuantifiers(), selectionState.getQualifiers(), selectionState.getSummarizers()));
+            this.newTabWithContent(Summary.class, "Podsumowania", () -> FXCollections.observableList(summaries), true, (deletedElem) -> {
+                this.summaries.remove(deletedElem);
+            });
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
