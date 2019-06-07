@@ -1,4 +1,4 @@
-package net.script.utils;
+package net.script.utils.functional;
 
 @FunctionalInterface
 public interface SupplierWithException<T> {

@@ -1,4 +1,4 @@
-package net.script.utils;
+package net.script.utils.tasking;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -469,7 +469,7 @@ public class FuzzyFXUtils {
                 .forEach( (field) -> {
                     extractColumn(field)
                             .ifPresent( column -> {
-                                if (column.fuzzyable()) {
+                                if (column.fuzzable()) {
                                     data.add(new FieldColumnTuple(field, column));
                                 }
                             });

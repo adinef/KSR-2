@@ -1,12 +1,9 @@
-package net.script.utils;
+package net.script.utils.tasking;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import net.script.utils.functional.RunnableWithException;
 
 @Slf4j
 public class LongTask extends Service<Boolean> {

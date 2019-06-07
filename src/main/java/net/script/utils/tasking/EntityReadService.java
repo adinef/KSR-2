@@ -1,4 +1,4 @@
-package net.script.utils;
+package net.script.utils.tasking;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;

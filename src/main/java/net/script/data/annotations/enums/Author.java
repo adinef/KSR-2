@@ -3,7 +3,7 @@ package net.script.data.annotations.enums;
 public enum Author {
     BartoszGoss("Bartosz Goss", 207230),
     AdrianFijalkowski("Adrian Fijałkowski", 210171),
-    NotSpecfified("Nikt", 0 );
+    NotSpecfified("Nie sprecyzowano", null );
 
     private final String name;
     private final Integer index;

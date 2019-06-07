@@ -36,14 +36,14 @@ public class DCResMeasurement {
     )
     private String lotID;
 
-    @Column(value = "BATHRM", fuzzyable = true)
+    @Column(value = "BATHRM", fuzzable = true)
     @CsvBindByName(column = "BATHRM")
     @Comment(
             value = "Number of full bathrooms"
     )
     private Integer noBathrooms;
 
-    @Column(value = "HF_BATHRM", fuzzyable = true)
+    @Column(value = "HF_BATHRM", fuzzable = true)
     @CsvBindByName(column = "HF_BATHRM")
     @Comment(
             value = "Number of half bathrooms (no shower or tub)"
@@ -71,28 +71,28 @@ public class DCResMeasurement {
     )
     private String isAirConditioned;
 
-    @Column(value = "NUM_UNITS", fuzzyable = true)
+    @Column(value = "NUM_UNITS", fuzzable = true)
     @CsvBindByName(column = "NUM_UNITS")
     @Comment(
             value = "Number of units"
     )
     private Integer noUnits;
 
-    @Column(value = "ROOMS", fuzzyable = true)
+    @Column(value = "ROOMS", fuzzable = true)
     @CsvBindByName(column = "ROOMS")
     @Comment(
             value = "Number of rooms"
     )
     private Integer noRooms;
 
-    @Column(value = "BEDRM", fuzzyable = true)
+    @Column(value = "BEDRM", fuzzable = true)
     @CsvBindByName(column = "BEDRM")
     @Comment(
             value = "Number of bedrooms"
     )
     private Integer noBedrooms;
 
-    @Column(value = "AYB", fuzzyable = true)
+    @Column(value = "AYB", fuzzable = true)
     @CsvBindByName(column = "AYB")
     @Comment(
             value = "The earliest time the main portion of the building was built." +
@@ -100,14 +100,14 @@ public class DCResMeasurement {
     )
     private Integer yearBuilt;
 
-    @Column(value = "YR_RMDL", fuzzyable = true)
+    @Column(value = "YR_RMDL", fuzzable = true)
     @CsvBindByName(column = "YR_RMDL")
     @Comment(
             value = "Last year residence was remodeled"
     )
     private Integer yearRemodelled;
 
-    @Column(value = "STORIES", fuzzyable = true)
+    @Column(value = "STORIES", fuzzable = true)
     @CsvBindByName(column = "STORIES")
     @Comment(
             value = "Stories"
@@ -122,7 +122,7 @@ public class DCResMeasurement {
     )
     private LocalDate dateOfRecentSale;
 
-    @Column(value = "PRICE", fuzzyable = true)
+    @Column(value = "PRICE", fuzzable = true)
     @CsvBindByName(column = "PRICE")
     @Comment(
             value = "Price of most recent sale",
@@ -130,7 +130,7 @@ public class DCResMeasurement {
     )
     private Float recentSalePrice;
 
-    @Column(value = "SALE_NUM", fuzzyable = true)
+    @Column(value = "SALE_NUM", fuzzable = true)
     @CsvBindByName(column = "SALE_NUM")
     @Comment(
             value = "Sale number since May 2014",
@@ -138,28 +138,28 @@ public class DCResMeasurement {
     )
     private String saleNumber;
 
-    @Column(value = "GBA", fuzzyable = true)
+    @Column(value = "GBA", fuzzable = true)
     @CsvBindByName(column = "GBA")
     @Comment(
             value = "Gross building area in square feet "
     )
     private Integer gbArea;
 
-    @Column(value = "KITCHENS", fuzzyable = true)
+    @Column(value = "KITCHENS", fuzzable = true)
     @CsvBindByName(column = "KITCHENS")
     @Comment(
             value = "Number of kitchens "
     )
     private Integer noKitchens;
 
-    @Column(value = "FIREPLACES", fuzzyable = true)
+    @Column(value = "FIREPLACES", fuzzable = true)
     @CsvBindByName(column = "FIREPLACES")
     @Comment(
             value = "Number of fireplaces "
     )
     private Integer noFireplaces;
 
-    @Column(value = "LANDAREA", fuzzyable = true)
+    @Column(value = "LANDAREA", fuzzable = true)
     @CsvBindByName(column = "LANDAREA")
     @Comment(
             value = "Land area of property in square feet"
