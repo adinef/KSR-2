@@ -8,6 +8,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -141,14 +143,19 @@ public class MainController implements Initializable {
     @FXML
     @SuppressWarnings("unchecked")
     private void loadData() {
-        this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
+        this.newTabWithContent(
+                repository.getItemClass(),
+                "Dane",
+                repository::findAll,
+                false,
+                null);
     }
 
     public void showQuantifiers() {
         this.showLinguisticData(
                 Quantifier.class,
                 "Kwantyfikatory",
-                fuzzyData::quantifiers
+                workingData::workingQuantifiers
         );
         this.saveQuantifiersButton.setDisable(false);
     }
@@ -156,7 +163,7 @@ public class MainController implements Initializable {
     public void showQualifiers() {
         this.showLinguisticData(Qualifier.class,
                 "Kwalifikatory",
-                fuzzyData::qualifiers
+                workingData::workingQualifiers
         );
         this.saveQualifiersButton.setDisable(false);
     }
@@ -164,7 +171,7 @@ public class MainController implements Initializable {
     public void showSummarizers() {
         this.showLinguisticData(Summarizer.class,
                 "Summaryzatory",
-                fuzzyData::summarizers
+                workingData::workingSummarizers
         );
         this.saveSummarizersButton.setDisable(false);
     }
@@ -251,14 +258,14 @@ public class MainController implements Initializable {
             return;
         }
         selectionConsumer.accept(
-            FXCollections.observableList(
-                    FuzzyFXUtils
-                            .checkBoxSelectAlert(
-                                    workingDataSupplier.get(),
-                                    Main.getCurrentStage().getScene(),
-                                    currentStateSupplier.get()
-                            )
-            )
+                FXCollections.observableList(
+                        FuzzyFXUtils
+                                .checkBoxSelectAlert(
+                                        workingDataSupplier.get(),
+                                        Main.getCurrentStage().getScene(),
+                                        currentStateSupplier.get()
+                                )
+                )
         );
         System.out.println(currentStateSupplier.get());
         if (this.barrier.checkIn(objClass.getName())) {
@@ -271,7 +278,7 @@ public class MainController implements Initializable {
         selectionState.setAllowedFields(
                 FuzzyFXUtils
                         .selectFieldByClassPopup(
-                                (Class<?>)repository.getItemClass(),
+                                (Class<?>) repository.getItemClass(),
                                 Main.getCurrentStage().getScene(),
                                 selectionState.getAllowedFields(),
                                 true
@@ -295,6 +302,7 @@ public class MainController implements Initializable {
                 Qualifier.class
         );
     }
+
     @FXML
     private void newSummarizer(ActionEvent actionEvent) {
         this.newElement(
@@ -349,7 +357,11 @@ public class MainController implements Initializable {
     private void proceedWithSummarization(ActionEvent actionEvent) {
         // TEMPORARILY
         if (selectionState.isAllSelected()) {
-            this.newTabWithContent(Summary.class, "Podsumowania", FXCollections::emptyObservableList);
+            this.newTabWithContent(Summary.class,
+                    "Podsumowania",
+                    FXCollections::emptyObservableList,
+                    false,
+                    null);
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
@@ -369,12 +381,28 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         ObservableList<T> finalRead = read;
-        this.newTabWithContent(tClass, tabname, () -> finalRead);
+        this.newTabWithContent(tClass, tabname, () -> finalRead, true, (deletedElem) -> {
+            System.out.println(deletedElem);
+            if (Qualifier.class.equals(tClass)) {
+                this.workingData.workingQualifiers().remove(deletedElem);
+                this.selectionState.getQualifiers().remove(deletedElem);
+            } else if (Quantifier.class.equals(tClass)) {
+                this.workingData.workingQuantifiers().remove(deletedElem);
+                this.selectionState.getQuantifiers().remove(deletedElem);
+            } else if (Summarizer.class.equals(tClass)) {
+                this.workingData.workingSummarizers().remove(deletedElem);
+                this.selectionState.getSummarizers().remove(deletedElem);
+            }
+        });
     }
 
 
     @SuppressWarnings("unchecked")
-    private <T> void newTabWithContent(Class<T> tClass, String name, Supplier<Iterable<T>> dataSupplier) {
+    private <T> void newTabWithContent(Class<T> tClass,
+                                       String name,
+                                       Supplier<Iterable<T>> dataSupplier,
+                                       boolean deletable,
+                                       Consumer<T> deleteConsumer) {
         EntityReadService<T> task = new EntityReadService<>(dataSupplier);
         VBox vBox = new VBox();
         vBox.setSpacing(10);
@@ -391,6 +419,9 @@ public class MainController implements Initializable {
         tableView.getColumns().addAll(simpleColumns);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
+        if (deletable) {
+            tableView.setOnKeyPressed((e) -> this.askForDelete(e, tableView, deleteConsumer));
+        }
         Tab e1 = new Tab(name, vBox);
         tab1.getTabPane().getTabs().add(e1);
         HBox hBox = new HBox();
@@ -408,6 +439,22 @@ public class MainController implements Initializable {
         );
         task.start();
         this.tableViewMap.put(tClass.getName(), tableView);
+    }
+
+    private <T> void askForDelete(KeyEvent e, TableView<T> tableView, Consumer<T> deleteConsumer) {
+        if (e.getCode() == KeyCode.DELETE) {
+            boolean delete = CommonFXUtils
+                    .yesNoPopup("Usuwanie",
+                            "Czy na pewno usunąć element?",
+                            Main.getCurrentStage().getScene()
+                    );
+            if (delete) {
+                T selectedItem = tableView.getSelectionModel().getSelectedItem();
+                deleteConsumer.accept(selectedItem);
+                tableView.getItems().remove(selectedItem);
+                tableView.refresh();
+            }
+        }
     }
 
     private <T> void setColumnToolTipIfAvailible(Class<T> tClass, List<TableColumn<String, T>> simpleColumns) {
