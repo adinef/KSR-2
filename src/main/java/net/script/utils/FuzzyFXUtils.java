@@ -41,27 +41,13 @@ public class FuzzyFXUtils {
     public static final String PROPER_NUMBER_PATTERN = "\\d{0,7}([\\.]\\d{0,4})?";
 
     public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass, Scene scene, List<FieldColumnTuple> alreadySelected) {
-        Field[] declaredFields = tClass.getDeclaredFields();
-        ObservableList<FieldColumnTuple> acceptableData = FXCollections.observableArrayList();
-        for (Field field : declaredFields) {
-            Column annotation = field.getAnnotation(Column.class);
-            if (annotation != null) {
-                acceptableData.add(new FieldColumnTuple(field, annotation));
-            }
-        }
-        VBox data = new VBox();
-        data.setMinHeight(500);
-        data.setSpacing(10);
-        ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
-        for (FieldColumnTuple fieldColumnTuple : acceptableData) {
-            JFXCheckBox checkBox = new JFXCheckBox(fieldColumnTuple.getColumn().value());
-            if (alreadySelected.contains(fieldColumnTuple)) {
-                checkBox.setSelected(true);
-            }
-            checkBoxes.add(checkBox);
-        }
-        data.getChildren().addAll(checkBoxes);
-
+        ObservableList<FieldColumnTuple> acceptableData = extractAcceptableData(tClass.getDeclaredFields());
+        ObservableList<JFXCheckBox> checkBoxes =
+                checkBoxesFor(acceptableData, alreadySelected, FieldColumnTuple::name);
+        VBox mainVBox = new VBox();
+        mainVBox.setMinHeight(500);
+        mainVBox.setSpacing(10);
+        mainVBox.getChildren().addAll(checkBoxes);
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
         JFXButton closeButton = new JFXButton("Zamknij");
@@ -70,7 +56,7 @@ public class FuzzyFXUtils {
             alert.hideWithAnimation();
         });
         layout.setHeading(new Label("Wybierz pola"));
-        layout.setBody(data);
+        layout.setBody(mainVBox);
         layout.setActions(closeButton);
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
         alert.initModality(Modality.WINDOW_MODAL);
@@ -79,24 +65,25 @@ public class FuzzyFXUtils {
         alert.showAndWait();
 
         ObservableList<FieldColumnTuple> selectedElements = FXCollections.observableArrayList();
-        for (FieldColumnTuple fieldColumnTuple : acceptableData) {
-            Optional<JFXCheckBox> first = checkBoxes
-                    .stream()
-                    .filter((e) -> e.getText().equals(fieldColumnTuple.getColumn().value()))
-                    .findFirst();
-            first.ifPresent((e) -> {
-                if (e.isSelected()) {
-                    selectedElements.add(fieldColumnTuple);
-                }
-            });
-        }
+        acceptableData
+                .forEach((elem) -> {
+                    Optional<JFXCheckBox> first = checkBoxes
+                            .stream()
+                            .filter((e) -> e.getText().equals(elem.name()))
+                            .findFirst();
+                    first.ifPresent((e) -> {
+                        if (e.isSelected()) {
+                            selectedElements.add(elem);
+                        }
+                    });
+                });
         return selectedElements;
     }
 
 
     public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene, List<T> alreadySelected) {
 
-        ScrollPane data = new ScrollPane();
+        ScrollPane insideScrollPane = new ScrollPane();
         JFXButton closeButton = new JFXButton("Zamknij");
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
@@ -110,23 +97,16 @@ public class FuzzyFXUtils {
         vBox.setSpacing(10);
         vBox.setPadding(new Insets(20));
         vBox.setMinWidth(400);
-        data.setMinWidth(390);
-        data.setMinHeight(500);
-        data.setMaxHeight(500);
-        ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
-        for (T col : inputData) {
-            JFXCheckBox checkBox = new JFXCheckBox(col.getName());
-            if (alreadySelected.contains(col)) {
-                checkBox.setSelected(true);
-            }
-            checkBoxes.add(checkBox);
-        }
+        insideScrollPane.setMinWidth(390);
+        insideScrollPane.setMinHeight(500);
+        insideScrollPane.setMaxHeight(500);
+        ObservableList<JFXCheckBox> checkBoxes = checkBoxesFor(inputData, alreadySelected, Named::getName);
         vBox.getChildren().addAll(checkBoxes);
         vBox.getChildren().add(closeButton);
-        data.setContent(vBox);
-        alert.setContent(data);
-
+        insideScrollPane.setContent(vBox);
+        alert.setContent(insideScrollPane);
         alert.showAndWait();
+
         ObservableList<T> selectedElements = FXCollections.observableArrayList();
         for (T elem : inputData) {
             Optional<JFXCheckBox> first = checkBoxes
@@ -317,7 +297,7 @@ public class FuzzyFXUtils {
         List<Class<? extends QFunction>> functionClasses = QFunctionFactory.functionTypes();
         ObservableList<FunctionParamsHolder> nameAndParamList = getNameAndParamList(functionClasses);
         JFXComboBox<FunctionParamsHolder> functionComboBox = new JFXComboBox<>(nameAndParamList);
-        setConnverterForParamsHolder((ObservableList<FunctionParamsHolder>) nameAndParamList, (JFXComboBox<FunctionParamsHolder>) functionComboBox);
+        setConnverterForParamsHolder(nameAndParamList, functionComboBox);
 
         VBox funcEditBox = new VBox();
         functionComboBox.valueProperty().addListener((observableValue, oldVal, newVal) -> {
@@ -418,7 +398,8 @@ public class FuzzyFXUtils {
         }
     }
 
-    private static void setConnverterForParamsHolder(ObservableList<FunctionParamsHolder> nameAndParamList, JFXComboBox<FunctionParamsHolder> functionComboBox) {
+    private static void setConnverterForParamsHolder(ObservableList<FunctionParamsHolder> nameAndParamList,
+                                                     JFXComboBox<FunctionParamsHolder> functionComboBox) {
         functionComboBox.setConverter(
                 new StringConverter<FunctionParamsHolder>() {
                     @Override
@@ -472,6 +453,38 @@ public class FuzzyFXUtils {
             }
         }
         return paramsHolders;
+    }
+
+    private static Optional<Column> extractColumn(Field field) {
+        return Optional.of(field.getAnnotation(Column.class));
+    }
+
+    private static <T> ObservableList<JFXCheckBox> checkBoxesFor(List<T> inputData,
+                                                                 List<T> alreadySelected,
+                                                                 java.util.function.Function<T, String> nameProvider) {
+        ObservableList<JFXCheckBox> checkBoxes = FXCollections.observableArrayList();
+        inputData
+                .forEach((e) -> {
+                    JFXCheckBox checkBox = new JFXCheckBox(nameProvider.apply(e));
+                    if (alreadySelected.contains(e)) {
+                        checkBox.setSelected(true);
+                    }
+                    checkBoxes.add(checkBox);
+                });
+        return checkBoxes;
+    }
+
+    private static <T> ObservableList<FieldColumnTuple> extractAcceptableData(Field[] fields) {
+        ObservableList<FieldColumnTuple> data = FXCollections.observableArrayList();
+        Arrays
+                .stream(fields)
+                .forEach( (field) -> {
+                    extractColumn(field)
+                            .ifPresent( column -> {
+                                data.add(new FieldColumnTuple(field, column));
+                            });
+                });
+        return data;
     }
 
     @Data

@@ -316,7 +316,8 @@ public class MainController implements Initializable {
                 CommonFXUtils.getSimpleColumnsForClass(tClass, false);
         tableView.getColumns().addAll(simpleColumns);
         tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
-        tab1.getTabPane().getTabs().add(new Tab(name, tableView));
+        Tab e1 = new Tab(name, tableView);
+        tab1.getTabPane().getTabs().add(e1);
         task.setOnSucceeded(
                 e -> {
                     Collection data = (Collection) e.getSource().getValue();

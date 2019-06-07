@@ -16,6 +16,14 @@ public class FieldColumnTuple {
     @Getter
     private Column column;
 
+    public String name() {
+        return column.value();
+    }
+
+    public String fieldName() {
+        return field.getName();
+    }
+
     @Override
     public String toString() {
         return column.value();
