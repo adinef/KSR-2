@@ -4,6 +4,7 @@ import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -38,10 +39,13 @@ import java.util.function.Supplier;
 @Slf4j
 public class FuzzyFXUtils {
 
-    public static final String PROPER_NUMBER_PATTERN = "\\d{0,7}([\\.]\\d{0,4})?";
+    private static final String PROPER_NUMBER_PATTERN = "\\d{0,7}([\\.]\\d{0,4})?";
 
-    public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass, Scene scene, List<FieldColumnTuple> alreadySelected) {
-        ObservableList<FieldColumnTuple> acceptableData = extractAcceptableData(tClass.getDeclaredFields());
+    public static <T> ObservableList<FieldColumnTuple> selectFieldByClassPopup(Class<T> tClass,
+                                                                               Scene scene,
+                                                                               List<FieldColumnTuple> alreadySelected,
+                                                                               boolean numericOnly) {
+        ObservableList<FieldColumnTuple> acceptableData = extractAcceptableData(tClass.getDeclaredFields(), numericOnly);
         ObservableList<JFXCheckBox> checkBoxes =
                 checkBoxesFor(acceptableData, alreadySelected, FieldColumnTuple::name);
         VBox mainVBox = new VBox();
@@ -50,11 +54,7 @@ public class FuzzyFXUtils {
         mainVBox.getChildren().addAll(checkBoxes);
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
-        JFXButton closeButton = new JFXButton("Zamknij");
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> {
-            alert.hideWithAnimation();
-        });
+        JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
         layout.setHeading(new Label("Wybierz pola"));
         layout.setBody(mainVBox);
         layout.setActions(closeButton);
@@ -84,15 +84,12 @@ public class FuzzyFXUtils {
     public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene, List<T> alreadySelected) {
 
         ScrollPane insideScrollPane = new ScrollPane();
-        JFXButton closeButton = new JFXButton("Zamknij");
+
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
         alert.initModality(Modality.WINDOW_MODAL);
         alert.setOverlayClose(true);
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> {
-            alert.hideWithAnimation();
-        });
+        JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
         VBox vBox = new VBox();
         vBox.setSpacing(10);
         vBox.setPadding(new Insets(20));
@@ -101,9 +98,9 @@ public class FuzzyFXUtils {
         insideScrollPane.setMinHeight(500);
         insideScrollPane.setMaxHeight(500);
         ObservableList<JFXCheckBox> checkBoxes = checkBoxesFor(inputData, alreadySelected, Named::getName);
-        vBox.getChildren().addAll(checkBoxes);
-        vBox.getChildren().add(closeButton);
+        fillVBox(vBox, checkBoxes, closeButton);
         insideScrollPane.setContent(vBox);
+
         alert.setContent(insideScrollPane);
         alert.showAndWait();
 
@@ -126,8 +123,6 @@ public class FuzzyFXUtils {
     public static <T extends LinguisticVariable> Optional editLVPopup(String title, T elem, Scene scene) {
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
-        JFXButton closeButton = new JFXButton("Zamknij");
-
         VBox vBox = new VBox();
 
         List<Node> paramsForName = newFormParamString("Nazwa", elem::getName, elem::setName);
@@ -138,16 +133,14 @@ public class FuzzyFXUtils {
                 () -> elem.getLvRange().getEnd().toString(), (nv) -> elem.getLvRange().setEnd(nv));
         Label functionLabel = new Label("Wartości funkcji przynależności");
         List<Node> editFuncVarNodes = getNodesForFuncEdit(elem.getFunction());
-
-        vBox.getChildren().addAll(paramsForName);
-        vBox.getChildren().addAll(paramsForMember);
-        vBox.getChildren().addAll(paramsForRangeStart);
-        vBox.getChildren().addAll(paramsForRangeEnd);
-        vBox.getChildren().addAll(functionLabel);
-        vBox.getChildren().addAll(editFuncVarNodes);
-
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> alert.hideWithAnimation());
+        fillVBox(vBox,
+                paramsForName,
+                paramsForMember,
+                paramsForRangeStart,
+                paramsForRangeEnd,
+                functionLabel,
+                editFuncVarNodes);
+        JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
 
         layout.setHeading(new Label(title));
         layout.setBody(vBox);
@@ -162,21 +155,14 @@ public class FuzzyFXUtils {
     public static Optional editQuantifierPopup(String title, Quantifier elem, Scene scene) {
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
-        JFXButton closeButton = new JFXButton("Zamknij");
 
         VBox vBox = new VBox();
 
         List<Node> paramsForName = newFormParamString("Nazwa", elem::getName, elem::setName);
         Label functionLabel = new Label("Wartości funkcji przynależności");
-        List<Node> editFuncVarNodes = getNodesForFuncEdit(elem.getFunction());
+        fillVBox(vBox, paramsForName, functionLabel, getNodesForFuncEdit(elem.getFunction()));
 
-        vBox.getChildren().addAll(paramsForName);
-        vBox.getChildren().addAll(functionLabel);
-        vBox.getChildren().addAll(editFuncVarNodes);
-
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> alert.hideWithAnimation());
-
+        JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
         layout.setHeading(new Label(title));
         layout.setBody(vBox);
         layout.setActions(closeButton);
@@ -259,8 +245,6 @@ public class FuzzyFXUtils {
         AtomicBoolean aborted = new AtomicBoolean(false);
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
-        JFXButton closeButton = new JFXButton("Anuluj");
-        JFXButton saveButton = new JFXButton("Zapisz");
         VBox vBox = new VBox();
 
         Constructor<T> constructor;
@@ -271,19 +255,15 @@ public class FuzzyFXUtils {
             return Optional.empty();
         }
 
-        Range range = new Range(0D, 0D);
-
         T obj;
-
         try {
-            obj = constructor.newInstance("", "", null, range);
+            obj = constructor.newInstance("", "", null, new Range(0D, 0D));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             log.error(e.getLocalizedMessage());
             return Optional.empty();
         }
 
         List<Node> paramsForName = newFormParamString("Nazwa", obj::getName, obj::setName);
-
         List<Node> paramsForMember = newFormParamString("Pole", obj::getMemberFieldName, obj::setMemberFieldName);
 
         T finalObj = obj;
@@ -305,22 +285,20 @@ public class FuzzyFXUtils {
             funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
         });
 
-        vBox.getChildren().addAll(paramsForName);
-        vBox.getChildren().addAll(paramsForMember);
-        vBox.getChildren().addAll(paramsForRangeStart);
-        vBox.getChildren().addAll(paramsForRangeEnd);
-        vBox.getChildren().addAll(functionLabel);
-        vBox.getChildren().addAll(functionComboBox);
-        vBox.getChildren().addAll(funcEditBox);
+        fillVBox(vBox,
+                paramsForName,
+                paramsForMember,
+                paramsForRangeStart,
+                paramsForRangeEnd,
+                functionLabel,
+                functionComboBox,
+                funcEditBox);
 
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> {
+        JFXButton closeButton = standardButton("Anuluj", actionEvent -> {
             aborted.lazySet(true);
             alert.hideWithAnimation();
         });
-
-        saveButton.setButtonType(JFXButton.ButtonType.FLAT);
-        saveButton.setOnAction(event -> {
+        JFXButton saveButton = standardButton("Zapisz", actionEvent -> {
             obj.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
             alert.hideWithAnimation();
         });
@@ -345,12 +323,9 @@ public class FuzzyFXUtils {
         AtomicBoolean aborted = new AtomicBoolean(false);
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
-        JFXButton closeButton = new JFXButton("Anuluj");
-        JFXButton saveButton = new JFXButton("Zapisz");
         VBox vBox = new VBox();
 
         Quantifier quantifier = new Quantifier("", null);
-
         List<Node> paramsForName = newFormParamString("Nazwa", quantifier::getName, quantifier::setName);
 
         Label functionLabel = new Label("Funkcja przynależności");
@@ -364,20 +339,13 @@ public class FuzzyFXUtils {
             funcEditBox.getChildren().clear();
             funcEditBox.getChildren().addAll( generateFunctionParametersEditBoxes(newVal));
         });
+        fillVBox(vBox, paramsForName, functionLabel, functionComboBox, funcEditBox);
 
-        vBox.getChildren().addAll(paramsForName);
-        vBox.getChildren().addAll(functionLabel);
-        vBox.getChildren().addAll(functionComboBox);
-        vBox.getChildren().addAll(funcEditBox);
-
-        closeButton.setButtonType(JFXButton.ButtonType.FLAT);
-        closeButton.setOnAction(event -> {
+        JFXButton closeButton = standardButton("Anuluj", actionEvent -> {
             aborted.lazySet(true);
             alert.hideWithAnimation();
         });
-
-        saveButton.setButtonType(JFXButton.ButtonType.FLAT);
-        saveButton.setOnAction(event -> {
+        JFXButton saveButton = standardButton("Zapisz", actionEvent -> {
             quantifier.setFunction(QFunctionFactory.getFunction(functionComboBox.getValue()));
             alert.hideWithAnimation();
         });
@@ -474,14 +442,36 @@ public class FuzzyFXUtils {
         return checkBoxes;
     }
 
-    private static <T> ObservableList<FieldColumnTuple> extractAcceptableData(Field[] fields) {
+    private static void fillVBox(VBox vBox, Object... data) {
+        if (data != null) {
+            for (Object elem : data) {
+                if (elem instanceof List) {
+                    vBox.getChildren().addAll((List)elem);
+                }
+                if (elem instanceof Node) {
+                    vBox.getChildren().add((Node)elem);
+                }
+            }
+        }
+    }
+
+    private static JFXButton standardButton(String name, Consumer<ActionEvent> consumer) {
+        JFXButton button = new JFXButton(name);
+        button.setButtonType(JFXButton.ButtonType.FLAT);
+        button.setOnAction(consumer::accept);
+        return button;
+    }
+
+    private static ObservableList<FieldColumnTuple> extractAcceptableData(Field[] fields, boolean numericOnly) {
         ObservableList<FieldColumnTuple> data = FXCollections.observableArrayList();
         Arrays
                 .stream(fields)
                 .forEach( (field) -> {
                     extractColumn(field)
                             .ifPresent( column -> {
-                                data.add(new FieldColumnTuple(field, column));
+                                if (Number.class.isAssignableFrom(field.getType())) {
+                                    data.add(new FieldColumnTuple(field, column));
+                                }
                             });
                 });
         return data;

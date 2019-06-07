@@ -1,5 +1,6 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.annotations.enums.Author;
@@ -228,7 +230,8 @@ public class MainController implements Initializable {
                         .selectFieldByClassPopup(
                                 repository.getItemClass(),
                                 Main.getCurrentStage().getScene(),
-                                selectionState.getAllowedFields()
+                                selectionState.getAllowedFields(),
+                                true
                         )
         );
         System.out.println(selectionState.getAllowedFields());
@@ -310,18 +313,23 @@ public class MainController implements Initializable {
     @SuppressWarnings("unchecked")
     private <T> void newTabWithContent(Class<T> tClass, String name, Supplier<Iterable<T>> dataSupplier) {
         EntityReadService<T> task = new EntityReadService<>(dataSupplier);
+        StackPane stackPane = new StackPane();
+        JFXSpinner jfxSpinner = new JFXSpinner();
+        jfxSpinner.setRadius(50);
         TableView tableView = new TableView();
+        stackPane.getChildren().addAll(tableView, jfxSpinner);
         tableView.setPrefHeight(prefTabContentHeight());
         List<TableColumn<String, T>> simpleColumns =
                 CommonFXUtils.getSimpleColumnsForClass(tClass, false);
         tableView.getColumns().addAll(simpleColumns);
         tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
-        Tab e1 = new Tab(name, tableView);
+        Tab e1 = new Tab(name, stackPane);
         tab1.getTabPane().getTabs().add(e1);
         task.setOnSucceeded(
                 e -> {
                     Collection data = (Collection) e.getSource().getValue();
                     tableView.setItems(FXCollections.observableList(new ArrayList<>(data)));
+                    stackPane.getChildren().remove(jfxSpinner);
                 }
         );
         task.start();
