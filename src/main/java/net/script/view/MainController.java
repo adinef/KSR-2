@@ -75,6 +75,7 @@ public class MainController implements Initializable {
 
     // ************** DATA ****************
     private SelectionState selectionState = new SelectionState();
+    private SummaryGenerator summaryGenerator;
     // ************************************
 
     // ************** TableView to class mapping ****************
@@ -147,6 +148,7 @@ public class MainController implements Initializable {
                 repository.getItemClass(),
                 "Dane",
                 repository::findAll,
+                false,
                 false,
                 null);
     }
@@ -406,16 +408,36 @@ public class MainController implements Initializable {
             //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
             //FIRST TYPE SUMMARIZATION
             //List<Summary> summaries = new ArrayList<>();
-            summaries.addAll(SummaryGenerator.createSummary(repository.findAll(), selectionState.getQuantifiers(), selectionState.getQualifiers(), selectionState.getSummarizers()));
-            this.newTabWithContent(Summary.class, "Podsumowania", () -> FXCollections.observableList(summaries), true, (deletedElem) -> {
-                this.summaries.remove(deletedElem);
-            });
+            summaries.clear();
+            summaries.addAll(
+                    summarizer().createSummary(
+                            repository.findAll(),
+                            selectionState.getQuantifiers(),
+                            selectionState.getQualifiers(),
+                            selectionState.getSummarizers()
+                    )
+            );
+            this.newTabWithContent(
+                    Summary.class,
+                    "Podsumowania",
+                    () -> FXCollections.observableList(summaries),
+                    false,
+                    true,
+                    (deletedElem) -> this.summaries.remove(deletedElem)
+            );
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
                     Main.getCurrentStage().getScene()
             );
         }
+    }
+
+    private SummaryGenerator summarizer() {
+        if (this.summaryGenerator == null) {
+            this.summaryGenerator = new SummaryGenerator("budynków");
+        }
+        return this.summaryGenerator;
     }
 
     // HELPER METHODS
@@ -429,7 +451,7 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         ObservableList<T> finalRead = read;
-        this.newTabWithContent(tClass, tabname, () -> finalRead, true, (deletedElem) -> {
+        this.newTabWithContent(tClass, tabname, () -> finalRead, true, true, (deletedElem) -> {
             System.out.println(deletedElem);
             if (Qualifier.class.equals(tClass)) {
                 this.workingData.workingQualifiers().remove(deletedElem);
@@ -449,6 +471,7 @@ public class MainController implements Initializable {
     private <T> void newTabWithContent(Class<T> tClass,
                                        String name,
                                        Supplier<Iterable<T>> dataSupplier,
+                                       boolean editable,
                                        boolean deletable,
                                        Consumer<T> deleteConsumer) {
         EntityReadService<T> task = new EntityReadService<>(dataSupplier);
@@ -466,9 +489,25 @@ public class MainController implements Initializable {
         setColumnToolTipIfAvailible(tClass, simpleColumns);
         tableView.getColumns().addAll(simpleColumns);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
+        ContextMenu contextMenu = null;
+        if (editable) {
+            contextMenu = new ContextMenu();
+            MenuItem menuItem = new MenuItem("Edytuj");
+            contextMenu.getItems().add(menuItem);
+            menuItem.setOnAction( (e) -> this.editContext(tableView));
+            tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
+        }
         if (deletable) {
+            if (contextMenu == null) {
+                contextMenu = new ContextMenu();
+            }
+            MenuItem menuItem = new MenuItem("Usuń");
+            menuItem.setOnAction((e) -> this.deleteContext(deleteConsumer, tableView));
+            contextMenu.getItems().add(menuItem);
             tableView.setOnKeyPressed((e) -> this.askForDelete(e, tableView, deleteConsumer));
+        }
+        if (contextMenu != null) {
+            tableView.setContextMenu(contextMenu);
         }
         Tab e1 = new Tab(name, vBox);
         tab1.getTabPane().getTabs().add(e1);
@@ -491,17 +530,7 @@ public class MainController implements Initializable {
 
     private <T> void askForDelete(KeyEvent e, TableView<T> tableView, Consumer<T> deleteConsumer) {
         if (e.getCode() == KeyCode.DELETE) {
-            boolean delete = CommonFXUtils
-                    .yesNoPopup("Usuwanie",
-                            "Czy na pewno usunąć element?",
-                            Main.getCurrentStage().getScene()
-                    );
-            if (delete) {
-                T selectedItem = tableView.getSelectionModel().getSelectedItem();
-                deleteConsumer.accept(selectedItem);
-                tableView.getItems().remove(selectedItem);
-                tableView.refresh();
-            }
+            this.deleteContext(deleteConsumer, tableView);
         }
     }
 
@@ -523,28 +552,46 @@ public class MainController implements Initializable {
 
     private void listenForTableDoubleClick(MouseEvent mouseEvent, TableView tableView) {
         if (mouseEvent.getClickCount() == 2) {
-            Object selectedItem = tableView.getSelectionModel().getSelectedItem();
-            if (selectedItem instanceof LinguisticVariable) {
-                LinguisticVariable lv = (LinguisticVariable) selectedItem;
-                Optional<?> editQualifierOptional =
-                        FuzzyFXUtils.editLVPopup(
-                                "Edytuj kwalifikator",
-                                lv,
-                                Main.getCurrentStage().getScene(),
-                                this.repository.getItemClass()
-                        );
-                editQualifierOptional.ifPresent((e) -> tableView.refresh());
-            }
-            if (selectedItem instanceof Quantifier) {
-                Quantifier quantifier = (Quantifier) selectedItem;
-                Optional<?> editQuantifierOptional =
-                        FuzzyFXUtils.editQuantifierPopup(
-                                "Edytuj kwantyfikator",
-                                quantifier,
-                                Main.getCurrentStage().getScene()
-                        );
-                editQuantifierOptional.ifPresent((e) -> tableView.refresh());
-            }
+            editContext(tableView);
+        }
+    }
+
+    private <T> void deleteContext(Consumer<T> deleteConsumer, TableView<T> tableView) {
+        boolean delete = CommonFXUtils
+                .yesNoPopup("Usuwanie",
+                        "Czy na pewno usunąć element?",
+                        Main.getCurrentStage().getScene()
+                );
+        if (delete) {
+            T selectedItem = tableView.getSelectionModel().getSelectedItem();
+            deleteConsumer.accept(selectedItem);
+            tableView.getItems().remove(selectedItem);
+            tableView.refresh();
+        }
+    }
+
+    private void editContext(TableView tableView) {
+        Object selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if (selectedItem instanceof LinguisticVariable) {
+            LinguisticVariable lv = (LinguisticVariable) selectedItem;
+            Optional<?> editQualifierOptional =
+                    FuzzyFXUtils.editLVPopup(
+                            "Edytuj kwalifikator",
+                            lv,
+                            Main.getCurrentStage().getScene(),
+                            this.repository.getItemClass()
+                    );
+            editQualifierOptional.ifPresent((e) -> tableView.refresh());
+        }
+        if (selectedItem instanceof Quantifier) {
+            Quantifier quantifier = (Quantifier) selectedItem;
+            Optional<?> editQuantifierOptional =
+                    FuzzyFXUtils.editQuantifierPopup(
+                            "Edytuj kwantyfikator",
+                            quantifier,
+                            Main.getCurrentStage().getScene()
+                    );
+            editQuantifierOptional.ifPresent((e) -> tableView.refresh());
         }
     }
 
