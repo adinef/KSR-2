@@ -79,7 +79,7 @@ public class WorkingData {
         List<Summarizer> summarizers = workingSummarizers();
         if (summarizers != null) {
             for (Summarizer summarizer : summarizers) {
-                if (tuples.stream().anyMatch( (e) -> e.getColumn().value().equals(summarizer.getMemberFieldName()) )) {
+                if (tuples.stream().anyMatch((e) -> e.getColumn().value().equals(summarizer.getMemberFieldName()))) {
                     filtered.add(summarizer);
                 }
             }
@@ -92,7 +92,7 @@ public class WorkingData {
         List<Qualifier> qualifiers = workingQualifiers();
         if (qualifiers != null) {
             for (Qualifier qualifier : qualifiers) {
-                if (tuples.stream().anyMatch( (e) -> e.getColumn().value().equals(qualifier.getMemberFieldName()) )) {
+                if (tuples.stream().anyMatch((e) -> e.getColumn().value().equals(qualifier.getMemberFieldName()))) {
                     filtered.add(qualifier);
                 }
             }
@@ -114,14 +114,15 @@ public class WorkingData {
         }
     }
 
-    public List<Quantifier> workingQuantifiers() {if (this.qualifiers == null) {
-        try {
-            this.quantifiers = fuzzyData.quantifiers();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            this.quantifiers = new LinkedList<>();
+    public List<Quantifier> workingQuantifiers() {
+        if (this.qualifiers == null) {
+            try {
+                this.quantifiers = fuzzyData.quantifiers();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                this.quantifiers = new LinkedList<>();
+            }
         }
-    }
         return this.quantifiers;
     }
 }

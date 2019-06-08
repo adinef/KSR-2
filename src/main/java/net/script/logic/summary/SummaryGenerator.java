@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class SummaryGenerator {
 
-    private final List<Summary> summaries = new ArrayList<>();
+    private final List<Tuple<Summary, SummarizationState>> summaries = new ArrayList<>();
     private final String entityName;
     private final String standardContext;
 
@@ -27,7 +27,7 @@ public class SummaryGenerator {
         this.standardContext = "%s " + entityName + " ma/jest ";
     }
 
-    public List<Summary> createSummary(Iterable<DCResMeasurement> dcResMeasurements,
+    public List<Tuple<Summary, SummarizationState>> createSummary(Iterable<DCResMeasurement> dcResMeasurements,
                                        List<Quantifier> quantifiers,
                                        List<Qualifier> qualifiers,
                                        List<Summarizer> summarizers) {
@@ -132,7 +132,7 @@ public class SummaryGenerator {
         return summaries;
     }
 
-    private Summary createSummaryFirstType(List<?> dataList,
+    private Tuple<Summary, SummarizationState> createSummaryFirstType(List<?> dataList,
                                            List<Quantifier> quantifiers,
                                            Summarizer summarizer) {
         FuzzySet summarizersSet = FuzzySet.with(dataList).from(summarizer);
@@ -147,10 +147,18 @@ public class SummaryGenerator {
         String podsumowanie = String.format(this.standardContext, name);
         podsumowanie += summarizer.getName();
 
-        return new Summary(podsumowanie, max);
+        return new Tuple<>(
+                new Summary(podsumowanie, max),
+                new SummarizationState(
+                        new ArrayList<>(),
+                        quantifiers,
+                        Collections.singletonList(summarizer),
+                        summarizersSet
+                )
+        );
     }
 
-    private Summary createSummaryFirstTypeMultipleSummarizers(List<?> dataList,
+    private Tuple<Summary, SummarizationState>  createSummaryFirstTypeMultipleSummarizers(List<?> dataList,
                                                               List<Quantifier> quantifiers,
                                                               List<Summarizer> summarizers) {
         List<FuzzySet> summarySets = this.extractFromLinguisticVariables(dataList, summarizers);
@@ -166,10 +174,18 @@ public class SummaryGenerator {
 
         String summaryContent = this.buildSummaryContext(String.format(this.standardContext, name), summarizers);
 
-        return new Summary(summaryContent, max);
+        return new Tuple<>(
+                new Summary(summaryContent, max),
+                new SummarizationState(
+                        new ArrayList<>(),
+                        quantifiers,
+                        summarizers,
+                        summarizersSet
+                )
+        );
     }
 
-    private Summary createSummaryTypeTwo(List<?> dataList,
+    private Tuple<Summary, SummarizationState>  createSummaryTypeTwo(List<?> dataList,
                                          List<Quantifier> quantifiers,
                                          List<Qualifier> qualifiers,
                                          List<Summarizer> summarizers) {
@@ -196,7 +212,15 @@ public class SummaryGenerator {
                 this.buildSummaryContext(String.format("%s %s, które mają/są ", name, this.entityName), qualifiers);
          summaryContent += this.buildSummaryContext(" ma/jest ", summarizers);
 
-        return new Summary(summaryContent, max);
+        return new Tuple<>(
+                new Summary(summaryContent, max),
+                new SummarizationState(
+                        qualifiers,
+                        quantifiers,
+                        summarizers,
+                        intersectSet
+                )
+        );
     }
 
 

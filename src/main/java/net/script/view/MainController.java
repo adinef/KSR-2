@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.FieldColumnTuple;
 import net.script.data.Named;
+import net.script.data.Tuple;
 import net.script.data.annotations.Column;
 import net.script.data.repositories.CachingRepository;
 import net.script.logic.access.FuzzyData;
@@ -29,6 +30,7 @@ import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.summarizer.Summarizer;
+import net.script.logic.summary.SummarizationState;
 import net.script.logic.summary.SummaryGenerator;
 import net.script.utils.*;
 import net.script.utils.functional.ConsumerWithException;
@@ -56,7 +58,6 @@ public class MainController implements Initializable {
     private final WorkingData workingData;
     private final SettingsPopup settingsPopup;
     private boolean isFullscreen;
-    private List<Summary> summaries = new ArrayList<>();
 
     @FXML
     private HBox summaryDataChosenBox;
@@ -403,6 +404,8 @@ public class MainController implements Initializable {
 
     @FXML
     private void proceedWithSummarization(ActionEvent actionEvent) {
+
+        List<Tuple<Summary, SummarizationState>> summaries = new ArrayList<>();
         // TEMPORARILY
         if (selectionState.firstTypeReady()) {
             //this.newTabWithContent(repository.getItemClass(), "Dane", repository::findAll);
@@ -420,10 +423,12 @@ public class MainController implements Initializable {
             this.newTabWithContent(
                     Summary.class,
                     "Podsumowania",
-                    () -> FXCollections.observableList(summaries),
+                    () -> FXCollections.observableList(
+                            summaries.stream().map(Tuple::getFirst).collect(Collectors.toList())
+                    ),
                     false,
-                    true,
-                    (deletedElem) -> this.summaries.remove(deletedElem)
+                    false,
+                    null
             );
         } else {
             CommonFXUtils.noDataPopup("Dane",
