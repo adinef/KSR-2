@@ -40,6 +40,11 @@ public class TriangleFunction implements QFunction {
     }
 
     @Override
+    public double calculateIntegral() {
+        return 0.5 * (c - a);
+    }
+
+    @Override
     public String toString() {
         return String.format("Funkcja triangularna, współczynniki: %f, %f, %s", a, b, c);
     }

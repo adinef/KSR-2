@@ -7,6 +7,7 @@ import net.script.logic.fuzzy.linguistic.LinguisticVariable;
 import net.script.logic.qualifier.Qualifier;
 import net.script.logic.quantifier.Quantifier;
 import net.script.logic.summarizer.Summarizer;
+import net.script.logic.summary.qualities.*;
 import net.script.view.Summary;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +29,9 @@ public class SummaryGenerator {
     }
 
     public List<Tuple<Summary, SummarizationState>> createSummary(Iterable<DCResMeasurement> dcResMeasurements,
-                                       List<Quantifier> quantifiers,
-                                       List<Qualifier> qualifiers,
-                                       List<Summarizer> summarizers) {
+                                                                  List<Quantifier> quantifiers,
+                                                                  List<Qualifier> qualifiers,
+                                                                  List<Summarizer> summarizers) {
         summaries.clear();
         Iterator<?> source = dcResMeasurements.iterator();
         List<Object> dataList = new ArrayList<>();
@@ -98,7 +99,7 @@ public class SummaryGenerator {
                     }
                 }
             }
-            if(qualifiers.size()>=2 && quantifiers.size() >= 2) {
+            if (qualifiers.size() >= 2 && quantifiers.size() >= 2) {
                 List<Summarizer> tempSumList = new ArrayList<>();
                 List<Qualifier> tempQualList = new ArrayList<>();
                 for (int i = 0; i < qualifiers.size(); i++) {
@@ -125,7 +126,7 @@ public class SummaryGenerator {
             List<Summarizer> uniqueCategorySummarizers = summarizers.stream().filter(distinctByKey(Summarizer::getMemberFieldName)).collect(Collectors.toList());
             List<Qualifier> uniqueCategoryQualifiers = qualifiers.stream().filter(distinctByKey(Qualifier::getMemberFieldName)).collect(Collectors.toList());
             if (summarizers.size() == uniqueCategorySummarizers.size() && summarizers.size() > 2 &&
-            qualifiers.size() == uniqueCategoryQualifiers.size() && qualifiers.size() > 2) {
+                    qualifiers.size() == uniqueCategoryQualifiers.size() && qualifiers.size() > 2) {
                 summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, qualifiers, summarizers));
             }
         }
@@ -133,49 +134,87 @@ public class SummaryGenerator {
     }
 
     private Tuple<Summary, SummarizationState> createSummaryFirstType(List<?> dataList,
-                                           List<Quantifier> quantifiers,
-                                           Summarizer summarizer) {
+                                                                      List<Quantifier> quantifiers,
+                                                                      Summarizer summarizer) {
         FuzzySet summarizersSet = FuzzySet.with(dataList).from(summarizer);
 
-        double finalSizeNormalized = calculateNormalized(summarizersSet);
-        System.out.println(finalSizeNormalized);
+        /*double finalSizeNormalized = calculateNormalized(summarizersSet);
+        System.out.println(finalSizeNormalized);*/
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, finalSizeNormalized);
-        double max = nameMaxTuple.getSecond();
-        String name = nameMaxTuple.getFirst();
-
-        String podsumowanie = String.format(this.standardContext, name);
-        podsumowanie += summarizer.getName();
-
-        return new Tuple<>(
-                new Summary(podsumowanie, max),
+        SummarizationState summarizationState =
                 new SummarizationState(
                         new ArrayList<>(),
                         quantifiers,
+                        Collections.singletonList(summarizer),
+                        summarizersSet);
+
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
+        double max = nameMaxTuple.getSecond();
+        String name = nameMaxTuple.getFirst();
+
+        String summaryContent = String.format(this.standardContext, name);
+        summaryContent += summarizer.getName();
+
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
+
+        return new Tuple<>(
+                new Summary(summaryContent, max,
+                        qualityMeasures.get("T2"),
+                        qualityMeasures.get("T3"),
+                        qualityMeasures.get("T4"),
+                        qualityMeasures.get("T5"),
+                        qualityMeasures.get("T6"),
+                        qualityMeasures.get("T7"),
+                        qualityMeasures.get("T8"),
+                        qualityMeasures.get("T9"),
+                        qualityMeasures.get("T10"),
+                        qualityMeasures.get("T11")),
+                new SummarizationState(
+                        new ArrayList<>(),
+                        null,
                         Collections.singletonList(summarizer),
                         summarizersSet
                 )
         );
     }
 
-    private Tuple<Summary, SummarizationState>  createSummaryFirstTypeMultipleSummarizers(List<?> dataList,
-                                                              List<Quantifier> quantifiers,
-                                                              List<Summarizer> summarizers) {
+    private Tuple<Summary, SummarizationState> createSummaryFirstTypeMultipleSummarizers(List<?> dataList,
+                                                                                         List<Quantifier> quantifiers,
+                                                                                         List<Summarizer> summarizers) {
         List<FuzzySet> summarySets = this.extractFromLinguisticVariables(dataList, summarizers);
 
         FuzzySet summarizersSet = waterfallIntersect(summarySets);
 
-        double finalSizeNormalized = calculateNormalized(summarizersSet);
-        System.out.println(finalSizeNormalized);
+        /*double finalSizeNormalized = calculateNormalized(summarizersSet);
+        System.out.println(finalSizeNormalized);*/
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, finalSizeNormalized);
+        SummarizationState summarizationState =
+                new SummarizationState(
+                        new ArrayList<>(),
+                        quantifiers,
+                        summarizers,
+                        summarizersSet);
+
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
         double max = nameMaxTuple.getSecond();
         String name = nameMaxTuple.getFirst();
 
         String summaryContent = this.buildSummaryContext(String.format(this.standardContext, name), summarizers);
 
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
+
         return new Tuple<>(
-                new Summary(summaryContent, max),
+                new Summary(summaryContent, max,
+                        qualityMeasures.get("T2"),
+                        qualityMeasures.get("T3"),
+                        qualityMeasures.get("T4"),
+                        qualityMeasures.get("T5"),
+                        qualityMeasures.get("T6"),
+                        qualityMeasures.get("T7"),
+                        qualityMeasures.get("T8"),
+                        qualityMeasures.get("T9"),
+                        qualityMeasures.get("T10"),
+                        qualityMeasures.get("T11")),
                 new SummarizationState(
                         new ArrayList<>(),
                         quantifiers,
@@ -185,10 +224,10 @@ public class SummaryGenerator {
         );
     }
 
-    private Tuple<Summary, SummarizationState>  createSummaryTypeTwo(List<?> dataList,
-                                         List<Quantifier> quantifiers,
-                                         List<Qualifier> qualifiers,
-                                         List<Summarizer> summarizers) {
+    private Tuple<Summary, SummarizationState> createSummaryTypeTwo(List<?> dataList,
+                                                                    List<Quantifier> quantifiers,
+                                                                    List<Qualifier> qualifiers,
+                                                                    List<Summarizer> summarizers) {
         List<FuzzySet> calculatedSets = this.extractFromLinguisticVariables(dataList, qualifiers);
 
         FuzzySet intersectSet = waterfallIntersect(calculatedSets);
@@ -201,19 +240,38 @@ public class SummaryGenerator {
             intersectSet = FuzzySet.intersect(intersectSet, calculatedSet);
         }
 
-        double finalSizeNormalized = calculateNormalized(intersectSet);
-        System.out.println(finalSizeNormalized);
+        SummarizationState summarizationState =
+                new SummarizationState(
+                        qualifiers,
+                        quantifiers,
+                        summarizers,
+                        intersectSet);
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, finalSizeNormalized);
+        /*double finalSizeNormalized = calculateNormalized(intersectSet);
+        System.out.println(finalSizeNormalized);*/
+
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
         double max = nameMaxTuple.getSecond();
         String name = nameMaxTuple.getFirst();
 
         String summaryContent =
                 this.buildSummaryContext(String.format("%s %s, które mają/są ", name, this.entityName), qualifiers);
-         summaryContent += this.buildSummaryContext(" ma/jest ", summarizers);
+        summaryContent += this.buildSummaryContext(" ma/jest ", summarizers);
+
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
 
         return new Tuple<>(
-                new Summary(summaryContent, max),
+                new Summary(summaryContent, max,
+                        qualityMeasures.get("T2"),
+                        qualityMeasures.get("T3"),
+                        qualityMeasures.get("T4"),
+                        qualityMeasures.get("T5"),
+                        qualityMeasures.get("T6"),
+                        qualityMeasures.get("T7"),
+                        qualityMeasures.get("T8"),
+                        qualityMeasures.get("T9"),
+                        qualityMeasures.get("T10"),
+                        qualityMeasures.get("T11")),
                 new SummarizationState(
                         qualifiers,
                         quantifiers,
@@ -226,13 +284,13 @@ public class SummaryGenerator {
 
     //HELPER METHODS
 
-    private double calculateNormalized(FuzzySet intersectedSet) {
+    /*private double calculateNormalized(FuzzySet intersectedSet) {
         double finalSizeNormalized = 0;
         if (intersectedSet.size() != 0) {
-            finalSizeNormalized = intersectedSet.support().size() * 1.0 / intersectedSet.size();
+            finalSizeNormalized = FuzzySet.sumWithCardinality(intersectedSet,1) * 1.0 / intersectedSet.size();
         }
         return finalSizeNormalized;
-    }
+    }*/
 
     private String buildSummaryContext(String beginning, List<? extends LinguisticVariable> lvs) {
         for (LinguisticVariable summarizer : lvs) {
@@ -243,19 +301,19 @@ public class SummaryGenerator {
         return beginning;
     }
 
-    private Tuple<String, Double> extractNameAndMax(List<? extends Quantifier> lvs, double finalSizeNormalized) {
+    private Tuple<String, Double> extractNameAndMax(List<? extends Quantifier> lvs, double r) {
         double max = -1.0;
         String name = "";
         for (Quantifier q : lvs) {
-            if (q.calculate(finalSizeNormalized) > max) {
-                max = q.calculate(finalSizeNormalized);
+            if (q.calculate(r) > max) {
+                max = q.calculate(r);
                 name = q.getName();
             }
         }
         return new Tuple<>(name, max);
     }
 
-    private FuzzySet waterfallIntersect(List<FuzzySet> fuzzySets){
+    private FuzzySet waterfallIntersect(List<FuzzySet> fuzzySets) {
         FuzzySet firstSet = fuzzySets.get(0);
         if (firstSet.size() >= 2) {
             for (int i = 1; i < fuzzySets.size(); i++) {
@@ -277,6 +335,24 @@ public class SummaryGenerator {
         Set<Object> seen = ConcurrentHashMap.newKeySet();
         return t -> seen.add(keyExtractor.apply(t));
     }
+
+    private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, String name) {
+        HashMap<String, Double> QualityValuesMap = new HashMap<>();
+
+        QualityValuesMap.put("T2", DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState));
+        QualityValuesMap.put("T3", DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState));
+        QualityValuesMap.put("T4", DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3")));
+        QualityValuesMap.put("T5", LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState));
+        QualityValuesMap.put("T6", DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name));
+        QualityValuesMap.put("T7", DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name));
+        QualityValuesMap.put("T8", DegreeOfSummarizerCardinalityT8.calculateDegreeOfSummarizerCardinality(Data, summarizationState));
+        QualityValuesMap.put("T9", DegreeOfQualifierImprecisionT9.calculateDegreeOfQualifierImprecision(summarizationState));
+        QualityValuesMap.put("T10", DegreeOfQualifierCardinalityT10.calculateDegreeOfQualifierCardinality(Data, summarizationState));
+        QualityValuesMap.put("T11", LengthOfQualifierT11.calculateLengthOfQualifierT11(summarizationState));
+
+        return QualityValuesMap;
+    }
+
 
 }
 

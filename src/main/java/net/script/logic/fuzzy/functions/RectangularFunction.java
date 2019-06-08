@@ -35,6 +35,11 @@ public class RectangularFunction implements QFunction {
     }
 
     @Override
+    public double calculateIntegral() {
+        return (b-a);
+    }
+
+    @Override
     public String toString() {
         return String.format("Funkcja prostokatna, współczynniki: %f, %f", a, b);
     }

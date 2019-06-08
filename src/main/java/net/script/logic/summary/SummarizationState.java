@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SummarizationState {
     private List<Qualifier> qualifiers;
-    private List<Quantifier> quantfifiers;
+    private List<Quantifier> quantfiers;
     private List<Summarizer> summarizers;
     private FuzzySet finalFuzzySet;
 }
