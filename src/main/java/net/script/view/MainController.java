@@ -273,11 +273,17 @@ public class MainController implements Initializable {
         Label label = new Label(title);
         JFXListView<String> list = new JFXListView<>();
         list.setMinHeight(500);
-        list.getItems().addAll(
-                valuesSupplier.get()
-        );
-        vBox.getChildren().addAll(label, list);
-        nodes.add(vBox);
+        List<String> data = valuesSupplier.get();
+        if (!data.isEmpty()) {
+            list.getItems().addAll(
+                    data
+            );
+            vBox.getChildren().addAll(label, list);
+            nodes.add(vBox);
+        } else {
+            this.nodesMapping.remove(elemClass);
+        }
+
         this.summaryDataChosenBox.getChildren().clear();
         for (List<Node> valList : this.nodesMapping.values()) {
             this.summaryDataChosenBox.getChildren().addAll(valList);
@@ -324,13 +330,11 @@ public class MainController implements Initializable {
                                 true
                         )
         );
-        if (!selectionState.getAllowedFields().isEmpty()) {
-            this.setListView(
-                    FieldColumnTuple.class,
-                    "Wybrane pola",
-                    () -> selectionState.getAllowedFields().stream().map(FieldColumnTuple::name).collect(Collectors.toList())
-            );
-        }
+        this.setListView(
+                FieldColumnTuple.class,
+                "Wybrane pola",
+                () -> selectionState.getAllowedFields().stream().map(FieldColumnTuple::name).collect(Collectors.toList())
+        );
     }
 
     @FXML
