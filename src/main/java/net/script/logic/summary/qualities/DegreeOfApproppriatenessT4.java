@@ -17,7 +17,7 @@ public class DegreeOfApproppriatenessT4 implements QualityMeasure {
         double val = 1;
         for(Summarizer summarizer : StateSummary.getSummarizers()){
             FuzzySet fuzzySet = FuzzySet.with(Data).from(summarizer);
-            val *= (fuzzySet.support().size() * 1.0 / fuzzySet.size());
+            val *= (fuzzySet.support().size() * 1.0 / Data.size());
         }
         return Math.abs(val-T3);
     }

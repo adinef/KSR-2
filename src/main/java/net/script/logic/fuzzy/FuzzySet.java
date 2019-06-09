@@ -22,7 +22,7 @@ public class FuzzySet<T> implements Map<T, Double> {
         this.linguisticVariable = lv;
     }
 
-    private FuzzySet() {
+    public FuzzySet() {
 
     }
 
@@ -191,8 +191,16 @@ public class FuzzySet<T> implements Map<T, Double> {
                 if (elemValue != null) {
                     if (field.getType().equals(Integer.class)) {
                         map.put(elem, lVariable.getFunction().calculate((Integer) elemValue));
-                    } else {
+                    } else if (field.getType().equals(Float.class)){
+                        map.put(elem, lVariable.getFunction().calculate((Float) elemValue));
+                    } else if (field.getType().equals(Double.class)){
                         map.put(elem, lVariable.getFunction().calculate((Double) elemValue));
+                    } else if (field.getType().equals(Long.class)){
+                        map.put(elem, lVariable.getFunction().calculate((Long) elemValue));
+                    } else if (field.getType().equals(Short.class)){
+                        map.put(elem, lVariable.getFunction().calculate((Short) elemValue));
+                    } else if (field.getType().equals(Byte.class)){
+                        map.put(elem, lVariable.getFunction().calculate((Byte) elemValue));
                     }
                 }
             }

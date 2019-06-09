@@ -21,7 +21,7 @@ public class QFunctionFactory {
             @NonNull Double a = coefficients.getOrDefault("a", null);
             @NonNull Double b = coefficients.getOrDefault("b", null);
             @NonNull Double c = coefficients.getOrDefault("c", null);
-            return new TriangleFunction(a, b, c);
+            return new TriangularFunction(a, b, c);
         } else if ("rectangular".equalsIgnoreCase(name)) {
             @NonNull Double a = coefficients.getOrDefault("a", null);
             @NonNull Double b = coefficients.getOrDefault("b", null);
@@ -32,7 +32,7 @@ public class QFunctionFactory {
     }
 
     public static List<Class<? extends QFunction>> functionTypes() {
-        return Arrays.asList( TrapezoidFunction.class, TriangleFunction.class, RectangularFunction.class );
+        return Arrays.asList( TrapezoidFunction.class, TriangularFunction.class, RectangularFunction.class );
     }
 
 }

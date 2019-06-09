@@ -21,8 +21,4 @@ public class Quantifier implements Named {
     public double calculate(double x) {
         return getFunction().calculate(x);
     }
-
-    public double cardinalNumber() {
-        return getFunction().distance();
-    }
 }

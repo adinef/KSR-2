@@ -207,7 +207,7 @@
         <qualifier name="bez pokoi" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>10.0</end>
+                <end>101.1</end>
             </range>
             <function name="rectangular">
                 <coefficient name="a" value="0.0"/>
@@ -217,7 +217,7 @@
         <qualifier name="mała ilość pokoji" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>10.0</end>
+                <end>101.1</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="0.1"/>
@@ -229,7 +229,7 @@
         <qualifier name="dużą ilość pokoji" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>10.0</end>
+                <end>101.1</end>
             </range>
             <function name="triangular">
                 <coefficient name="a" value="4.0"/>
@@ -237,7 +237,7 @@
                 <coefficient name="c" value="101.1"/>
             </function>
         </qualifier>
-        <qualifier name="małą ilość łazienek" member="BTHRM">
+        <qualifier name="małą ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>
@@ -248,7 +248,7 @@
                 <coefficient name="c" value="4"/>
             </function>
         </qualifier>
-        <qualifier name="średnią ilość łazienek" member="BTHRM">
+        <qualifier name="średnią ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>
@@ -259,7 +259,7 @@
                 <coefficient name="c" value="10"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość łazienek" member="BTHRM">
+        <qualifier name="dużą ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>

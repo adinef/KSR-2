@@ -8,7 +8,7 @@ import static java.lang.Math.abs;
 
 @AllArgsConstructor
 @Function("triangular")
-public class TriangleFunction implements QFunction {
+public class TriangularFunction implements QFunction {
 
     @Coefficient("a")
     private final double a;
@@ -30,18 +30,13 @@ public class TriangleFunction implements QFunction {
     }
 
     @Override
-    public double distance() {
-        return c - a;
-    }
-
-    @Override
-    public double square() {
-        return 0;
-    }
-
-    @Override
     public double calculateIntegral() {
         return 0.5 * (c - a);
+    }
+
+    @Override
+    public double distance() {
+        return c-a;
     }
 
     @Override

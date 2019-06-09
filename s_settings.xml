@@ -237,7 +237,7 @@
                 <coefficient name="c" value="101.1"/>
             </function>
         </summarizer>
-        <summarizer name="małą ilość łazienek" member="BTHRM">
+        <summarizer name="małą ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>
@@ -248,7 +248,7 @@
                 <coefficient name="c" value="4"/>
             </function>
         </summarizer>
-        <summarizer name="średnią ilość łazienek" member="BTHRM">
+        <summarizer name="średnią ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>
@@ -259,7 +259,7 @@
                 <coefficient name="c" value="10"/>
             </function>
         </summarizer>
-        <summarizer name="dużą ilość łazienek" member="BTHRM">
+        <summarizer name="dużą ilość łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
                 <end>24.0</end>

@@ -33,21 +33,16 @@ public class TrapezoidFunction implements QFunction {
     }
 
     @Override
-    public double distance() {
-        return d - b;
-    }
-
-    @Override
-    public double square() {
-        return (a - b) * (d - c);
-    }
-
-    @Override
     public double calculateIntegral() {
         double value = c - b;
         value += 0.5 * (b - a);
         value += 0.5 * (d-c);
         return value;
+    }
+
+    @Override
+    public double distance() {
+        return d-a;
     }
 
     @Override

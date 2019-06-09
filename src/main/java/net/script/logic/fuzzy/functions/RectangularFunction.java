@@ -18,25 +18,20 @@ public class RectangularFunction implements QFunction {
 
     @Override
     public double calculate(double x) {
-        if (x <= b || x >= a) {
+        if (x <= b && x >= a) {
             return 1;
         }
         return 0;
     }
 
     @Override
-    public double distance() {
-        return b-a;
-    }
-
-    @Override
-    public double square() {
-        return 1;
-    }
-
-    @Override
     public double calculateIntegral() {
         return (b-a);
+    }
+
+    @Override
+    public double distance() {
+        return b-a;
     }
 
     @Override
