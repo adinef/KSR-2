@@ -39,7 +39,7 @@ public class CSVSaveUtils {
                 Column annotation = declaredFields[i].getAnnotation(Column.class);
                 data = getHeadersExtracted(data, declaredFields, i, annotation, separator);
             }
-            Class lClass = clazz;
+            Class lClass = clazz.getSuperclass();
             while (lClass != null) {
                 for (int i = 0; i < lClass.getDeclaredFields().length; i++) {
                     Column annotation = lClass.getDeclaredFields()[i].getAnnotation(Column.class);
