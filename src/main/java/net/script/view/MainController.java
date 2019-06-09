@@ -601,9 +601,9 @@ public class MainController implements Initializable {
                 if (colAnn != null && !colAnn.tooltip().isEmpty()) {
                     if (colAnn.value().equals(col.getText())) {
                         Label label = new Label(col.getText());
-                        label.setFont(new Font(12));
                         label.setTooltip(new Tooltip(colAnn.tooltip()));
                         col.setGraphic(label);
+                        col.setText("");
                     }
                 }
             }

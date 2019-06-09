@@ -1,5 +1,5 @@
 <qualifiers>
-   <definitions class="java.util.LinkedList">
+   <definitions>
       <qualifier name="nowy" member="id">
          <range>
             <start>0.0</start>
@@ -8,41 +8,6 @@
          <function name="trapezoid">
             <coefficient name="a" value="2.0"/>
             <coefficient name="b" value="2.0"/>
-            <coefficient name="c" value="5.0"/>
-            <coefficient name="d" value="6.0"/>
-         </function>
-      </qualifier>
-      <qualifier name="asd" member="12">
-         <range>
-            <start>1.0</start>
-            <end>2.0</end>
-         </range>
-         <function name="triangular">
-            <coefficient name="a" value="1.0"/>
-            <coefficient name="b" value="2.0"/>
-            <coefficient name="c" value="3.0"/>
-         </function>
-      </qualifier>
-      <qualifier name="TWOJA STARA ŁAZIENKA" member="BATHRM">
-         <range>
-            <start>0.0</start>
-            <end>50.0</end>
-         </range>
-         <function name="trapezoid">
-            <coefficient name="a" value="0.0"/>
-            <coefficient name="b" value="1.0"/>
-            <coefficient name="c" value="5.0"/>
-            <coefficient name="d" value="6.0"/>
-         </function>
-      </qualifier>
-      <qualifier name="PÓŁ TWOJEJ STAREJ ŁAZIENKI" member="HF_BATHRM">
-         <range>
-            <start>0.0</start>
-            <end>50.0</end>
-         </range>
-         <function name="trapezoid">
-            <coefficient name="a" value="0.0"/>
-            <coefficient name="b" value="1.0"/>
             <coefficient name="c" value="5.0"/>
             <coefficient name="d" value="6.0"/>
          </function>
