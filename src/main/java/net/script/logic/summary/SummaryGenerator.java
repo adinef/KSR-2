@@ -65,7 +65,8 @@ public class SummaryGenerator {
         if (qualifiers.size() > 0) {
             for (Summarizer s : summarizers) {
                 for (Qualifier q : qualifiers) {
-                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), Collections.singletonList(s)));
+                    if(checkMemberCompatibility(Collections.singletonList(q),Collections.singletonList(s)))
+                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), Collections.singletonList(s)));
                 }
             }
             //pojedynczy kwalifikator i 2 sumaryzatory
@@ -78,7 +79,8 @@ public class SummaryGenerator {
                             if (!summarizers.get(i).getMemberFieldName().equals(summarizers.get(j).getMemberFieldName())) {
                                 tempSumList.add(summarizers.get(i));
                                 tempSumList.add(summarizers.get(j));
-                                summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), tempSumList));
+                                if(checkMemberCompatibility(Collections.singletonList(q),tempSumList))
+                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), tempSumList));
                             }
                         }
                     }
@@ -93,7 +95,8 @@ public class SummaryGenerator {
                             if (!qualifiers.get(i).getMemberFieldName().equals(qualifiers.get(j).getMemberFieldName())) {
                                 tempQualList.add(qualifiers.get(i));
                                 tempQualList.add(qualifiers.get(j));
-                                summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, Collections.singletonList(s)));
+                                if(checkMemberCompatibility(tempQualList,Collections.singletonList(s)))
+                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, Collections.singletonList(s)));
                             }
                         }
                     }
@@ -115,7 +118,8 @@ public class SummaryGenerator {
                                 if (!summarizers.get(k).getMemberFieldName().equals(summarizers.get(l).getMemberFieldName())) {
                                     tempSumList.add(summarizers.get(k));
                                     tempSumList.add(summarizers.get(l));
-                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, tempSumList));
+                                    if(checkMemberCompatibility(tempQualList,tempSumList))
+                                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, tempSumList));
                                 }
                             }
                         }
@@ -126,7 +130,7 @@ public class SummaryGenerator {
             List<Summarizer> uniqueCategorySummarizers = summarizers.stream().filter(distinctByKey(Summarizer::getMemberFieldName)).collect(Collectors.toList());
             List<Qualifier> uniqueCategoryQualifiers = qualifiers.stream().filter(distinctByKey(Qualifier::getMemberFieldName)).collect(Collectors.toList());
             if (summarizers.size() == uniqueCategorySummarizers.size() && summarizers.size() > 2 &&
-                    qualifiers.size() == uniqueCategoryQualifiers.size() && qualifiers.size() > 2) {
+                    qualifiers.size() == uniqueCategoryQualifiers.size() && qualifiers.size() > 2 && checkMemberCompatibility(uniqueCategoryQualifiers,uniqueCategorySummarizers)) {
                 summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, qualifiers, summarizers));
             }
         }
@@ -353,6 +357,14 @@ public class SummaryGenerator {
         return QualityValuesMap;
     }
 
+    private boolean checkMemberCompatibility(List<Qualifier> qualifiers, List<Summarizer> summarizers) {
+        for (Qualifier q : qualifiers) {
+            for (Summarizer s : summarizers) {
+                if(s.getMemberFieldName().equals(q.getMemberFieldName())) return false;
+            }
+        }
+        return true;
+    }
 
 }
 
