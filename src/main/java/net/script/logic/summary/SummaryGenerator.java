@@ -352,13 +352,13 @@ public class SummaryGenerator {
         HashMap<String, Double> QualityValuesMap = new HashMap<>();
 
         double t2 = DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState);
-        QualityValuesMap.put("T2", round(t1));
+        QualityValuesMap.put("T2", round(t2));
         double t3 = DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState);
-        QualityValuesMap.put("T3", round(t2));
+        QualityValuesMap.put("T3", round(t3));
         double t4 = DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3"));
-        QualityValuesMap.put("T4", round(t3));
+        QualityValuesMap.put("T4", round(t4));
         double t5 = LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState);
-        QualityValuesMap.put("T5", round(t4));
+        QualityValuesMap.put("T5", round(t5));
         double t6 = DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name);
         QualityValuesMap.put("T6", round(t6));
         double t7 = DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name);
