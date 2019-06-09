@@ -27,7 +27,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         fxmlLoader.setLocation(getClass().getResource("/fxml/sample.fxml"));
         Parent root = fxmlLoader.load();
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("KSR 2 - Podsumowania lingwistyczne.");
         primaryStage.initStyle(StageStyle.UNDECORATED);
         //MOVE IT TO SCENE CONTROLLER
         root.setOnMousePressed( (e) -> {
@@ -38,7 +38,7 @@ public class Main extends Application {
             primaryStage.setX(e.getScreenX() - xOffset);
             primaryStage.setY(e.getScreenY() - yOffset);
         });
-        Scene scene = new Scene(root, 1055, 705);
+        Scene scene = new Scene(root, 1200, 900);
         scene.getStylesheets().add( getClass().getResource("/css/style.css").toExternalForm() );
         primaryStage.setScene(scene);
         primaryStage.show();

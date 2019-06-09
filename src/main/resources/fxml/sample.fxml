@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="705.0" prefWidth="1200.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
+      prefHeight="900.0" prefWidth="1500.0" spacing="10" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.script.view.MainController">
     <HBox onMouseClicked="#barClicked">
         <MenuBar style="-fx-background-color: transparent;">
