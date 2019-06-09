@@ -67,11 +67,16 @@ public class CommonFXUtils {
     }
 
     public static <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
-        List<Field> allFields = Arrays.asList(tClass.getDeclaredFields());
-        allFields.addAll(Arrays.asList(tClass.getSuperclass().getDeclaredFields()));
         List<TableColumn<String, T>> columns = new LinkedList<>();
-        for (Field field : allFields) {
+        for (Field field : tClass.getDeclaredFields()) {
             createColumn(editable, columns, field);
+        }
+        Class loopClass = tClass.getSuperclass();
+        while (loopClass != null) {
+            for (Field field : loopClass.getDeclaredFields()) {
+                createColumn(editable, columns, field);
+            }
+            loopClass = loopClass.getSuperclass();
         }
         return columns;
     }

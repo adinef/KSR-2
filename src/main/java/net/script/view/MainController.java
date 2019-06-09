@@ -1,5 +1,6 @@
 package net.script.view;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSpinner;
 import javafx.application.Platform;
@@ -17,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.FieldColumnTuple;
@@ -40,8 +42,11 @@ import net.script.utils.tasking.EntityReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -418,7 +423,7 @@ public class MainController implements Initializable {
                             selectionState.getSummarizers()
                     )
             );
-            this.newTabWithContent(
+            VBox vBox = this.newTabWithContent(
                     Summary.class,
                     "Podsumowania",
                     () -> FXCollections.observableList(
@@ -428,11 +433,62 @@ public class MainController implements Initializable {
                     false,
                     null
             );
+            JFXButton saveButton = new JFXButton("Zapisz podsumowania");
+            saveButton.setOnAction((e) -> this.saveSummaries(summaries));
+            vBox.getChildren().add(0, saveButton);
         } else {
             CommonFXUtils.noDataPopup("Dane",
                     "Proszę wybierz wszystkie potrzebne dane do wygenerowania podsumowania.",
                     Main.getCurrentStage().getScene()
             );
+        }
+    }
+
+    private void saveSummaries(List<Tuple<Summary, SummarizationState>> summaries) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("./"));
+        fileChooser.setTitle("Wybierz katalog");
+        File file = fileChooser.showSaveDialog(Main.getCurrentStage());
+        if (file != null) {
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    CommonFXUtils.noDataPopup(
+                            "Błąd",
+                            "Wystąpił błąd w trakcie zapisu. " + e.getMessage(),
+                            Main.getCurrentStage().getScene()
+                    );
+                    e.printStackTrace();
+                    return;
+                }
+            }
+            String data = "";
+            for (Tuple<Summary, SummarizationState> sState : summaries) {
+                Summary summary = sState.getFirst();
+                data += summary.getContent() + ", ";
+                data += summary.getDegreeOfTruth() + ", ";
+                data += summary.getDegreeOfImprecision() + ", ";
+                data += summary.getDegreeOfCovering() + ", ";
+                data += summary.getDegreOfAppropriateness() + ", ";
+                data += summary.getLengthOfSummary() + ", ";
+                data += summary.getDegreeOfQuantifierImprecision() + ", ";
+                data += summary.getDegreeOfQuantifierCardinality() + ", ";
+                data += summary.getDegreeOfSummarizerCardinality() + ", ";
+                data += summary.getDegreeOfQualifierImprecision() + ", ";
+                data += summary.getDegreeOfQualifierCardinality() + ", ";
+                data += summary.getLengthOfQualifier() + "\n";
+            }
+            try {
+                Files.write(file.toPath(), data.getBytes());
+            } catch (IOException e) {
+                CommonFXUtils.noDataPopup(
+                        "Błąd",
+                        "Wystąpił błąd w trakcie zapisu. " + e.getMessage(),
+                        Main.getCurrentStage().getScene()
+                );
+                e.printStackTrace();
+            }
         }
     }
 
@@ -471,7 +527,7 @@ public class MainController implements Initializable {
 
 
     @SuppressWarnings("unchecked")
-    private <T> void newTabWithContent(Class<T> tClass,
+    private <T> VBox newTabWithContent(Class<T> tClass,
                                        String name,
                                        Supplier<Iterable<T>> dataSupplier,
                                        boolean editable,
@@ -529,6 +585,7 @@ public class MainController implements Initializable {
         );
         task.start();
         this.tableViewMap.put(tClass.getName(), tableView);
+        return vBox;
     }
 
     private <T> void askForDelete(KeyEvent e, TableView<T> tableView, Consumer<T> deleteConsumer) {
