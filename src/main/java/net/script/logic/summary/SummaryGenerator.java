@@ -11,6 +11,8 @@ import net.script.logic.summary.qualities.*;
 import net.script.view.Summary;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -343,16 +345,16 @@ public class SummaryGenerator {
     private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, String name) {
         HashMap<String, Double> QualityValuesMap = new HashMap<>();
 
-        QualityValuesMap.put("T2", DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState));
-        QualityValuesMap.put("T3", DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState));
-        QualityValuesMap.put("T4", DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3")));
-        QualityValuesMap.put("T5", LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState));
-        QualityValuesMap.put("T6", DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name));
-        QualityValuesMap.put("T7", DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name));
-        QualityValuesMap.put("T8", DegreeOfSummarizerCardinalityT8.calculateDegreeOfSummarizerCardinality(Data, summarizationState));
-        QualityValuesMap.put("T9", DegreeOfQualifierImprecisionT9.calculateDegreeOfQualifierImprecision(summarizationState));
-        QualityValuesMap.put("T10", DegreeOfQualifierCardinalityT10.calculateDegreeOfQualifierCardinality(Data, summarizationState));
-        QualityValuesMap.put("T11", LengthOfQualifierT11.calculateLengthOfQualifierT11(summarizationState));
+        QualityValuesMap.put("T2", round(DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState)));
+        QualityValuesMap.put("T3", round(DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState)));
+        QualityValuesMap.put("T4", round(DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3"))));
+        QualityValuesMap.put("T5", round(LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState)));
+        QualityValuesMap.put("T6", round(DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name)));
+        QualityValuesMap.put("T7", round(DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name)));
+        QualityValuesMap.put("T8", round(DegreeOfSummarizerCardinalityT8.calculateDegreeOfSummarizerCardinality(Data, summarizationState)));
+        QualityValuesMap.put("T9", round(DegreeOfQualifierImprecisionT9.calculateDegreeOfQualifierImprecision(summarizationState)));
+        QualityValuesMap.put("T10", round(DegreeOfQualifierCardinalityT10.calculateDegreeOfQualifierCardinality(Data, summarizationState)));
+        QualityValuesMap.put("T11", round(LengthOfQualifierT11.calculateLengthOfQualifierT11(summarizationState)));
 
         return QualityValuesMap;
     }
@@ -364,6 +366,12 @@ public class SummaryGenerator {
             }
         }
         return true;
+    }
+
+    private static double round(double value) {
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }
