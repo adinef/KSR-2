@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Column {
-    String value();
+    String value() default "";
     String tooltip() default "";
     boolean fuzzable() default false;
 }

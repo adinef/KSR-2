@@ -219,13 +219,11 @@ public class MainController implements Initializable {
                 this.workingData::workingQuantifiers,
                 () -> selectionState.getQuantifiers()
         );
-        if (!selectionState.getQuantifiers().isEmpty()) {
-            this.setListView(
-                    Quantifier.class,
-                    "Wybrane kwantyfikatory",
-                    () -> selectionState.getQuantifiers().stream().map(Quantifier::getName).collect(Collectors.toList())
-            );
-        }
+        this.setListView(
+                Quantifier.class,
+                "Wybrane kwantyfikatory",
+                () -> selectionState.getQuantifiers().stream().map(Quantifier::getName).collect(Collectors.toList())
+        );
     }
 
     @FXML
@@ -237,13 +235,11 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
                 () -> selectionState.getQualifiers()
         );
-        if (!selectionState.getQualifiers().isEmpty()) {
-            this.setListView(
-                    Qualifier.class,
-                    "Wybrane kwalifikatory",
-                    () -> selectionState.getQualifiers().stream().map(Qualifier::getName).collect(Collectors.toList())
-            );
-        }
+        this.setListView(
+                Qualifier.class,
+                "Wybrane kwalifikatory",
+                () -> selectionState.getQualifiers().stream().map(Qualifier::getName).collect(Collectors.toList())
+        );
     }
 
     @FXML
@@ -255,13 +251,11 @@ public class MainController implements Initializable {
                 () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
                 () -> selectionState.getSummarizers()
         );
-        if (!selectionState.getSummarizers().isEmpty()) {
-            this.setListView(
-                    Summarizer.class,
-                    "Wybrane sumaryzatory",
-                    () -> selectionState.getSummarizers().stream().map(Summarizer::getName).collect(Collectors.toList())
-            );
-        }
+        this.setListView(
+                Summarizer.class,
+                "Wybrane sumaryzatory",
+                () -> selectionState.getSummarizers().stream().map(Summarizer::getName).collect(Collectors.toList())
+        );
     }
 
     private void setListView(Class<?> elemClass,
@@ -499,7 +493,7 @@ public class MainController implements Initializable {
             contextMenu = new ContextMenu();
             MenuItem menuItem = new MenuItem("Edytuj");
             contextMenu.getItems().add(menuItem);
-            menuItem.setOnAction( (e) -> this.editContext(tableView));
+            menuItem.setOnAction((e) -> this.editContext(tableView));
             tableView.setOnMouseClicked((e) -> this.listenForTableDoubleClick(e, tableView));
         }
         if (deletable) {

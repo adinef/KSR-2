@@ -17,9 +17,7 @@ import net.script.utils.functional.RunnableWithException;
 import net.script.utils.tasking.LongTask;
 
 import java.lang.reflect.Field;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
@@ -68,13 +66,11 @@ public class CommonFXUtils {
         return result.get();
     }
 
-    public static  <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
-        Field[] allFields = tClass.getDeclaredFields();
+    public static <T> List<TableColumn<String, T>> getSimpleColumnsForClass(Class<T> tClass, boolean editable) {
+        List<Field> allFields = Arrays.asList(tClass.getDeclaredFields());
+        allFields.addAll(Arrays.asList(tClass.getSuperclass().getDeclaredFields()));
         List<TableColumn<String, T>> columns = new LinkedList<>();
         for (Field field : allFields) {
-            createColumn(editable, columns, field);
-        }
-        for (Field field : tClass.getSuperclass().getDeclaredFields()) {
             createColumn(editable, columns, field);
         }
         return columns;
@@ -93,7 +89,7 @@ public class CommonFXUtils {
 
     public static void longTaskWithMessages(RunnableWithException r, String onSuccess, String onFailure, Scene scene) {
         LongTask longTask = new LongTask(r);
-        longTask.setOnSucceeded( (e) -> {
+        longTask.setOnSucceeded((e) -> {
             if (e.getSource().getValue().equals(true)) {
                 CommonFXUtils.noDataPopup("Sukces",
                         onSuccess,
