@@ -21,7 +21,7 @@ public class Summary {
     @Column("[T1] Stopień prawdziwości")
     private double degreeOfTruth;
 
-    @Column("[T2] Stopień precyzyjności")
+    @Column("[T2] Stopień nieprecyzyjności")
     private double degreeOfImprecision;
 
     @Column("[T3] Stopień pokrycia")
@@ -33,7 +33,7 @@ public class Summary {
     @Column("[T5] Długość podsumowania")
     private double lengthOfSummary;
 
-    @Column("[T6] Stopień precyzyjności kwantyfikatora")
+    @Column("[T6] Stopień nieprecyzyjności kwantyfikatora")
     private double degreeOfQuantifierImprecision;
 
     @Column("[T7] Stopień kardynalności kwantyfikatora")
@@ -42,7 +42,7 @@ public class Summary {
     @Column("[T8] Stopień kardynalności sumaryzatora")
     private double degreeOfSummarizerCardinality;
 
-    @Column("[T9] Stopień precyzyjności kwalifikatora")
+    @Column("[T9] Stopień nieprecyzyjności kwalifikatora")
     private double degreeOfQualifierImprecision;
 
     @Column("[T10] Stopień kardynalności kwalifikatora")
