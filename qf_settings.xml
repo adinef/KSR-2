@@ -84,18 +84,6 @@
                 <coefficient name="d" value="25200000.0"/>
             </function>
         </qualifier>
-        <qualifier name="niewyobrażalnie drogie" member="PRICE">
-            <range>
-                <start>1.0</start>
-                <end>25200000.0</end>
-            </range>
-            <function name="trapezoid">
-                <coefficient name="a" value="1200000.0"/>
-                <coefficient name="b" value="2000000.0"/>
-                <coefficient name="c" value="25200000.0"/>
-                <coefficient name="d" value="25200000.0"/>
-            </function>
-        </qualifier>
         <qualifier name="małą powierzchnię budynku" member="GBA">
             <range>
                 <start>1.0</start>
