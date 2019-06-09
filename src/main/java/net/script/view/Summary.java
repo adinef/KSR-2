@@ -15,6 +15,9 @@ public class Summary {
     @Column("Treść")
     private String content;
 
+    @Column("[T] śr stopień prawdziwości")
+    private double averageT;
+
     @Column("[T1] Stopień prawdziwości")
     private double degreeOfTruth;
 

@@ -467,6 +467,7 @@ public class MainController implements Initializable {
             for (Tuple<Summary, SummarizationState> sState : summaries) {
                 Summary summary = sState.getFirst();
                 data += summary.getContent() + ", ";
+                data += summary.getAverageT() + ", ";
                 data += summary.getDegreeOfTruth() + ", ";
                 data += summary.getDegreeOfImprecision() + ", ";
                 data += summary.getDegreeOfCovering() + ", ";

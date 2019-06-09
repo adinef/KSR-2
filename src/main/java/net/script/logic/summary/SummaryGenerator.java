@@ -161,10 +161,12 @@ public class SummaryGenerator {
         String summaryContent = String.format(this.standardContext, name);
         summaryContent += summarizer.getName();
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
 
         return new Tuple<>(
-                new Summary(summaryContent, max,
+                new Summary(summaryContent,
+                        qualityMeasures.get("T"),
+                        max,
                         qualityMeasures.get("T2"),
                         qualityMeasures.get("T3"),
                         qualityMeasures.get("T4"),
@@ -207,10 +209,12 @@ public class SummaryGenerator {
 
         String summaryContent = this.buildSummaryContext(String.format(this.standardContext, name), summarizers);
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
 
         return new Tuple<>(
-                new Summary(summaryContent, max,
+                new Summary(summaryContent,
+                        qualityMeasures.get("T"),
+                        max,
                         qualityMeasures.get("T2"),
                         qualityMeasures.get("T3"),
                         qualityMeasures.get("T4"),
@@ -264,10 +268,12 @@ public class SummaryGenerator {
                 this.buildSummaryContext(String.format("%s %s, które mają/są ", name, this.entityName), qualifiers);
         summaryContent += this.buildSummaryContext(" ma/jest ", summarizers);
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
 
         return new Tuple<>(
-                new Summary(summaryContent, max,
+                new Summary(summaryContent,
+                        qualityMeasures.get("T"),
+                        max,
                         qualityMeasures.get("T2"),
                         qualityMeasures.get("T3"),
                         qualityMeasures.get("T4"),
@@ -342,21 +348,45 @@ public class SummaryGenerator {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
-    private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, String name) {
+    private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, Double t1, String name) {
         HashMap<String, Double> QualityValuesMap = new HashMap<>();
 
-        QualityValuesMap.put("T2", round(DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState)));
-        QualityValuesMap.put("T3", round(DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState)));
-        QualityValuesMap.put("T4", round(DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3"))));
-        QualityValuesMap.put("T5", round(LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState)));
-        QualityValuesMap.put("T6", round(DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name)));
-        QualityValuesMap.put("T7", round(DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name)));
-        QualityValuesMap.put("T8", round(DegreeOfSummarizerCardinalityT8.calculateDegreeOfSummarizerCardinality(Data, summarizationState)));
-        QualityValuesMap.put("T9", round(DegreeOfQualifierImprecisionT9.calculateDegreeOfQualifierImprecision(summarizationState)));
-        QualityValuesMap.put("T10", round(DegreeOfQualifierCardinalityT10.calculateDegreeOfQualifierCardinality(Data, summarizationState)));
-        QualityValuesMap.put("T11", round(LengthOfQualifierT11.calculateLengthOfQualifierT11(summarizationState)));
+        double t2 = DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState);
+        QualityValuesMap.put("T2", round(t1));
+        double t3 = DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState);
+        QualityValuesMap.put("T3", round(t2));
+        double t4 = DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3"));
+        QualityValuesMap.put("T4", round(t3));
+        double t5 = LengthOfSummaryT5.calculateLengthOfSummaryT5(summarizationState);
+        QualityValuesMap.put("T5", round(t4));
+        double t6 = DegreeOfQuantifierImprecisionT6.calculateDegreeOfQuantifierImprecision(summarizationState, name);
+        QualityValuesMap.put("T6", round(t6));
+        double t7 = DegreeOfQuantifierCardinalityT7.calculateDegreeOfQuantifierCardinality(summarizationState, name);
+        QualityValuesMap.put("T7", round(t7));
+        double t8 = DegreeOfSummarizerCardinalityT8.calculateDegreeOfSummarizerCardinality(Data, summarizationState);
+        QualityValuesMap.put("T8", round(t8));
+        double t9 = DegreeOfQualifierImprecisionT9.calculateDegreeOfQualifierImprecision(summarizationState);
+        QualityValuesMap.put("T9", round(t9));
+        double t10 = DegreeOfQualifierCardinalityT10.calculateDegreeOfQualifierCardinality(Data, summarizationState);
+        QualityValuesMap.put("T10", round(t10));
+        double t11 = LengthOfQualifierT11.calculateLengthOfQualifierT11(summarizationState);
+        QualityValuesMap.put("T11", round(t11));
+
+        QualityValuesMap.put("T", round(average(t1, t2, t3, t4, t5)));
 
         return QualityValuesMap;
+    }
+
+    private static double average(Double... vals) {
+        if (vals == null) {
+            return 0;
+        }
+        double size = vals.length;
+        double avg = 0.0;
+        for (double val : vals) {
+            avg += val;
+        }
+        return avg / size;
     }
 
     private boolean checkMemberCompatibility(List<Qualifier> qualifiers, List<Summarizer> summarizers) {
