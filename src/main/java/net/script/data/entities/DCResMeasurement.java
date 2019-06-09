@@ -73,7 +73,7 @@ public class DCResMeasurement {
 
     @Column(value = "STORIES", tooltip = "Stories", fuzzable = true)
     @CsvBindByName(column = "STORIES")
-    private Float stories;
+    private Double stories;
 
     @Column(value = "SALEDATE", tooltip = "Date of most recent sale")
     @CsvCustomBindByName(column = "SALEDATE", converter = LocalDateConverter.class)
@@ -81,7 +81,7 @@ public class DCResMeasurement {
 
     @Column(value = "PRICE", tooltip = "Price of most recent sale", fuzzable = true)
     @CsvBindByName(column = "PRICE")
-    private Float recentSalePrice;
+    private Double recentSalePrice;
 
     @Column(value = "SALE_NUM", tooltip = "Sale number since May 2014", fuzzable = true)
     @CsvBindByName(column = "SALE_NUM")

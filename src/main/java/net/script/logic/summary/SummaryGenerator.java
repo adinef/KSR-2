@@ -67,7 +67,7 @@ public class SummaryGenerator {
         if (qualifiers.size() > 0) {
             for (Summarizer s : summarizers) {
                 for (Qualifier q : qualifiers) {
-                    if(checkMemberCompatibility(Collections.singletonList(q),Collections.singletonList(s)))
+                    //if(checkMemberCompatibility(Collections.singletonList(q),Collections.singletonList(s)))
                         summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), Collections.singletonList(s)));
                 }
             }
@@ -81,7 +81,7 @@ public class SummaryGenerator {
                             if (!summarizers.get(i).getMemberFieldName().equals(summarizers.get(j).getMemberFieldName())) {
                                 tempSumList.add(summarizers.get(i));
                                 tempSumList.add(summarizers.get(j));
-                                if(checkMemberCompatibility(Collections.singletonList(q),tempSumList))
+                                //if(checkMemberCompatibility(Collections.singletonList(q),tempSumList))
                                     summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), tempSumList));
                             }
                         }
@@ -97,7 +97,7 @@ public class SummaryGenerator {
                             if (!qualifiers.get(i).getMemberFieldName().equals(qualifiers.get(j).getMemberFieldName())) {
                                 tempQualList.add(qualifiers.get(i));
                                 tempQualList.add(qualifiers.get(j));
-                                if(checkMemberCompatibility(tempQualList,Collections.singletonList(s)))
+                                //if(checkMemberCompatibility(tempQualList,Collections.singletonList(s)))
                                     summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, Collections.singletonList(s)));
                             }
                         }
@@ -120,7 +120,7 @@ public class SummaryGenerator {
                                 if (!summarizers.get(k).getMemberFieldName().equals(summarizers.get(l).getMemberFieldName())) {
                                     tempSumList.add(summarizers.get(k));
                                     tempSumList.add(summarizers.get(l));
-                                    if(checkMemberCompatibility(tempQualList,tempSumList))
+                                    //if(checkMemberCompatibility(tempQualList,tempSumList))
                                         summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, tempSumList));
                                 }
                             }
