@@ -38,7 +38,7 @@ public class DCResMeasurement {
 
     @Column(value = "HEAD", tooltip = "Heating code")
     @CsvBindByName(column = "HEAD")
-    private Integer heatingCode;
+    private String heatingCode;
 
     @Column(value = "HEAD_D", tooltip = "Heating description")
     @CsvBindByName(column = "HEAD_D")

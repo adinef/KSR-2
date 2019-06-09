@@ -24,10 +24,10 @@ public class TrapezoidFunction implements QFunction {
     public double calculate(double x) {
         if (x > a && x < b) {
             return ((1 / (b - a)) * (x - a));
+        } if (x > c && x < d) {
+            return (-(1/(d-c)) * (x - d));
         } else if (x >= b && x <= c) {
             return 1;
-        } else if (x > c && x < d) {
-            return (-(1/(d-c)) * (x - d));
         }
         return 0;
     }
