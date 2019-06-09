@@ -47,6 +47,6 @@ public class TrapezoidFunction implements QFunction {
 
     @Override
     public String toString() {
-        return String.format("Funkcja trapezoidalna, współczynniki: %f, %f, %f, %f", a, b, c, d);
+        return String.format("Funkcja trapezoidalna, współczynniki: %s, %s, %s, %s", a, b, c, d);
     }
 }

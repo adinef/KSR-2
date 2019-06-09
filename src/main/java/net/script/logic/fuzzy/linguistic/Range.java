@@ -15,6 +15,6 @@ public class Range {
 
     @Override
     public String toString() {
-        return String.format("[Początek: %f, Koniec: %f]", begin, end);
+        return String.format("[Początek: %s, Koniec: %s]", begin, end);
     }
 }

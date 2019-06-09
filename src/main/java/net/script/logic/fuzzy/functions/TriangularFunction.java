@@ -41,6 +41,6 @@ public class TriangularFunction implements QFunction {
 
     @Override
     public String toString() {
-        return String.format("Funkcja triangularna, współczynniki: %f, %f, %s", a, b, c);
+        return String.format("Funkcja triangularna, współczynniki: %s, %s, %s", a, b, c);
     }
 }

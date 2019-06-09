@@ -36,6 +36,6 @@ public class RectangularFunction implements QFunction {
 
     @Override
     public String toString() {
-        return String.format("Funkcja prostokatna, współczynniki: %f, %f", a, b);
+        return String.format("Funkcja prostokatna, współczynniki: %s, %s", a, b);
     }
 }
