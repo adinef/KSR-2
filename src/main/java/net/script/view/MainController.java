@@ -17,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
@@ -160,27 +159,36 @@ public class MainController implements Initializable {
     }
 
     public void showQuantifiers() {
-        this.showLinguisticData(
+        VBox vBox = this.showLinguisticData(
                 Quantifier.class,
                 "Kwantyfikatory",
                 workingData::workingQuantifiers
         );
+        JFXButton saveButton = new JFXButton("Zapisz do CSV");
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQuantifiers(), ",", Quantifier.class));
+        vBox.getChildren().add(0, saveButton);
         this.saveQuantifiersOption.setDisable(false);
     }
 
     public void showQualifiers() {
-        this.showLinguisticData(Qualifier.class,
+        VBox vBox = this.showLinguisticData(Qualifier.class,
                 "Kwalifikatory",
                 workingData::workingQualifiers
         );
+        JFXButton saveButton = new JFXButton("Zapisz do CSV");
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQualifiers(), ",", Qualifier.class));
+        vBox.getChildren().add(0, saveButton);
         this.saveQualifiersOption.setDisable(false);
     }
 
     public void showSummarizers() {
-        this.showLinguisticData(Summarizer.class,
+        VBox vBox = this.showLinguisticData(Summarizer.class,
                 "Summaryzatory",
                 workingData::workingSummarizers
         );
+        JFXButton saveButton = new JFXButton("Zapisz do CSV");
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingSummarizers(), ",",  Summarizer.class));
+        vBox.getChildren().add(0, saveButton);
         this.saveSummarizersOption.setDisable(false);
     }
 
@@ -445,52 +453,10 @@ public class MainController implements Initializable {
     }
 
     private void saveSummaries(List<Tuple<Summary, SummarizationState>> summaries) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("./"));
-        fileChooser.setTitle("Wybierz katalog");
-        File file = fileChooser.showSaveDialog(Main.getCurrentStage());
-        if (file != null) {
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    CommonFXUtils.noDataPopup(
-                            "Błąd",
-                            "Wystąpił błąd w trakcie zapisu. " + e.getMessage(),
-                            Main.getCurrentStage().getScene()
-                    );
-                    e.printStackTrace();
-                    return;
-                }
-            }
-            String data = "";
-            for (Tuple<Summary, SummarizationState> sState : summaries) {
-                Summary summary = sState.getFirst();
-                data += summary.getContent() + ", ";
-                data += summary.getAverageT() + ", ";
-                data += summary.getDegreeOfTruth() + ", ";
-                data += summary.getDegreeOfImprecision() + ", ";
-                data += summary.getDegreeOfCovering() + ", ";
-                data += summary.getDegreOfAppropriateness() + ", ";
-                data += summary.getLengthOfSummary() + ", ";
-                data += summary.getDegreeOfQuantifierImprecision() + ", ";
-                data += summary.getDegreeOfQuantifierCardinality() + ", ";
-                data += summary.getDegreeOfSummarizerCardinality() + ", ";
-                data += summary.getDegreeOfQualifierImprecision() + ", ";
-                data += summary.getDegreeOfQualifierCardinality() + ", ";
-                data += summary.getLengthOfQualifier() + "\n";
-            }
-            try {
-                Files.write(file.toPath(), data.getBytes());
-            } catch (IOException e) {
-                CommonFXUtils.noDataPopup(
-                        "Błąd",
-                        "Wystąpił błąd w trakcie zapisu. " + e.getMessage(),
-                        Main.getCurrentStage().getScene()
-                );
-                e.printStackTrace();
-            }
-        }
+        CSVSaveUtils.exportToCsv(
+                summaries.stream().map(Tuple::getFirst).collect(Collectors.toList()),
+                ",",
+                Summary.class);
     }
 
     private SummaryGenerator summarizer() {
@@ -502,7 +468,7 @@ public class MainController implements Initializable {
 
     // HELPER METHODS
 
-    private <T> void showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
+    private <T> VBox showLinguisticData(Class<T> tClass, String tabname, SupplierWithException<List<T>> listSupplier) {
         ObservableList<T> read = FXCollections.observableArrayList();
         try {
             read = FXCollections.observableList(listSupplier.get());
@@ -511,7 +477,7 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         ObservableList<T> finalRead = read;
-        this.newTabWithContent(tClass, tabname, () -> finalRead, true, true, (deletedElem) -> {
+        VBox vBox = this.newTabWithContent(tClass, tabname, () -> finalRead, true, true, (deletedElem) -> {
             System.out.println(deletedElem);
             if (Qualifier.class.equals(tClass)) {
                 this.workingData.workingQualifiers().remove(deletedElem);
@@ -524,6 +490,7 @@ public class MainController implements Initializable {
                 this.selectionState.getSummarizers().remove(deletedElem);
             }
         });
+        return vBox;
     }
 
 
