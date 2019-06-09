@@ -43,9 +43,9 @@
       <quantifier name="Wszystkie">
          <function name="trapezoid">
             <coefficient name="a" value="0.9998"/>
-            <coefficient name="b" value="1.0"/>
-            <coefficient name="c" value="2.0"/>
-            <coefficient name="d" value="2.0"/>
+            <coefficient name="b" value="0.9998"/>
+            <coefficient name="c" value="1.0"/>
+            <coefficient name="d" value="1.0"/>
          </function>
       </quantifier>
    </definitions>
