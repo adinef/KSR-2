@@ -25,12 +25,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
-public class SettingsPopup {
+public class SettingsUI {
 
     private final PathConfig pathConfig;
+    public String separator = ",";
     private final QuantifiersConfigAccessor quantifiersConfigAccessor;
     private final QualifiersConfigAccessor qualifiersConfigAccessor;
     private final SummarizersConfigAccessor summarizersConfigAccessor;
@@ -38,10 +41,10 @@ public class SettingsPopup {
     private FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("Plik .xml", "xml");
 
     @Autowired
-    public SettingsPopup(PathConfig pathConfig,
-                         QuantifiersConfigAccessor quantifiersConfigAccessor,
-                         QualifiersConfigAccessor qualifiersConfigAccessor,
-                         SummarizersConfigAccessor summarizersConfigAccessor) {
+    public SettingsUI(PathConfig pathConfig,
+                      QuantifiersConfigAccessor quantifiersConfigAccessor,
+                      QualifiersConfigAccessor qualifiersConfigAccessor,
+                      SummarizersConfigAccessor summarizersConfigAccessor) {
         this.pathConfig = pathConfig;
         this.quantifiersConfigAccessor = quantifiersConfigAccessor;
         this.qualifiersConfigAccessor = qualifiersConfigAccessor;
@@ -81,7 +84,15 @@ public class SettingsPopup {
                 PathType.SUMMARIZERS
         );
 
+        Label separatorLabel = new Label("Separator w CSV");
+        TextField separatorTextField = new TextField(this.separator);
+        separatorTextField.textProperty().addListener(
+                (e, oV, nV) -> {
+                    this.separator = nV;
+                }
+        );
 
+        AtomicBoolean anyPathChanged = new AtomicBoolean(false);
         yesButton.setOnAction(
                 (e) -> {
                     String qfPath = this.pathConfig.knownPathFor(PathType.QUALIFIERS);
@@ -95,6 +106,7 @@ public class SettingsPopup {
                         this.quantifiersConfigAccessor.read(false);
                         this.summarizersConfigAccessor.read(false);
                         this.pathConfig.savePathSettings();
+                        anyPathChanged.set(true);
                         alert.hideWithAnimation();
                     } catch (Exception e1) {
                         this.pathConfig.setValue(PathType.QUALIFIERS, qfPath);
@@ -114,6 +126,8 @@ public class SettingsPopup {
         mainVbox.getChildren().addAll(qData.nodes);
         mainVbox.getChildren().addAll(qfData.nodes);
         mainVbox.getChildren().addAll(sData.nodes);
+        mainVbox.getChildren().addAll(separatorLabel);
+        mainVbox.getChildren().addAll(separatorTextField);
 
         layout.setHeading(new Label("Ustawienia"));
         layout.setBody(mainVbox);
@@ -126,6 +140,13 @@ public class SettingsPopup {
         alert.setHideOnEscape(false);
         alert.setContent(layout);
         alert.showAndWait();
+        if (anyPathChanged.get()) {
+            CommonFXUtils.noDataPopup(
+                    "Zmiana ścieżek",
+                    "Aby nowe ścieżki zostały zaakceptowane może być wymagane ponowne uruchomienie programu.",
+                    scene
+            );
+        }
     }
 
     private NodeData newBlockData(String title, String fileDesc, Scene scene, PathType pathType) {

@@ -17,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import net.script.Main;
 import net.script.data.FieldColumnTuple;
@@ -41,11 +40,8 @@ import net.script.utils.tasking.EntityReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -60,7 +56,7 @@ public class MainController implements Initializable {
     private final CachingRepository repository;
     private final FuzzyData fuzzyData;
     private final WorkingData workingData;
-    private final SettingsPopup settingsPopup;
+    private final SettingsUI settingsUI;
     private boolean isFullscreen;
 
     @FXML
@@ -95,11 +91,11 @@ public class MainController implements Initializable {
     public MainController(
             FuzzyData fuzzyData,
             WorkingData workingData,
-            CachingRepository repository, SettingsPopup settingsPopup) {
+            CachingRepository repository, SettingsUI settingsUI) {
         this.repository = repository;
         this.fuzzyData = fuzzyData;
         this.workingData = workingData;
-        this.settingsPopup = settingsPopup;
+        this.settingsUI = settingsUI;
     }
 
     @FXML
@@ -165,7 +161,7 @@ public class MainController implements Initializable {
                 workingData::workingQuantifiers
         );
         JFXButton saveButton = new JFXButton("Zapisz do CSV");
-        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQuantifiers(), ",", Quantifier.class));
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQuantifiers(), settingsUI.separator, Quantifier.class));
         vBox.getChildren().add(0, saveButton);
         this.saveQuantifiersOption.setDisable(false);
     }
@@ -176,7 +172,7 @@ public class MainController implements Initializable {
                 workingData::workingQualifiers
         );
         JFXButton saveButton = new JFXButton("Zapisz do CSV");
-        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQualifiers(), ",", Qualifier.class));
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingQualifiers(), settingsUI.separator, Qualifier.class));
         vBox.getChildren().add(0, saveButton);
         this.saveQualifiersOption.setDisable(false);
     }
@@ -187,7 +183,7 @@ public class MainController implements Initializable {
                 workingData::workingSummarizers
         );
         JFXButton saveButton = new JFXButton("Zapisz do CSV");
-        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingSummarizers(), ",",  Summarizer.class));
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingSummarizers(), settingsUI.separator,  Summarizer.class));
         vBox.getChildren().add(0, saveButton);
         this.saveSummarizersOption.setDisable(false);
     }
@@ -455,7 +451,7 @@ public class MainController implements Initializable {
     private void saveSummaries(List<Tuple<Summary, SummarizationState>> summaries) {
         CSVSaveUtils.exportToCsv(
                 summaries.stream().map(Tuple::getFirst).collect(Collectors.toList()),
-                ",",
+                settingsUI.separator,
                 Summary.class);
     }
 
@@ -625,6 +621,6 @@ public class MainController implements Initializable {
 
     @FXML
     private void settings(ActionEvent actionEvent) {
-        settingsPopup.show(Main.getCurrentStage().getScene());
+        settingsUI.show(Main.getCurrentStage().getScene());
     }
 }
