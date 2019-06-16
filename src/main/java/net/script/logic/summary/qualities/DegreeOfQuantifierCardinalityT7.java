@@ -9,6 +9,6 @@ import java.util.stream.Collectors;
 public class DegreeOfQuantifierCardinalityT7 {
     public static double calculateDegreeOfQuantifierCardinality(SummarizationState StateSummary, String name){
         Quantifier quantifier = StateSummary.getQuantfiers().stream().filter(s -> s.getName().trim().equals(name)).collect(Collectors.toList()).get(0);
-        return 1 - quantifier.getFunction().calculateIntegral();
+        return 1.0 - quantifier.getFunction().calculateIntegral();
     }
 }
