@@ -11,7 +11,7 @@ public class DegreeOfApproppriatenessT4  {
 
 
     public static double calculateDegreeOfAppropriateness(List<?> Data, SummarizationState StateSummary, double T3) {
-        double val = 1;
+        double val = 1.0;
         for(Summarizer summarizer : StateSummary.getSummarizers()){
             FuzzySet fuzzySet = FuzzySet.with(Data).from(summarizer);
             val *= (fuzzySet.support().size() * 1.0 / Data.size());

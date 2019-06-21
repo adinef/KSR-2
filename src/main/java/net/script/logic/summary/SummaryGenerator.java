@@ -339,6 +339,7 @@ public class SummaryGenerator {
                 name = q.getName();
             }
         }
+        max = Math.round(max * 100.0) / 100.0;
         return new Tuple<>(name, max);
     }
 

@@ -17,7 +17,7 @@ public class DegreeOfCoveringT3  {
             m = calculateSumOfTi2ndType(Data,StateSummaryTuple, isAndQualifier);
         }
         else m = Data.size();
-        return FuzzySet.sumWithCardinality(StateSummaryTuple.getFinalFuzzySet(),1) / m;
+        return StateSummaryTuple.getFinalFuzzySet().support().size()/m;
     }
 
     private static double calculateSumOfTi2ndType(List<?> Data, SummarizationState summarizationState, boolean isAndQualifier) {
@@ -31,6 +31,6 @@ public class DegreeOfCoveringT3  {
                 FuzzySet.sum(qualSet, FuzzySet.with(Data).from(qualifier));
             }
         }
-        return FuzzySet.sumWithCardinality(qualSet,1);
+        return qualSet.support().size();
     }
 }

@@ -37,7 +37,7 @@ public class FuzzySet<T> implements Map<T, Double> {
     public static <E> FuzzySet<E> intersect(FuzzySet<E> firstSet, FuzzySet<E> secondSet) {
         FuzzySet<E> operationResult = new FuzzySet<>();
         for (Map.Entry<E, Double> entry : firstSet.entrySet()) {
-            if ( secondSet.containsKey(entry.getKey())) {
+            if ( secondSet.containsKey(entry.getKey()) && secondSet.get(entry.getKey()) > 0.0) {
                 operationResult.put(entry.getKey(), Double.min(entry.getValue(), secondSet.get(entry.getKey())));
             }
         }
@@ -47,14 +47,14 @@ public class FuzzySet<T> implements Map<T, Double> {
     public static <E> FuzzySet<E> sum(FuzzySet<E> firstSet, FuzzySet<E> secondSet) {
         FuzzySet<E> operationResult = new FuzzySet<>();
         for (Map.Entry<E, Double> entry : firstSet.entrySet()) {
-            if (secondSet.containsKey(entry.getKey())) {
+            if (secondSet.containsKey(entry.getKey()) && entry.getValue() > 0.0) {
                 operationResult.put(entry.getKey(), Double.max(entry.getValue(), secondSet.get(entry.getKey())));
-            } else {
+            } else if (entry.getValue() > 0.0) {
                 operationResult.put(entry.getKey(), entry.getValue());
             }
         }
         for (Map.Entry<E, Double> entry : secondSet.entrySet()) {
-            if (!firstSet.containsKey(entry.getKey())) {
+            if (!firstSet.containsKey(entry.getKey()) && entry.getValue() > 0.0) {
                 operationResult.put(entry.getKey(), entry.getValue());
             }
         }
