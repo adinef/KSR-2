@@ -24,11 +24,11 @@ public class DegreeOfCoveringT3  {
         FuzzySet qualSet = FuzzySet.with(Data).from(summarizationState.getQualifiers().get(0));
         if(isAndQualifier){
             for (Qualifier qualifier : summarizationState.getQualifiers()) {
-                FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(qualifier));
+                qualSet = FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(qualifier));
             }
         } else {
             for (Qualifier qualifier : summarizationState.getQualifiers()) {
-                FuzzySet.sum(qualSet, FuzzySet.with(Data).from(qualifier));
+                qualSet = FuzzySet.sum(qualSet, FuzzySet.with(Data).from(qualifier));
             }
         }
         return qualSet.support().size();

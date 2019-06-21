@@ -25,13 +25,14 @@ public class DegreeOfTruthT1 {
         double r;
         if (StateSummary.getQualifiers() != null && StateSummary.getQualifiers().size() > 0) {
             FuzzySet qualSet = FuzzySet.with(Data).from(StateSummary.getQualifiers().get(0));
-            if(isAndQualifier){
-                for (Qualifier qualifier : StateSummary.getQualifiers()) {
-                    FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(qualifier));
+            if(isAndQualifier && StateSummary.getQualifiers().size()>=2){
+                for (int i = 1; i < StateSummary.getQualifiers().size(); i++) {
+                    qualSet = FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(StateSummary.getQualifiers().get(i)));
+                    System.out.println("weszło tutaj");
                 }
-            } else {
-                for (Qualifier qualifier : StateSummary.getQualifiers()) {
-                    FuzzySet.sum(qualSet, FuzzySet.with(Data).from(qualifier));
+            } else if (StateSummary.getQualifiers().size()>=2){
+                for (int i = 1; i < StateSummary.getQualifiers().size(); i++) {
+                    qualSet = FuzzySet.sum(qualSet, FuzzySet.with(Data).from(StateSummary.getQualifiers().get(i)));
                 }
             }
             r = FuzzySet.sumWithCardinality(StateSummary.getFinalFuzzySet(), 1) / FuzzySet.sumWithCardinality(qualSet, 1);

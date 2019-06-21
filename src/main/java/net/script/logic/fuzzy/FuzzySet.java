@@ -28,16 +28,17 @@ public class FuzzySet<T> implements Map<T, Double> {
 
     public static <E> Double sumWithCardinality(FuzzySet<E> set, int cardinality) {
         Double val = 0.0;
+        double card = cardinality * 1.0;
         for (Double currVal : set.values()) {
             val += currVal;
         }
-        return val / cardinality;
+        return val / card;
     }
 
     public static <E> FuzzySet<E> intersect(FuzzySet<E> firstSet, FuzzySet<E> secondSet) {
         FuzzySet<E> operationResult = new FuzzySet<>();
         for (Map.Entry<E, Double> entry : firstSet.entrySet()) {
-            if ( secondSet.containsKey(entry.getKey()) && secondSet.get(entry.getKey()) > 0.0) {
+            if (secondSet.containsKey(entry.getKey()) && secondSet.get(entry.getKey()) > 0.0) {
                 operationResult.put(entry.getKey(), Double.min(entry.getValue(), secondSet.get(entry.getKey())));
             }
         }

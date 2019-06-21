@@ -37,7 +37,7 @@
             <coefficient name="a" value="0.90"/>
             <coefficient name="b" value="0.92"/>
             <coefficient name="c" value="0.9999"/>
-            <coefficient name="d" value="1"/>
+            <coefficient name="d" value="1.0"/>
          </function>
       </quantifier>
       <quantifier name="Wszystkie">

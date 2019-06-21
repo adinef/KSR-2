@@ -116,8 +116,8 @@
             <function name="trapezoid">
                 <coefficient name="a" value="3500.0"/>
                 <coefficient name="b" value="4000.0"/>
-                <coefficient name="c" value="45384.0"/>
-                <coefficient name="d" value="45384.0"/>
+                <coefficient name="c" value="24030.0"/>
+                <coefficient name="d" value="24030.0"/>
             </function>
         </qualifier>
         <qualifier name="małą powierzchnię działki" member="LANDAREA">
@@ -208,8 +208,8 @@
                 <end>101.0</end>
             </range>
             <function name="trapezoid">
-                <coefficient name="a" value="0.1"/>
-                <coefficient name="b" value="0.1"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="0.0"/>
                 <coefficient name="c" value="5.0"/>
                 <coefficient name="d" value="8.0"/>
             </function>
@@ -220,7 +220,7 @@
                 <end>101.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="4.0"/>
+                <coefficient name="a" value="6.0"/>
                 <coefficient name="b" value="101.0"/>
                 <coefficient name="c" value="101.0"/>
             </function>
@@ -310,7 +310,7 @@
             <function name="triangular">
                 <coefficient name="a" value="3.0"/>
                 <coefficient name="b" value="12.0"/>
-                <coefficient name="c" value="12.0"/>
+                <coefficient name="c" value="14.0"/>
             </function>
         </qualifier>
         <qualifier name="dużo sypialni" member="BEDRM">
@@ -318,10 +318,11 @@
                 <start>0.0</start>
                 <end>54.0</end>
             </range>
-            <function name="triangular">
-                <coefficient name="a" value="7.0"/>
-                <coefficient name="b" value="54.0"/>
+            <function name="trapezoid">
+                <coefficient name="a" value="13.0"/>
+                <coefficient name="b" value="20.0"/>
                 <coefficient name="c" value="54.0"/>
+                <coefficient name="d" value="54.0"/>
             </function>
         </qualifier>
         <qualifier name="mało pięter" member="STORIES">
