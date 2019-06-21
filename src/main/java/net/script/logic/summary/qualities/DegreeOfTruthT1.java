@@ -28,7 +28,6 @@ public class DegreeOfTruthT1 {
             if(isAndQualifier && StateSummary.getQualifiers().size()>=2){
                 for (int i = 1; i < StateSummary.getQualifiers().size(); i++) {
                     qualSet = FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(StateSummary.getQualifiers().get(i)));
-                    System.out.println("weszło tutaj");
                 }
             } else if (StateSummary.getQualifiers().size()>=2){
                 for (int i = 1; i < StateSummary.getQualifiers().size(); i++) {
