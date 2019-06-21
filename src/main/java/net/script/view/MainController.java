@@ -183,7 +183,7 @@ public class MainController implements Initializable {
                 workingData::workingSummarizers
         );
         JFXButton saveButton = new JFXButton("Zapisz do CSV");
-        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingSummarizers(), settingsUI.separator,  Summarizer.class));
+        saveButton.setOnAction((e) -> CSVSaveUtils.exportToCsv(this.workingData.workingSummarizers(), settingsUI.separator, Summarizer.class));
         vBox.getChildren().add(0, saveButton);
         this.saveSummarizersOption.setDisable(false);
     }
@@ -224,9 +224,10 @@ public class MainController implements Initializable {
         this.selectData(
                 () -> this.workingData.setWorkingQuantifiers(this.fuzzyData.quantifiers()),
                 Quantifier.class,
-                (list) -> selectionState.setQuantifiers(list),
+                (in) -> selectionState.setQuantifiers(in.getSecond()),
                 this.workingData::workingQuantifiers,
-                () -> selectionState.getQuantifiers()
+                () -> selectionState.getQuantifiers(),
+                false
         );
         this.setListView(
                 Quantifier.class,
@@ -240,9 +241,14 @@ public class MainController implements Initializable {
         this.selectData(
                 () -> this.workingData.setWorkingQualifiers(this.fuzzyData.qualifiers()),
                 Qualifier.class,
-                (list) -> selectionState.setQualifiers(list),
+                (in) -> {
+                    Tuple<OperatorChoice, ObservableList<Qualifier>> tuple = in;
+                    selectionState.setQualifiers(tuple.getSecond());
+                    selectionState.setQualifierAndOperation(tuple.getFirst().isAndChosen());
+                },
                 () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
-                () -> selectionState.getQualifiers()
+                () -> selectionState.getQualifiers(),
+                true
         );
         this.setListView(
                 Qualifier.class,
@@ -256,9 +262,14 @@ public class MainController implements Initializable {
         this.selectData(
                 () -> this.workingData.setWorkingSummarizers(this.fuzzyData.summarizers()),
                 Summarizer.class,
-                (list) -> selectionState.setSummarizers(list),
+                (in) -> {
+                    Tuple<OperatorChoice, ObservableList<Summarizer>> tuple = in;
+                    selectionState.setSummarizers(tuple.getSecond());
+                    selectionState.setSummarizerAndOperation(tuple.getFirst().isAndChosen());
+                },
                 () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
-                () -> selectionState.getSummarizers()
+                () -> selectionState.getSummarizers(),
+                true
         );
         this.setListView(
                 Summarizer.class,
@@ -302,9 +313,10 @@ public class MainController implements Initializable {
 
     private <T extends Named> void selectData(RunnableWithException initializer,
                                               Class<T> objClass,
-                                              Consumer<ObservableList<T>> selectionConsumer,
+                                              Consumer<Tuple<OperatorChoice, ObservableList<T>>> selectionConsumer,
                                               Supplier<List<T>> workingDataSupplier,
-                                              Supplier<List<T>> currentStateSupplier) {
+                                              Supplier<List<T>> currentStateSupplier,
+                                              boolean withOperators) {
         try {
             initializer.run();
         } catch (Exception e) {
@@ -317,14 +329,13 @@ public class MainController implements Initializable {
             return;
         }
         selectionConsumer.accept(
-                FXCollections.observableList(
-                        FuzzyFXUtils
-                                .checkBoxSelectAlert(
-                                        workingDataSupplier.get(),
-                                        Main.getCurrentStage().getScene(),
-                                        currentStateSupplier.get()
-                                )
-                )
+                FuzzyFXUtils
+                        .checkBoxSelectAlert(
+                                workingDataSupplier.get(),
+                                Main.getCurrentStage().getScene(),
+                                currentStateSupplier.get(),
+                                withOperators
+                        )
         );
     }
 

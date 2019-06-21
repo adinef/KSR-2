@@ -8,11 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,6 +20,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.script.data.FieldColumnTuple;
 import net.script.data.Named;
+import net.script.data.Tuple;
 import net.script.data.annotations.Coefficient;
 import net.script.data.annotations.Column;
 import net.script.data.annotations.Function;
@@ -58,8 +58,8 @@ public class FuzzyFXUtils {
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
         JFXDialogLayout layout = new JFXDialogLayout();
         JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
-        layout.setHeading(new Label("Wybierz pola"));
         layout.setBody(mainVBox);
+        layout.setHeading(new Label("Wybierz pola"));
         layout.setActions(closeButton);
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
         alert.initModality(Modality.WINDOW_MODAL);
@@ -84,14 +84,20 @@ public class FuzzyFXUtils {
     }
 
 
-    public static <T extends Named> List<T> checkBoxSelectAlert(List<T> inputData, Scene scene, List<T> alreadySelected) {
+    public static <T extends Named> Tuple<OperatorChoice, ObservableList<T>> checkBoxSelectAlert(
+            List<T> inputData,
+            Scene scene,
+            List<T> alreadySelected,
+            boolean withOperators) {
 
         ScrollPane insideScrollPane = new ScrollPane();
 
         JFXAlert alert = new JFXAlert((Stage) scene.getWindow());
+        JFXDialogLayout layout = new JFXDialogLayout();
         alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
         alert.initModality(Modality.WINDOW_MODAL);
         alert.setOverlayClose(true);
+        alert.setWidth(700);
         JFXButton closeButton = standardButton("Zamknij", (e) -> alert.hideWithAnimation());
         VBox vBox = new VBox();
         vBox.setSpacing(10);
@@ -101,10 +107,29 @@ public class FuzzyFXUtils {
         insideScrollPane.setMinHeight(500);
         insideScrollPane.setMaxHeight(500);
         ObservableList<JFXCheckBox> checkBoxes = checkBoxesFor(inputData, alreadySelected, Named::getName);
-        fillVBox(vBox, checkBoxes, closeButton);
+        vBox.getChildren().addAll(checkBoxes);
         insideScrollPane.setContent(vBox);
+        VBox andOrBox = new VBox();
+        andOrBox.setSpacing(10);
+        andOrBox.setPadding(new Insets(20));
+        andOrBox.setMinWidth(180);
+        ToggleGroup toggleGroup = new ToggleGroup();
+        RadioButton andChosen = new RadioButton("Z operacją 'i'");
+        andChosen.setToggleGroup(toggleGroup);
+        RadioButton orChosen = new RadioButton("Z operacją 'lub'");
+        orChosen.setToggleGroup(toggleGroup);
+        andOrBox.getChildren().addAll(andChosen, orChosen);
+        HBox choiceAllBox = new HBox();
+        choiceAllBox.setSpacing(10);
+        if (withOperators) {
+            choiceAllBox.getChildren().addAll(insideScrollPane, andOrBox);
+        } else {
+            choiceAllBox.getChildren().addAll(insideScrollPane);
+        }
 
-        alert.setContent(insideScrollPane);
+        layout.setBody(choiceAllBox);
+        layout.setActions(closeButton);
+        alert.setContent(layout);
         alert.showAndWait();
 
         ObservableList<T> selectedElements = FXCollections.observableArrayList();
@@ -119,7 +144,7 @@ public class FuzzyFXUtils {
                 }
             });
         }
-        return selectedElements;
+        return new Tuple<>( new OperatorChoice(andChosen.isSelected()), selectedElements);
     }
 
 
