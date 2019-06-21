@@ -21,6 +21,6 @@ public class LinguisticVariable implements Named {
     @Column("Funkcja")
     private QFunction function;
 
-    @Column("Zasięg")
+    @Column("Przestrzeń rozważańt")
     private Range lvRange;
 }
