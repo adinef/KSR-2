@@ -87,7 +87,7 @@ public class FuzzyFXUtils {
     public static <T extends Named> Tuple<OperatorChoice, ObservableList<T>> checkBoxSelectAlert(
             List<T> inputData,
             Scene scene,
-            List<T> alreadySelected,
+            Tuple<OperatorChoice, List<T>> alreadySelected,
             boolean withOperators) {
 
         ScrollPane insideScrollPane = new ScrollPane();
@@ -106,7 +106,7 @@ public class FuzzyFXUtils {
         insideScrollPane.setMinWidth(390);
         insideScrollPane.setMinHeight(500);
         insideScrollPane.setMaxHeight(500);
-        ObservableList<JFXCheckBox> checkBoxes = checkBoxesFor(inputData, alreadySelected, Named::getName);
+        ObservableList<JFXCheckBox> checkBoxes = checkBoxesFor(inputData, alreadySelected.getSecond(), Named::getName);
         vBox.getChildren().addAll(checkBoxes);
         insideScrollPane.setContent(vBox);
         VBox andOrBox = new VBox();
@@ -116,8 +116,11 @@ public class FuzzyFXUtils {
         ToggleGroup toggleGroup = new ToggleGroup();
         RadioButton andChosen = new RadioButton("Z operacją 'i'");
         andChosen.setToggleGroup(toggleGroup);
+        andChosen.setSelected(alreadySelected.getFirst().isAndChosen());
         RadioButton orChosen = new RadioButton("Z operacją 'lub'");
         orChosen.setToggleGroup(toggleGroup);
+        orChosen.setSelected(true);
+        andChosen.setSelected(alreadySelected.getFirst().isAndChosen());
         andOrBox.getChildren().addAll(andChosen, orChosen);
         HBox choiceAllBox = new HBox();
         choiceAllBox.setSpacing(10);

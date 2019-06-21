@@ -226,7 +226,7 @@ public class MainController implements Initializable {
                 Quantifier.class,
                 (in) -> selectionState.setQuantifiers(in.getSecond()),
                 this.workingData::workingQuantifiers,
-                () -> selectionState.getQuantifiers(),
+                () -> new Tuple<>(new OperatorChoice(false), selectionState.getQuantifiers()),
                 false
         );
         this.setListView(
@@ -247,7 +247,10 @@ public class MainController implements Initializable {
                     selectionState.setQualifierAndOperation(tuple.getFirst().isAndChosen());
                 },
                 () -> this.workingData.workingQualifiers(selectionState.getAllowedFields()),
-                () -> selectionState.getQualifiers(),
+                () -> new Tuple<>(
+                        new OperatorChoice(selectionState.isQualifierAndOperation()),
+                        selectionState.getQualifiers()
+                ),
                 true
         );
         this.setListView(
@@ -268,7 +271,10 @@ public class MainController implements Initializable {
                     selectionState.setSummarizerAndOperation(tuple.getFirst().isAndChosen());
                 },
                 () -> this.workingData.workingSummarizers(selectionState.getAllowedFields()),
-                () -> selectionState.getSummarizers(),
+                () -> new Tuple<>(
+                        new OperatorChoice(selectionState.isSummarizerAndOperation()),
+                        selectionState.getSummarizers()
+                ),
                 true
         );
         this.setListView(
@@ -315,7 +321,7 @@ public class MainController implements Initializable {
                                               Class<T> objClass,
                                               Consumer<Tuple<OperatorChoice, ObservableList<T>>> selectionConsumer,
                                               Supplier<List<T>> workingDataSupplier,
-                                              Supplier<List<T>> currentStateSupplier,
+                                              Supplier<Tuple<OperatorChoice, List<T>>> currentStateSupplier,
                                               boolean withOperators) {
         try {
             initializer.run();
