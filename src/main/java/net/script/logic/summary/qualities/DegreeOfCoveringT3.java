@@ -8,25 +8,28 @@ import net.script.view.Summary;
 
 import java.util.List;
 
-public class DegreeOfCoveringT3 implements QualityMeasure {
-    @Override
-    public double calculateQualityValue(List<?> Data, SummarizationState StateSummaryTuple) {
-        return 0;
-    }
+public class DegreeOfCoveringT3  {
 
-    public static double calculateDegreeOfCovering(List<?> Data, SummarizationState StateSummaryTuple) {
+
+    public static double calculateDegreeOfCovering(List<?> Data, SummarizationState StateSummaryTuple, boolean isAndQualifier) {
         double m;
         if (StateSummaryTuple.getQualifiers() != null && StateSummaryTuple.getQualifiers().size() > 0) {
-            m = calculateSumOfTi2ndType(Data,StateSummaryTuple);
+            m = calculateSumOfTi2ndType(Data,StateSummaryTuple, isAndQualifier);
         }
         else m = Data.size();
         return FuzzySet.sumWithCardinality(StateSummaryTuple.getFinalFuzzySet(),1) / m;
     }
 
-    private static double calculateSumOfTi2ndType(List<?> Data, SummarizationState summarizationState) {
+    private static double calculateSumOfTi2ndType(List<?> Data, SummarizationState summarizationState, boolean isAndQualifier) {
         FuzzySet qualSet = FuzzySet.with(Data).from(summarizationState.getQualifiers().get(0));
-        for (Qualifier qualifier : summarizationState.getQualifiers()) {
-            FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(qualifier));
+        if(isAndQualifier){
+            for (Qualifier qualifier : summarizationState.getQualifiers()) {
+                FuzzySet.intersect(qualSet, FuzzySet.with(Data).from(qualifier));
+            }
+        } else {
+            for (Qualifier qualifier : summarizationState.getQualifiers()) {
+                FuzzySet.sum(qualSet, FuzzySet.with(Data).from(qualifier));
+            }
         }
         return FuzzySet.sumWithCardinality(qualSet,1);
     }
