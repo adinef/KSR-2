@@ -21,11 +21,13 @@ public class TriangularFunction implements QFunction {
 
     @Override
     public double calculate(double x) {
-        if ( x > a && x <= b) {
+        if (x == b) {
+            return 1;
+        } else if ( x > a && x <= b) {
             return (1.0/(b-a)) * (x - a);
         } else if (x > b && x < c) {
             return (-1.0/(c-b))*(x-c);
-        }
+        } else
         return 0;
     }
 

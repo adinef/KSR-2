@@ -22,13 +22,13 @@ public class TrapezoidFunction implements QFunction {
 
     @Override
     public double calculate(double x) {
-        if (x > a && x < b) {
+        if (x >= b && x <= c) {
+            return 1;
+        } else if (x > a && x < b) {
             return ((1 / (b - a)) * (x - a));
         } else if (x > c && x < d) {
             return (-(1/(d-c)) * (x - d));
-        } else if (x >= b && x <= c) {
-            return 1;
-        }
+        } else
         return 0;
     }
 

@@ -38,20 +38,20 @@
         </qualifier>
         <qualifier name="tanie" member="PRICE">
             <range>
-                <start>1.0</start>
-                <end>25200000.0</end>
+                <start>0.0</start>
+                <end>24000000.0</end>
             </range>
             <function name="trapezoid">
-                <coefficient name="a" value="1.0"/>
-                <coefficient name="b" value="1.0"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="0.0"/>
                 <coefficient name="c" value="100000.0"/>
                 <coefficient name="d" value="150000.0"/>
             </function>
         </qualifier>
         <qualifier name="dość drogie" member="PRICE">
             <range>
-                <start>1.0</start>
-                <end>25200000.0</end>
+                <start>0.0</start>
+                <end>24000000.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="125000.0"/>
@@ -62,8 +62,8 @@
         </qualifier>
         <qualifier name="bardzo drogie" member="PRICE">
             <range>
-                <start>1.0</start>
-                <end>25200000.0</end>
+                <start>0.0</start>
+                <end>24000000.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="400000.0"/>
@@ -74,32 +74,32 @@
         </qualifier>
         <qualifier name="niewyobrażalnie drogie" member="PRICE">
             <range>
-                <start>1.0</start>
-                <end>25200000.0</end>
+                <start>0.0</start>
+                <end>24000000.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="1200000.0"/>
                 <coefficient name="b" value="2000000.0"/>
-                <coefficient name="c" value="25200000.0"/>
-                <coefficient name="d" value="25200000.0"/>
+                <coefficient name="c" value="24000000.0"/>
+                <coefficient name="d" value="24000000.0"/>
             </function>
         </qualifier>
         <qualifier name="małą powierzchnię budynku" member="GBA">
             <range>
-                <start>1.0</start>
-                <end>45384.0</end>
+                <start>0.0</start>
+                <end>24030.0</end>
             </range>
             <function name="trapezoid">
-                <coefficient name="a" value="1.0"/>
-                <coefficient name="b" value="1.0"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="0.0"/>
                 <coefficient name="c" value="300.0"/>
                 <coefficient name="d" value="1800.0"/>
             </function>
         </qualifier>
         <qualifier name="średnią powierzchnię budynku" member="GBA">
             <range>
-                <start>1.0</start>
-                <end>45384.0</end>
+                <start>0.0</start>
+                <end>24030.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="1600.0"/>
@@ -110,8 +110,8 @@
         </qualifier>
         <qualifier name="dużą powierzchnię budynku" member="GBA">
             <range>
-                <start>1.0</start>
-                <end>45384.0</end>
+                <start>0.0</start>
+                <end>24030.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="3500.0"/>
@@ -122,19 +122,19 @@
         </qualifier>
         <qualifier name="małą powierzchnię działki" member="LANDAREA">
             <range>
-                <start>1.0</start>
+                <start>216.0</start>
                 <end>942632.0</end>
             </range>
             <function name="trapezoid">
-                <coefficient name="a" value="1.0"/>
-                <coefficient name="b" value="1.0"/>
+                <coefficient name="a" value="216.0"/>
+                <coefficient name="b" value="216.0"/>
                 <coefficient name="c" value="1500.0"/>
                 <coefficient name="d" value="2000.0"/>
             </function>
         </qualifier>
         <qualifier name="średnią powierzchnię działki" member="LANDAREA">
             <range>
-                <start>1.0</start>
+                <start>216.0</start>
                 <end>942632.0</end>
             </range>
             <function name="trapezoid">
@@ -146,7 +146,7 @@
         </qualifier>
         <qualifier name="dużą powierzchnię działki" member="LANDAREA">
             <range>
-                <start>1.0</start>
+                <start>216.0</start>
                 <end>942632.0</end>
             </range>
             <function name="trapezoid">
@@ -156,7 +156,7 @@
                 <coefficient name="d" value="942632.0"/>
             </function>
         </qualifier>
-        <qualifier name="małą ilość mieszkań" member="NUM_UNITS">
+        <qualifier name="mało mieszkań" member="NUM_UNITS">
             <range>
                 <start>0.0</start>
                 <end>6.0</end>
@@ -168,7 +168,7 @@
                 <coefficient name="d" value="3.0"/>
             </function>
         </qualifier>
-        <qualifier name="średnią ilość mieszkań" member="NUM_UNITS">
+        <qualifier name="średnią liczbę mieszkań" member="NUM_UNITS">
             <range>
                 <start>0.0</start>
                 <end>6.0</end>
@@ -180,7 +180,7 @@
                 <coefficient name="d" value="5.0"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość mieszkań" member="NUM_UNITS">
+        <qualifier name="dużą liczbę mieszkań" member="NUM_UNITS">
             <range>
                 <start>0.0</start>
                 <end>6.0</end>
@@ -195,17 +195,17 @@
         <qualifier name="bez pokoi" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>101.1</end>
+                <end>101.0</end>
             </range>
             <function name="rectangular">
                 <coefficient name="a" value="0.0"/>
                 <coefficient name="b" value="0.0"/>
             </function>
         </qualifier>
-        <qualifier name="mała ilość pokoji" member="ROOMS">
+        <qualifier name="mało pokoi" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>101.1</end>
+                <end>101.0</end>
             </range>
             <function name="trapezoid">
                 <coefficient name="a" value="0.1"/>
@@ -214,147 +214,147 @@
                 <coefficient name="d" value="8.0"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość pokoji" member="ROOMS">
+        <qualifier name="dużo pokoi" member="ROOMS">
             <range>
                 <start>0.0</start>
-                <end>101.1</end>
+                <end>101.0</end>
             </range>
             <function name="triangular">
                 <coefficient name="a" value="4.0"/>
-                <coefficient name="b" value="101.1"/>
-                <coefficient name="c" value="101.1"/>
+                <coefficient name="b" value="101.0"/>
+                <coefficient name="c" value="101.0"/>
             </function>
         </qualifier>
-        <qualifier name="małą ilość łazienek" member="BATHRM">
+        <qualifier name="mało łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
-                <end>24.0</end>
+                <end>14.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="0"/>
-                <coefficient name="b" value="0"/>
-                <coefficient name="c" value="4"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="0.0"/>
+                <coefficient name="c" value="4.0"/>
             </function>
         </qualifier>
-        <qualifier name="średnią ilość łazienek" member="BATHRM">
+        <qualifier name="średnią liczbę łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
-                <end>24.0</end>
+                <end>14.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="4"/>
-                <coefficient name="b" value="7"/>
-                <coefficient name="c" value="10"/>
+                <coefficient name="a" value="4.0"/>
+                <coefficient name="b" value="7.0"/>
+                <coefficient name="c" value="10.0"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość łazienek" member="BATHRM">
+        <qualifier name="dużą liczbę łazienek" member="BATHRM">
             <range>
                 <start>0.0</start>
-                <end>24.0</end>
+                <end>14.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="7"/>
-                <coefficient name="b" value="15"/>
-                <coefficient name="c" value="24"/>
+                <coefficient name="a" value="7.0"/>
+                <coefficient name="b" value="14.0"/>
+                <coefficient name="c" value="14.0"/>
             </function>
         </qualifier>
-        <qualifier name="małą ilość łazienek bez prysznica" member="HF_BATHRM">
-            <range>
-                <start>0.0</start>
-                <end>11.0</end>
-            </range>
-            <function name="triangular">
-                <coefficient name="a" value="0"/>
-                <coefficient name="b" value="0"/>
-                <coefficient name="c" value="3"/>
-            </function>
-        </qualifier>
-        <qualifier name="średnią ilość łazienek bez prysznica" member="HF_BATHRM">
+        <qualifier name="mało łazienek bez prysznica" member="HF_BATHRM">
             <range>
                 <start>0.0</start>
                 <end>11.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="2"/>
-                <coefficient name="b" value="3"/>
-                <coefficient name="c" value="5"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="0.0"/>
+                <coefficient name="c" value="3.0"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość łazienek bez prysznica" member="HF_BATHRM">
+        <qualifier name="średnią liczbę łazienek bez prysznica" member="HF_BATHRM">
             <range>
                 <start>0.0</start>
                 <end>11.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="4"/>
-                <coefficient name="b" value="11"/>
-                <coefficient name="c" value="11"/>
+                <coefficient name="a" value="2.0"/>
+                <coefficient name="b" value="3.0"/>
+                <coefficient name="c" value="5.0"/>
             </function>
         </qualifier>
-        <qualifier name="mała ilość sypialni" member="BEDRM">
+        <qualifier name="dużą liczbę łazienek bez prysznica" member="HF_BATHRM">
+            <range>
+                <start>0.0</start>
+                <end>11.0</end>
+            </range>
+            <function name="triangular">
+                <coefficient name="a" value="4.0"/>
+                <coefficient name="b" value="11.0"/>
+                <coefficient name="c" value="11.0"/>
+            </function>
+        </qualifier>
+        <qualifier name="mało sypialni" member="BEDRM">
             <range>
                 <start>0.0</start>
                 <end>54.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="0"/>
-                <coefficient name="b" value="5"/>
-                <coefficient name="c" value="5"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="5.0"/>
+                <coefficient name="c" value="5.0"/>
             </function>
         </qualifier>
-        <qualifier name="średnią ilość sypialni" member="BEDRM">
+        <qualifier name="średnią liczbę sypialni" member="BEDRM">
             <range>
                 <start>0.0</start>
                 <end>54.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="3"/>
-                <coefficient name="b" value="12"/>
-                <coefficient name="c" value="12"/>
+                <coefficient name="a" value="3.0"/>
+                <coefficient name="b" value="12.0"/>
+                <coefficient name="c" value="12.0"/>
             </function>
         </qualifier>
-        <qualifier name="duża ilość sypialni" member="BEDRM">
+        <qualifier name="dużo sypialni" member="BEDRM">
             <range>
                 <start>0.0</start>
                 <end>54.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="7"/>
-                <coefficient name="b" value="54"/>
-                <coefficient name="c" value="54"/>
+                <coefficient name="a" value="7.0"/>
+                <coefficient name="b" value="54.0"/>
+                <coefficient name="c" value="54.0"/>
             </function>
         </qualifier>
-        <qualifier name="mała ilość pięter" member="STORIES">
+        <qualifier name="mało pięter" member="STORIES">
             <range>
                 <start>0.0</start>
                 <end>826.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="0"/>
-                <coefficient name="b" value="5"/>
-                <coefficient name="c" value="8"/>
+                <coefficient name="a" value="0.0"/>
+                <coefficient name="b" value="5.0"/>
+                <coefficient name="c" value="8.0"/>
             </function>
         </qualifier>
-        <qualifier name="średnią ilość pięter" member="STORIES">
+        <qualifier name="średnią liczbę pięter" member="STORIES">
             <range>
                 <start>0.0</start>
                 <end>826.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="6"/>
-                <coefficient name="b" value="10"/>
-                <coefficient name="c" value="15"/>
+                <coefficient name="a" value="6.0"/>
+                <coefficient name="b" value="10.0"/>
+                <coefficient name="c" value="15.0"/>
             </function>
         </qualifier>
-        <qualifier name="dużą ilość pięter" member="STORIES">
+        <qualifier name="dużą liczbę pięter" member="STORIES">
             <range>
                 <start>0.0</start>
                 <end>826.0</end>
             </range>
             <function name="triangular">
-                <coefficient name="a" value="6"/>
-                <coefficient name="b" value="10"/>
-                <coefficient name="c" value="15"/>
+                <coefficient name="a" value="6.0"/>
+                <coefficient name="b" value="10.0"/>
+                <coefficient name="c" value="15.0"/>
             </function>
         </qualifier>
     </definitions>
