@@ -12,11 +12,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class DegreeOfImprecisionT2 implements QualityMeasure {
-    @Override
-    public double calculateQualityValue(List<?> Data, SummarizationState StateSummaryTuple) {
-        return 0;
-    }
+public class DegreeOfImprecisionT2  {
+
 
     public static double calculateDegreeOfImprecision(SummarizationState StateSummary) {
         double value = 1;

@@ -33,7 +33,9 @@ public class SummaryGenerator {
     public List<Tuple<Summary, SummarizationState>> createSummary(Iterable<DCResMeasurement> dcResMeasurements,
                                                                   List<Quantifier> quantifiers,
                                                                   List<Qualifier> qualifiers,
-                                                                  List<Summarizer> summarizers) {
+                                                                  List<Summarizer> summarizers,
+                                                                  boolean isAndQualifier,
+                                                                  boolean isAndSummarizer) {
         summaries.clear();
         Iterator<?> source = dcResMeasurements.iterator();
         List<Object> dataList = new ArrayList<>();
@@ -52,14 +54,9 @@ public class SummaryGenerator {
                     if (!summarizers.get(i).getMemberFieldName().equals(summarizers.get(j).getMemberFieldName())) {
                         tempSumList.add(summarizers.get(i));
                         tempSumList.add(summarizers.get(j));
-                        summaries.add(this.createSummaryFirstTypeMultipleSummarizers(dataList, quantifiers, tempSumList));
+                        summaries.add(this.createSummaryFirstTypeMultipleSummarizers(dataList, quantifiers, tempSumList, isAndSummarizer));
                     }
                 }
-            }
-            //wszystkie jeśli dotyczą innych kategorii
-            List<Summarizer> uniqueCategorySummarizers = summarizers.stream().filter(distinctByKey(Summarizer::getMemberFieldName)).collect(Collectors.toList());
-            if (summarizers.size() == uniqueCategorySummarizers.size() && summarizers.size() > 2) {
-                summaries.add(this.createSummaryFirstTypeMultipleSummarizers(dataList, quantifiers, summarizers));
             }
         }
         //TYPU DRUGIEGO PERMUTACJE
@@ -68,7 +65,7 @@ public class SummaryGenerator {
             for (Summarizer s : summarizers) {
                 for (Qualifier q : qualifiers) {
                     if(checkMemberCompatibility(Collections.singletonList(q),Collections.singletonList(s)))
-                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), Collections.singletonList(s)));
+                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), Collections.singletonList(s),false,false));
                 }
             }
             //pojedynczy kwalifikator i 2 sumaryzatory
@@ -82,12 +79,13 @@ public class SummaryGenerator {
                                 tempSumList.add(summarizers.get(i));
                                 tempSumList.add(summarizers.get(j));
                                 if(checkMemberCompatibility(Collections.singletonList(q),tempSumList))
-                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), tempSumList));
+                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, Collections.singletonList(q), tempSumList,false,isAndSummarizer));
                             }
                         }
                     }
                 }
             }
+            //2 kwalifikatory i pojedynczy sumaryzator
             if (qualifiers.size() >= 2) {
                 List<Qualifier> tempQualList = new ArrayList<>();
                 for (Summarizer s : summarizers) {
@@ -98,12 +96,13 @@ public class SummaryGenerator {
                                 tempQualList.add(qualifiers.get(i));
                                 tempQualList.add(qualifiers.get(j));
                                 if(checkMemberCompatibility(tempQualList,Collections.singletonList(s)))
-                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, Collections.singletonList(s)));
+                                    summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, Collections.singletonList(s),isAndQualifier,false));
                             }
                         }
                     }
                 }
             }
+            //permutacje
             if (qualifiers.size() >= 2 && summarizers.size() >= 2) {
                 List<Summarizer> tempSumList = new ArrayList<>();
                 List<Qualifier> tempQualList = new ArrayList<>();
@@ -121,19 +120,12 @@ public class SummaryGenerator {
                                     tempSumList.add(summarizers.get(k));
                                     tempSumList.add(summarizers.get(l));
                                     if(checkMemberCompatibility(tempQualList,tempSumList))
-                                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, tempSumList));
+                                        summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, tempQualList, tempSumList,isAndQualifier,isAndSummarizer));
                                 } else continue;
                             }
                         }
                     }
                 }
-            }
-            //wszystkie jeśli dotyczą innych kategorii
-            List<Summarizer> uniqueCategorySummarizers = summarizers.stream().filter(distinctByKey(Summarizer::getMemberFieldName)).collect(Collectors.toList());
-            List<Qualifier> uniqueCategoryQualifiers = qualifiers.stream().filter(distinctByKey(Qualifier::getMemberFieldName)).collect(Collectors.toList());
-            if (summarizers.size() == uniqueCategorySummarizers.size() && summarizers.size() > 2 &&
-                    qualifiers.size() == uniqueCategoryQualifiers.size() && qualifiers.size() > 2 && checkMemberCompatibility(uniqueCategoryQualifiers,uniqueCategorySummarizers)) {
-                summaries.add(this.createSummaryTypeTwo(dataList, quantifiers, qualifiers, summarizers));
             }
         }
         return summaries;
@@ -152,16 +144,18 @@ public class SummaryGenerator {
                         new ArrayList<>(),
                         quantifiers,
                         Collections.singletonList(summarizer),
-                        summarizersSet);
+                        summarizersSet,
+                        false,
+                        false);
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState, false));
         double max = nameMaxTuple.getSecond();
         String name = nameMaxTuple.getFirst();
 
         String summaryContent = String.format(this.standardContext, name);
         summaryContent += summarizer.getName();
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name, false);
 
         return new Tuple<>(
                 new Summary(summaryContent,
@@ -181,17 +175,23 @@ public class SummaryGenerator {
                         new ArrayList<>(),
                         null,
                         Collections.singletonList(summarizer),
-                        summarizersSet
+                        summarizersSet,
+                        false
+                        ,false
                 )
         );
     }
 
     private Tuple<Summary, SummarizationState> createSummaryFirstTypeMultipleSummarizers(List<?> dataList,
                                                                                          List<Quantifier> quantifiers,
-                                                                                         List<Summarizer> summarizers) {
+                                                                                         List<Summarizer> summarizers,
+                                                                                         boolean isAndSummarizer) {
         List<FuzzySet> summarySets = this.extractFromLinguisticVariables(dataList, summarizers);
-
-        FuzzySet summarizersSet = waterfallIntersect(summarySets);
+        FuzzySet summarizersSet;
+        if(isAndSummarizer)
+            summarizersSet = waterfallIntersect(summarySets);
+        else
+            summarizersSet = waterfallSum(summarySets);
 
         /*double finalSizeNormalized = calculateNormalized(summarizersSet);
         System.out.println(finalSizeNormalized);*/
@@ -201,15 +201,17 @@ public class SummaryGenerator {
                         new ArrayList<>(),
                         quantifiers,
                         summarizers,
-                        summarizersSet);
+                        summarizersSet,
+                        false,
+                        isAndSummarizer);
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState, false));
         double max = nameMaxTuple.getSecond();
         String name = nameMaxTuple.getFirst();
 
-        String summaryContent = this.buildSummaryContext(String.format(this.standardContext, name), summarizers);
+        String summaryContent = this.buildSummaryContext(String.format(this.standardContext, name), summarizers, isAndSummarizer);
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name, false);
 
         return new Tuple<>(
                 new Summary(summaryContent,
@@ -229,7 +231,9 @@ public class SummaryGenerator {
                         new ArrayList<>(),
                         quantifiers,
                         summarizers,
-                        summarizersSet
+                        summarizersSet,
+                        false,
+                        isAndSummarizer
                 )
         );
     }
@@ -237,38 +241,47 @@ public class SummaryGenerator {
     private Tuple<Summary, SummarizationState> createSummaryTypeTwo(List<?> dataList,
                                                                     List<Quantifier> quantifiers,
                                                                     List<Qualifier> qualifiers,
-                                                                    List<Summarizer> summarizers) {
-        List<FuzzySet> calculatedSets = this.extractFromLinguisticVariables(dataList, qualifiers);
+                                                                    List<Summarizer> summarizers,
+                                                                    boolean isAndQualifier,
+                                                                    boolean isAndSummarizer) {
+        List<FuzzySet> qualifiersSets = this.extractFromLinguisticVariables(dataList, qualifiers);
+        List<FuzzySet> summarizersSets = this.extractFromLinguisticVariables(dataList, summarizers);
 
-        FuzzySet intersectSet = waterfallIntersect(calculatedSets);
+        FuzzySet joinedQualifiersSet;
+        FuzzySet joinedSummarizersSets;
+        FuzzySet finalSet;
+        if(isAndQualifier)
+            joinedQualifiersSet = waterfallIntersect(qualifiersSets);
+        else
+            joinedQualifiersSet = waterfallSum(qualifiersSets);
+        if(isAndSummarizer)
+            joinedSummarizersSets = waterfallIntersect(summarizersSets);
+        else
+            joinedSummarizersSets = waterfallSum(summarizersSets);
 
-        calculatedSets.clear();
-        for (Summarizer summarizer : summarizers) {
-            calculatedSets.add(FuzzySet.with(dataList).from(summarizer));
-        }
-        for (FuzzySet calculatedSet : calculatedSets) {
-            intersectSet = FuzzySet.intersect(intersectSet, calculatedSet);
-        }
+        finalSet = FuzzySet.intersect(joinedQualifiersSet,joinedSummarizersSets);
 
         SummarizationState summarizationState =
                 new SummarizationState(
                         qualifiers,
                         quantifiers,
                         summarizers,
-                        intersectSet);
+                        finalSet,
+                        isAndQualifier,
+                        isAndSummarizer);
 
         /*double finalSizeNormalized = calculateNormalized(intersectSet);
         System.out.println(finalSizeNormalized);*/
 
-        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState));
+        Tuple<String, Double> nameMaxTuple = this.extractNameAndMax(quantifiers, DegreeOfTruthT1.calculateR(dataList, summarizationState, isAndQualifier));
         double max = nameMaxTuple.getSecond();
         String name = nameMaxTuple.getFirst();
 
         String summaryContent =
-                this.buildSummaryContext(String.format("%s %s, które mają/są ", name, this.entityName), qualifiers);
-        summaryContent += this.buildSummaryContext(" ma/jest ", summarizers);
+                this.buildSummaryContext(String.format("%s %s, które mają/są ", name, this.entityName), qualifiers, isAndQualifier);
+        summaryContent += this.buildSummaryContext(" ma/jest ", summarizers, isAndSummarizer);
 
-        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name);
+        Map<String, Double> qualityMeasures = calculateQualityMeasures(dataList, summarizationState, max, name, isAndQualifier);
 
         return new Tuple<>(
                 new Summary(summaryContent,
@@ -288,7 +301,9 @@ public class SummaryGenerator {
                         qualifiers,
                         quantifiers,
                         summarizers,
-                        intersectSet
+                        finalSet,
+                        isAndQualifier,
+                        isAndSummarizer
                 )
         );
     }
@@ -304,11 +319,13 @@ public class SummaryGenerator {
         return finalSizeNormalized;
     }*/
 
-    private String buildSummaryContext(String beginning, List<? extends LinguisticVariable> lvs) {
+    private String buildSummaryContext(String beginning, List<? extends LinguisticVariable> lvs, boolean isAnd) {
+        String conjunction = " lub ";
+        if(isAnd) conjunction = " i ";
         for (LinguisticVariable summarizer : lvs) {
             beginning += (summarizer.getName());
             if (lvs.indexOf(summarizer) <= lvs.size() - 2)
-                beginning += (" i ");
+                beginning += conjunction;
         }
         return beginning;
     }
@@ -335,6 +352,16 @@ public class SummaryGenerator {
         return firstSet;
     }
 
+    private FuzzySet waterfallSum(List<FuzzySet> fuzzySets) {
+        FuzzySet firstSet = fuzzySets.get(0);
+        if (firstSet.size() >= 2) {
+            for (int i = 1; i < fuzzySets.size(); i++) {
+                firstSet = FuzzySet.sum(firstSet, fuzzySets.get(i));
+            }
+        }
+        return firstSet;
+    }
+
     private <T> List<FuzzySet> extractFromLinguisticVariables(List<T> dataList, List<? extends LinguisticVariable> lvs) {
         List<FuzzySet> calculatedSets = new ArrayList<>();
         for (LinguisticVariable lv : lvs) {
@@ -348,12 +375,12 @@ public class SummaryGenerator {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
-    private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, Double t1, String name) {
+    private static Map<String, Double> calculateQualityMeasures(List<?> Data, SummarizationState summarizationState, Double t1, String name, boolean isAndQualifier) {
         HashMap<String, Double> QualityValuesMap = new HashMap<>();
 
         double t2 = DegreeOfImprecisionT2.calculateDegreeOfImprecision(summarizationState);
         QualityValuesMap.put("T2", round(t2));
-        double t3 = DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState);
+        double t3 = DegreeOfCoveringT3.calculateDegreeOfCovering(Data, summarizationState,isAndQualifier);
         QualityValuesMap.put("T3", round(t3));
         double t4 = DegreeOfApproppriatenessT4.calculateDegreeOfAppropriateness(Data, summarizationState, QualityValuesMap.get("T3"));
         QualityValuesMap.put("T4", round(t4));

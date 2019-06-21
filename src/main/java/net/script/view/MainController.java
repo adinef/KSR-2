@@ -435,7 +435,9 @@ public class MainController implements Initializable {
                             repository.findAll(),
                             selectionState.getQuantifiers(),
                             selectionState.getQualifiers(),
-                            selectionState.getSummarizers()
+                            selectionState.getSummarizers(),
+                            selectionState.isQualifierAndOperation(),
+                            selectionState.isSummarizerAndOperation()
                     )
             );
             VBox vBox = this.newTabWithContent(

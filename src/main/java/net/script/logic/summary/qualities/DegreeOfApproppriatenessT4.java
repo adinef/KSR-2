@@ -6,12 +6,9 @@ import net.script.logic.summary.SummarizationState;
 
 import java.util.List;
 
-public class DegreeOfApproppriatenessT4 implements QualityMeasure {
+public class DegreeOfApproppriatenessT4  {
 
-    @Override
-    public double calculateQualityValue(List<?> Data, SummarizationState StateSummary) {
-        return 0;
-    }
+
 
     public static double calculateDegreeOfAppropriateness(List<?> Data, SummarizationState StateSummary, double T3) {
         double val = 1;

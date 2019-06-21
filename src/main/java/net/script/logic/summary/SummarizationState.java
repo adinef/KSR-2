@@ -16,4 +16,6 @@ public class SummarizationState {
     private List<Quantifier> quantfiers;
     private List<Summarizer> summarizers;
     private FuzzySet finalFuzzySet;
+    private boolean isAndQualifier;
+    private boolean isAndSummarizer;
 }
