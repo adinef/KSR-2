@@ -219,10 +219,11 @@
                 <start>0.0</start>
                 <end>101.0</end>
             </range>
-            <function name="triangular">
+            <function name="trapezoid">
                 <coefficient name="a" value="6.0"/>
-                <coefficient name="b" value="101.0"/>
+                <coefficient name="b" value="10.0"/>
                 <coefficient name="c" value="101.0"/>
+                <coefficient name="d" value="101.0"/>
             </function>
         </summarizer>
         <summarizer name="mało łazienek" member="BATHRM">
