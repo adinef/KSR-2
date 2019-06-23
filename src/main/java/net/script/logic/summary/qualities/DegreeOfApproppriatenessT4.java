@@ -8,8 +8,6 @@ import java.util.List;
 
 public class DegreeOfApproppriatenessT4  {
 
-
-
     public static double calculateDegreeOfAppropriateness(List<?> Data, SummarizationState StateSummary, double T3) {
         double val = 1.0;
         for(Summarizer summarizer : StateSummary.getSummarizers()){

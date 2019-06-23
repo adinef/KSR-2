@@ -452,7 +452,7 @@ public class MainController implements Initializable {
                     () -> FXCollections.observableList(
                             summaries.stream().map(Tuple::getFirst).collect(Collectors.toList())
                     ),
-                    false,
+                    true,
                     false,
                     null
             );
@@ -635,6 +635,10 @@ public class MainController implements Initializable {
                             Main.getCurrentStage().getScene()
                     );
             editQuantifierOptional.ifPresent((e) -> tableView.refresh());
+        }
+        if (selectedItem instanceof Summary) {
+            Summary summary = (Summary) selectedItem;
+            SummaryDetailsUtils.showDetailsOf(summary, tab1.getTabPane().getScene());
         }
     }
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.script.data.annotations.Column;
+import net.script.logic.summary.QualityTuple;
 
 import java.util.Map;
 
@@ -16,38 +17,38 @@ public class Summary {
     private String content;
 
     @Column("[T] śr stopień prawdziwości")
-    private double averageT;
+    private QualityTuple averageT;
 
     @Column("[T1] Stopień prawdziwości")
-    private double degreeOfTruth;
+    private QualityTuple degreeOfTruth;
 
     @Column("[T2] Stopień nieprecyzyjności")
-    private double degreeOfImprecision;
+    private QualityTuple degreeOfImprecision;
 
     @Column("[T3] Stopień pokrycia")
-    private double degreeOfCovering;
+    private QualityTuple degreeOfCovering;
 
     @Column("[T4] Stopień stosowności")
-    private double degreOfAppropriateness;
+    private QualityTuple degreOfAppropriateness;
 
     @Column("[T5] Długość podsumowania")
-    private double lengthOfSummary;
+    private QualityTuple lengthOfSummary;
 
     @Column("[T6] Stopień nieprecyzyjności kwantyfikatora")
-    private double degreeOfQuantifierImprecision;
+    private QualityTuple degreeOfQuantifierImprecision;
 
     @Column("[T7] Stopień kardynalności kwantyfikatora")
-    private double degreeOfQuantifierCardinality;
+    private QualityTuple degreeOfQuantifierCardinality;
 
     @Column("[T8] Stopień kardynalności sumaryzatora")
-    private double degreeOfSummarizerCardinality;
+    private QualityTuple degreeOfSummarizerCardinality;
 
     @Column("[T9] Stopień nieprecyzyjności kwalifikatora")
-    private double degreeOfQualifierImprecision;
+    private QualityTuple degreeOfQualifierImprecision;
 
     @Column("[T10] Stopień kardynalności kwalifikatora")
-    private double degreeOfQualifierCardinality;
+    private QualityTuple degreeOfQualifierCardinality;
 
     @Column("[T11] Długość kwalifikatora")
-    private double lengthOfQualifier;
+    private QualityTuple lengthOfQualifier;
 }
